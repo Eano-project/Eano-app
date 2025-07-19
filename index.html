@@ -1,114 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EANO Project - Login</title>
 
-  <!-- 🌐 SEO Meta -->
-  <meta name="description" content="EANO – Secure Digital Mining App, Earn Rewards Daily Like Pi Network">
-  <meta name="keywords" content="EANO, mining, crypto, Pi Network, rewards, secure, earn, digital currency">
-  <meta name="author" content="Santus EANO Team">
-  <meta name="theme-color" content="#111827" />
-  <title>EANO – Mine & Earn</title>
+  <!-- SEO -->
+  <meta name="description" content="EANO is a decentralized mining platform with real user value. Join the future of mining with KYC-ready features.">
+  <meta name="keywords" content="EANO, crypto, mining, decentralized, KYC, blockchain">
+  <meta name="author" content="Santus Osondu">
+  <meta name="theme-color" content="#000000" />
 
-  <!-- 📱 PWA Manifest -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <link rel="icon" type="image/png" href="icons/icon-192.png" />
-
-  <!-- 🧠 Open Graph Meta -->
-  <meta property="og:title" content="EANO – Mine & Earn" />
-  <meta property="og:description" content="Start mining EANO like Pi Network. Secure, clean, and rewarding!" />
-  <meta property="og:image" content="icons/icon-512.png" />
-  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="EANO - Earn Crypto Simply" />
+  <meta property="og:description" content="Mine EANO safely with KYC and referral rewards." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:url" content="https://eano-santus.github.io/eano-project/" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- ✨ Styles -->
+  <!-- Favicon + PWA -->
+  <link rel="icon" href="icons/favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
   <link rel="stylesheet" href="style.css" />
 </head>
+<body>
+  <header class="top-bar">
+    <div class="logo-glow">
+      <img src="assets/logo.png" alt="EANO Logo" class="logo" />
+    </div>
+    <div class="top-controls">
+      <select id="language-select"></select>
+      <button id="theme-toggle">🌓</button>
+    </div>
+  </header>
 
-<body class="dark">
-  <main class="centered-box">
-    <img src="icons/icon-192.png" alt="EANO Logo" class="app-logo" />
+  <main class="centered">
+    <h1>Welcome to EANO</h1>
+    <p class="tagline">Decentralized Mining, Real Utility.</p>
 
-    <h1 class="glow-text">Welcome to EANO</h1>
-    <p>Secure Mining. Real Value.</p>
+    <div id="google-signin" class="login-box">
+      <p>Sign in with Google to continue:</p>
+      <div id="google-btn"></div>
+    </div>
 
-    <!-- 🌍 Language Selector -->
-    <select id="langSelect" class="lang-select">
-      <option value="en">🌐 English</option>
-      <option value="ig">🗣 Igbo</option>
-      <option value="ha">🗣 Hausa</option>
-      <option value="yo">🗣 Yoruba</option>
-    </select>
-
-    <!-- 🔐 Google Sign-In -->
-    <button id="googleSignInBtn" class="google-btn">🔐 Sign in with Google</button>
-
-    <!-- 👋 Redirect Messages -->
-    <p id="statusMsg" class="status-msg" style="display:none;">Please wait...</p>
+    <footer class="footer">
+      <p>&copy; <span id="year"></span> EANO. All rights reserved.</p>
+      <a href="whitepaper.html">Whitepaper</a> |
+      <a href="support.html">Support</a>
+    </footer>
   </main>
 
-  <!-- 📦 Firebase & Auth -->
-  <script type="module">
-    import { auth, db } from './firebase.js';
-    import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <!-- Firebase -->
+  <script type="module" src="firebase.js"></script>
 
-    const signInBtn = document.getElementById('googleSignInBtn');
-    const statusMsg = document.getElementById('statusMsg');
-    const refCode = new URLSearchParams(window.location.search).get('ref') || null;
-
-    const provider = new GoogleAuthProvider();
-
-    // 🔁 Existing login check
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const snap = await getDoc(userRef);
-
-        if (snap.exists()) {
-          const data = snap.data();
-          const complete = data.firstname && data.lastname && data.username && data.email;
-
-          if (!complete) {
-            window.location.href = 'setup.html';
-          } else {
-            statusMsg.style.display = 'block';
-            statusMsg.innerText = "Welcome back! Redirecting...";
-            setTimeout(() => window.location.href = 'dashboard.html', 1500);
-          }
-        } else {
-          // Create new user shell
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            referralCode: refCode || "none",
-            createdAt: Date.now()
-          });
-          window.location.href = 'setup.html';
-        }
-      }
-    });
-
-    // 🔐 Google Sign-in handler
-    signInBtn.addEventListener('click', async () => {
-      statusMsg.style.display = 'block';
-      statusMsg.innerText = "Signing in...";
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (err) {
-        console.error("Sign-in failed", err);
-        statusMsg.innerText = "Failed to sign in. Try again.";
-      }
-    });
-  </script>
-
-  <!-- ⚙️ Service Worker -->
+  <!-- Lang / Theme / Auth -->
+  <script src="lang.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js');
-    }
+    // 🔁 Year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // 🌗 Toggle Theme
+    const toggleBtn = document.getElementById("theme-toggle");
+    toggleBtn.addEventListener("click", () => {
+      const html = document.documentElement;
+      const isDark = html.getAttribute("data-theme") === "dark";
+      html.setAttribute("data-theme", isDark ? "light" : "dark");
+    });
+
+    // 🌍 Load Language Options
+    loadLanguageOptions("language-select");
+
+    // 🔒 Google Sign-In Flow
+    import("./firebase.js").then(({ auth }) => {
+      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(firebaseAuth => {
+        const provider = new firebaseAuth.GoogleAuthProvider();
+        firebaseAuth.onAuthStateChanged(auth, (user) => {
+          if (user) {
+            // Redirect to dashboard if profile is verified
+            const uid = user.uid;
+            fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`)
+              .then(res => res.json())
+              .then(data => {
+                if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
+                  window.location.href = "dashboard.html";
+                } else {
+                  window.location.href = "setup.html";
+                }
+              }).catch(() => {
+                window.location.href = "setup.html";
+              });
+          }
+        });
+
+        // Show Google sign-in button
+        window.renderGoogleButton = () => {
+          google.accounts.id.initialize({
+            client_id: "50186911438-abc.apps.googleusercontent.com", // Replace with your correct Google OAuth client ID
+            callback: async (response) => {
+              try {
+                const credential = firebaseAuth.GoogleAuthProvider.credential(response.credential);
+                await firebaseAuth.signInWithCredential(auth, credential);
+              } catch (err) {
+                console.error("Google Sign-In Error", err);
+              }
+            }
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("google-btn"),
+            { theme: "outline", size: "large" }
+          );
+        };
+        const script = document.createElement("script");
+        script.src = "https://accounts.google.com/gsi/client";
+        script.onload = renderGoogleButton;
+        document.body.appendChild(script);
+      });
+    });
   </script>
 </body>
 </html>
