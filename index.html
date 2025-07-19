@@ -23,71 +23,66 @@
   <meta property="og:url" content="https://eano-santus.github.io/eano-coin/" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- 📦 External Styles -->
+  <!-- ✨ Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-  <main class="container">
-    <section id="welcome-section" style="display:none;">
-      <h1>Welcome back to EANO 🚀</h1>
-      <p>Redirecting to your dashboard...</p>
-    </section>
+<body class="dark">
+  <main class="centered-box">
+    <img src="icons/icon-192.png" alt="EANO Logo" class="app-logo" />
 
-    <section id="login-section">
-      <h1>EANO Network</h1>
-      <p>Start Mining with Trust</p>
+    <h1 class="glow-text">Welcome to EANO</h1>
+    <p>Secure Mining. Real Value.</p>
 
-      <!-- 🌍 Language Selector -->
-      <select id="langSelect">
-        <option value="en">🌐 English</option>
-        <option value="ig">🗣 Igbo</option>
-        <option value="ha">🗣 Hausa</option>
-        <option value="yo">🗣 Yoruba</option>
-      </select>
+    <!-- 🌍 Language Selector -->
+    <select id="langSelect" class="lang-select">
+      <option value="en">🌐 English</option>
+      <option value="ig">🗣 Igbo</option>
+      <option value="ha">🗣 Hausa</option>
+      <option value="yo">🗣 Yoruba</option>
+    </select>
 
-      <!-- 🔐 Google Sign-In -->
-      <button id="googleSignInBtn" class="google-btn">Sign in with Google</button>
+    <!-- 🔐 Google Sign-In -->
+    <button id="googleSignInBtn" class="google-btn">🔐 Sign in with Google</button>
 
-      <!-- 🔄 Redirect Note -->
-      <p id="redirectNote" style="display:none;">Completing setup...</p>
-    </section>
+    <!-- 👋 Redirect Messages -->
+    <p id="statusMsg" class="status-msg" style="display:none;">Please wait...</p>
   </main>
 
-  <!-- 🧠 Firebase Setup -->
+  <!-- 📦 Firebase & Auth -->
   <script type="module">
     import { auth, db } from './firebase.js';
     import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const signInBtn = document.getElementById('googleSignInBtn');
-    const loginSection = document.getElementById('login-section');
-    const welcomeSection = document.getElementById('welcome-section');
-    const redirectNote = document.getElementById('redirectNote');
-
-    const provider = new GoogleAuthProvider();
+    const statusMsg = document.getElementById('statusMsg');
     const refCode = new URLSearchParams(window.location.search).get('ref') || null;
 
+    const provider = new GoogleAuthProvider();
+
+    // 🔁 Existing login check
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+        const snap = await getDoc(userRef);
 
-        if (userSnap.exists()) {
-          const data = userSnap.data();
-          const isVerified = data.firstname && data.lastname && data.username && data.email && data.referralCode;
+        if (snap.exists()) {
+          const data = snap.data();
+          const complete = data.firstname && data.lastname && data.username && data.email;
 
-          if (!isVerified) {
+          if (!complete) {
             window.location.href = 'setup.html';
           } else {
-            loginSection.style.display = 'none';
-            welcomeSection.style.display = 'block';
+            statusMsg.style.display = 'block';
+            statusMsg.innerText = "Welcome back! Redirecting...";
             setTimeout(() => window.location.href = 'dashboard.html', 1500);
           }
         } else {
+          // Create new user shell
           await setDoc(userRef, {
-            email: user.email,
             uid: user.uid,
+            email: user.email,
             referralCode: refCode || "none",
             createdAt: Date.now()
           });
@@ -96,18 +91,20 @@
       }
     });
 
+    // 🔐 Google Sign-in handler
     signInBtn.addEventListener('click', async () => {
-      redirectNote.style.display = 'block';
+      statusMsg.style.display = 'block';
+      statusMsg.innerText = "Signing in...";
       try {
         await signInWithPopup(auth, provider);
-      } catch (error) {
-        console.error("Google Sign-In failed:", error);
-        redirectNote.textContent = "Something went wrong. Try again.";
+      } catch (err) {
+        console.error("Sign-in failed", err);
+        statusMsg.innerText = "Failed to sign in. Try again.";
       }
     });
   </script>
 
-  <!-- 📲 Register Service Worker -->
+  <!-- ⚙️ Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js');
