@@ -9,15 +9,15 @@ import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.g
 import { getMessaging, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 import { getPerformance } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-performance.js";
 
-// ✅ EANO Miner Firebase Configuration
+// ✅ EANO App Firebase Configuration (new project)
 const firebaseConfig = {
-  apiKey: "AIzaSyCzNpblYEjxZvOtuwao3JakP-FaZAT-Upw",
-  authDomain: "eano-miner.firebaseapp.com",
-  projectId: "eano-miner",
-  storageBucket: "eano-miner.appspot.com",
-  messagingSenderId: "50186911438",
-  appId: "1:50186911438:web:85410fccc7c5933d761a9f",
-  measurementId: "G-NS0W6QSS69"
+  apiKey: "AIzaSyC8fSr1NX1jE0uJ5QfRikf6j-PMb1XhtUs",
+  authDomain: "eano-app-3f678.firebaseapp.com",
+  projectId: "eano-app-3f678",
+  storageBucket: "eano-app-3f678.appspot.com",
+  messagingSenderId: "566183355081",
+  appId: "1:566183355081:web:e8d8aa13ba30099392e318",
+  measurementId: "G-GE2V793DCE"
 };
 
 // ✅ Initialize Firebase App
