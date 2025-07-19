@@ -117,6 +117,14 @@
         document.body.appendChild(script);
       });
     });
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/serviceWorker.js")
+        .then(reg => console.log("ServiceWorker registered ✅"))
+        .catch(err => console.log("ServiceWorker failed:", err));
+    });
+  }
   </script>
 </body>
 </html>
