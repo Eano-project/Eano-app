@@ -7,55 +7,59 @@
 
 body, html {
   height: 100%;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  background-color: #0f172a;
+  color: #ffffff;
   scroll-behavior: smooth;
 }
 
-/* Dark mode default */
-body.dark {
-  background-color: #111827;
-  color: #ffffff;
-}
-
-/* Center container */
+/* Centered welcome container */
 .centered-box {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 2rem;
-  min-height: 100vh;
+  align-items: center;
   text-align: center;
+  padding: 2rem;
 }
 
-/* Logo styling */
+/* App logo */
 .app-logo {
   width: 120px;
   height: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   border-radius: 20px;
-  box-shadow: 0 0 10px #00ffff50;
+  box-shadow: 0 0 15px #00ffffaa;
 }
 
-/* Title with glow */
+/* Glowing welcome text */
 .glow-text {
-  font-size: 2rem;
-  color: #0ff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #00ffff;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
   margin-bottom: 0.5rem;
 }
 
+/* Subheading */
+.sub-text {
+  font-size: 1rem;
+  color: #d1d5db;
+  margin-bottom: 2rem;
+}
+
 /* Google sign-in button */
 .google-btn {
-  margin-top: 1.5rem;
+  display: inline-block;
   background-color: #4285F4;
   color: white;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 30px;
   font-size: 16px;
   font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  padding: 14px 26px;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -64,26 +68,39 @@ body.dark {
   background-color: #357ae8;
 }
 
-/* Language select */
+/* Language selector */
 .lang-select {
-  margin-top: 1rem;
-  background-color: #1f2937;
-  color: #ffffff;
-  padding: 8px 12px;
-  border: 1px solid #374151;
+  margin-top: 1.5rem;
+  padding: 10px 14px;
+  background-color: #1e293b;
+  color: #fff;
+  border: 1px solid #334155;
   border-radius: 10px;
   font-size: 14px;
   outline: none;
 }
 
-/* Status message */
+/* Status or debug message */
 .status-msg {
   margin-top: 1rem;
-  color: #ccc;
   font-size: 14px;
+  color: #94a3b8;
 }
 
-/* Responsive layout */
+/* Footer or small note */
+.footer-note {
+  margin-top: 2rem;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* PWA icons and SEO tags (support) */
+::selection {
+  background-color: #22d3ee;
+  color: #000;
+}
+
+/* Responsive design */
 @media screen and (max-width: 600px) {
   .app-logo {
     width: 80px;
@@ -94,7 +111,15 @@ body.dark {
   }
 
   .google-btn {
-    padding: 12px 18px;
+    padding: 12px 20px;
     font-size: 14px;
+  }
+
+  .sub-text {
+    font-size: 0.95rem;
+  }
+
+  .lang-select {
+    padding: 8px 12px;
   }
 }
