@@ -1,125 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ✅ Basic Meta -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EANO Dashboard</title>
-  <meta name="description" content="EANO Network - Decentralized Community Mining Platform like Pi Network" />
-  <meta name="keywords" content="EANO, crypto, mining, Pi Network, blockchain, community" />
-  <meta name="author" content="Santus EANO Team" />
-  <meta name="theme-color" content="#121212" />
 
-  <!-- ✅ Open Graph (Facebook, LinkedIn, etc.) -->
-  <meta property="og:title" content="EANO Dashboard" />
-  <meta property="og:description" content="Mine EANO daily and grow your trust score in the decentralized network." />
-  <meta property="og:image" content="https://eano-santus.github.io/eano-coin/logo.png" />
-  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/dashboard.html" />
-  <meta property="og:type" content="website" />
+  <!-- SEO Meta -->
+  <meta name="description" content="EANO - Earn and network through mining, gaming, and more.">
+  <meta name="keywords" content="EANO, crypto mining, Pi Network, earn online, Web3">
+  <meta name="author" content="Santus Chukwuneke">
 
-  <!-- ✅ Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="EANO Dashboard" />
-  <meta name="twitter:description" content="Earn EANO daily, refer users, and join the decentralized revolution." />
-  <meta name="twitter:image" content="https://eano-santus.github.io/eano-coin/logo.png" />
+  <!-- PWA Meta -->
+  <meta name="theme-color" content="#0d1117">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
-  <!-- ✅ PWA Manifest -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="favicon.ico" />
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+  <!-- Favicon -->
+  <link rel="icon" href="icons/icon-192x192.png" type="image/png">
 
-  <!-- ✅ Styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-</head>
-<body class="dark-mode">
 
-  <!-- ... Everything from previous version (Balance, Menu, Mine button, etc.) ... -->
-
-  <!-- 🔵 Fixed Mine Button -->
-  <button id="mineBtn" class="mine-button">🔵</button>
-
-  <!-- ✅ Footer -->
-  <footer class="footer">
-    <p>© 2025 EANO Network • Built by Santus with ❤️</p>
-    <p><a href="https://t.me/eano_support" target="_blank">Support</a> | <a href="whitepaper.html">Whitepaper</a></p>
-  </footer>
-
-  <!-- ✅ Inject API Key -->
-  <script>
-    window.FIREBASE_API_KEY = "{{ FIREBASE_API_KEY }}";
-  </script>
-
-  <!-- ✅ Firebase Module -->
+  <!-- Firebase Config -->
   <script type="module" src="firebase.js"></script>
 
-  <!-- ✅ Dashboard Logic -->
+  <!-- Register Service Worker -->
   <script>
-    // Light/Dark Mode
-    document.getElementById("toggleTheme").onclick = function () {
-      document.body.classList.toggle("light-mode");
-    };
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/serviceWorker.js')
+          .then(reg => console.log('✅ Service Worker registered', reg.scope))
+          .catch(err => console.error('❌ SW registration failed:', err));
+      });
+    }
+  </script>
+</head>
+<body class="dark">
 
-    // Logout
-    document.getElementById("logoutBtn").onclick = function () {
-      localStorage.clear();
-      window.location.href = "index.html";
-    };
+  <!-- Balance Display -->
+  <div class="top-bar">
+    <div class="balance">Balance: <span id="balance">0.000</span> EANO</div>
+    <div class="lang-toggle">
+      <select id="languageSelect"></select>
+    </div>
+  </div>
 
-    // Countdown & Mining
-    function startCountdown(duration) {
-      const countdownEl = document.getElementById("countdown");
+  <!-- Announcement Block -->
+  <div id="announcement" class="announcement">
+    <img id="announcementImage" src="assets/announcement.jpg" alt="Announcement" />
+    <p id="announcementText">🚀 Welcome to EANO – Let's mine together!</p>
+  </div>
+
+  <!-- Mining Status -->
+  <div class="mining-status">
+    <span id="miningStatus">Mining active</span> ⛏
+    <div id="countdown">24:00:00</div>
+  </div>
+
+  <!-- Fixed Mine Button -->
+  <button id="mineBtn" class="mine-button">🔵</button>
+
+  <!-- Scrollable Menu & Sections -->
+  <main class="scrollable">
+    <nav class="menu">
+      <a href="#home">🏡 Home</a>
+      <a href="#mainnet">🔐 Mainnet-KYC (soon)</a>
+      <a href="leaderboard.html">🏆 Leaderboard</a>
+      <a href="team.html">👥 Team</a>
+      <a href="#chat">💬 Chat</a>
+      <a href="profile.html">🙋 Profile</a>
+      <a href="#author">👨‍💻 Author</a>
+      <a href="#whitepaper">📜 WhitePaper (soon)</a>
+      <a href="https://t.me/eano_support">🛟 Support</a>
+      <a href="index.html">🚪 Logout</a>
+    </nav>
+
+    <!-- Coming Soon Blocks -->
+    <section class="features">
+      <div class="feature-card">🎮 Games<br><small>Coming Soon</small></div>
+      <div class="feature-card">🎙 Studio<br><small>Coming Soon</small></div>
+      <div class="feature-card">🛒 Marketplace<br><small>Coming Soon</small></div>
+      <div class="feature-card">📋 Tasks<br><small>Coming Soon</small></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 EANO Project • Built with 💡 by Santus</p>
+    <button id="themeToggle">🌙 Toggle Dark/Light</button>
+  </footer>
+
+  <!-- Combined Script (Dashboard JS logic) -->
+  <script type="module" src="ui.js"></script>
+  <script>
+    // Language selection placeholder
+    document.getElementById("languageSelect").innerHTML = `
+      <option value="en">English</option>
+      <option value="ig">Igbo</option>
+      <option value="fr">French</option>
+    `;
+
+    // Theme toggle
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    // Countdown timer (24 hours)
+    function startCountdown(duration = 86400) {
       let remaining = duration;
-      const interval = setInterval(() => {
-        const hours = String(Math.floor(remaining / 3600)).padStart(2, '0');
+      const countdown = document.getElementById("countdown");
+      setInterval(() => {
+        if (remaining <= 0) return;
+        remaining--;
+        const hrs = String(Math.floor(remaining / 3600)).padStart(2, '0');
         const mins = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
         const secs = String(remaining % 60).padStart(2, '0');
-        countdownEl.textContent = `${hours}:${mins}:${secs}`;
-        if (--remaining < 0) clearInterval(interval);
+        countdown.textContent = `${hrs}:${mins}:${secs}`;
       }, 1000);
     }
+    startCountdown();
 
-    async function startMining() {
-      const start = localStorage.getItem("mineStart");
-      const now = Date.now();
-      const sessionDuration = 24 * 60 * 60 * 1000;
-
-      if (!start || now - parseInt(start) >= sessionDuration) {
-        localStorage.setItem("mineStart", now);
-      }
-
-      const sessionEnd = parseInt(localStorage.getItem("mineStart")) + sessionDuration;
-      const remainingSecs = Math.floor((sessionEnd - now) / 1000);
-      startCountdown(remainingSecs);
-
-      const balanceEl = document.getElementById("balance");
-      let balance = parseFloat(localStorage.getItem("balance") || "0");
-      const ratePerSecond = 0.600 / 3600;
-
-      const miner = setInterval(() => {
-        if (Date.now() >= sessionEnd) {
-          clearInterval(miner);
-          return;
-        }
-        balance += ratePerSecond;
-        balanceEl.textContent = balance.toFixed(3);
-        localStorage.setItem("balance", balance.toFixed(3));
-      }, 1000);
-    }
-
-    window.onload = () => {
-      startMining();
-      registerServiceWorker();
-    };
-
-    // ✅ Register PWA Service Worker
-    function registerServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js')
-          .then(() => console.log("✅ Service Worker Registered"))
-          .catch(err => console.error("❌ Service Worker Failed:", err));
-      }
-    }
+    // Fixed Mine Button visual only (mining logic in firebase.js)
+    document.getElementById("mineBtn").addEventListener("click", () => {
+      alert("⛏ Mining already running in background.");
+    });
   </script>
 </body>
 </html>
