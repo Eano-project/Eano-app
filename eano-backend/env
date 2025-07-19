@@ -1,1 +1,5 @@
-
+FIREBASE_ADMIN_KEY={
+  "type": "service_account",
+  "project_id": "eano-app-3f678",
+  ...
+}
