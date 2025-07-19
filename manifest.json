@@ -1,11 +1,11 @@
 {
-  "name": "EANO - Decentralized Mining",
+  "name": "EANO Dashboard",
   "short_name": "EANO",
-  "description": "Earn EANO coins through decentralized mining and referrals.",
-  "start_url": "/index.html",
+  "description": "Earn and Network Online through EANO mining, games, and community.",
+  "start_url": "/dashboard.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#121212",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
   "orientation": "portrait",
   "icons": [
     {
