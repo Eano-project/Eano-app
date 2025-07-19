@@ -19,7 +19,24 @@ const firebaseConfig = {
   appId: "1:566183355081:web:e8d8aa13ba30099392e318",
   measurementId: "G-GE2V793DCE"
 };
+firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
+  function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        console.log("Welcome,", user.displayName);
+        // Redirect or store user info
+      })
+      .catch((error) => {
+        console.error("Login failed", error);
+      });
+  }
+</script>
+
+<button onclick="signInWithGoogle()">Sign in with Google</button>
 // ✅ Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
