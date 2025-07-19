@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complete Your Setup | EANO</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="description" content="Finish setting up your EANO account for mining and rewards." />
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="firebase.js"></script>
+</head>
+<body>
+  <div class="centered-box">
+    <img src="logo.png" alt="EANO Logo" class="app-logo" />
+    <h2 class="glow-text">Finish Account Setup</h2>
+    <p class="sub-text">This is required for mining and KYC verification.</p>
+
+    <form id="setupForm" style="width: 100%; max-width: 400px; margin-top: 1rem;">
+      <input type="text" id="firstName" placeholder="First Name" required class="form-field" />
+      <input type="text" id="lastName" placeholder="Last Name" required class="form-field" />
+      <input type="text" id="username" placeholder="Username (unique)" required class="form-field" />
+      <input type="email" id="email" placeholder="Email" required class="form-field" disabled />
+      <input type="text" id="referral" placeholder="Referral Code (optional)" class="form-field" />
+      <button type="submit" class="google-btn" style="margin-top: 1rem;">Complete Setup</button>
+    </form>
+
+    <p class="status-msg" id="status"></p>
+  </div>
+
+  <script type="module">
+    import { auth, db } from './firebase.js';
+    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const setupForm = document.getElementById("setupForm");
+    const emailField = document.getElementById("email");
+    const statusMsg = document.getElementById("status");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists() && userSnap.data().verified) {
+          // Already verified: go to dashboard
+          window.location.href = "dashboard.html";
+        } else {
+          // Pre-fill email
+          emailField.value = user.email;
+        }
+      } else {
+        window.location.href = "index.html"; // Not logged in
+      }
+    });
+
+    setupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const referralCode = document.getElementById("referral").value.trim();
+
+      if (username.length < 3) {
+        statusMsg.textContent = "Username must be at least 3 characters.";
+        return;
+      }
+
+      try {
+        const userRef = doc(db, "users", user.uid);
+        await setDoc(userRef, {
+          uid: user.uid,
+          firstName,
+          lastName,
+          username,
+          email: user.email,
+          referralCode: referralCode || null,
+          verified: true,
+          createdAt: Date.now(),
+          balance: 0,
+          trustScore: 0,
+          referrals: [],
+        });
+
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        statusMsg.textContent = "Error saving data. Try again.";
+        console.error(err);
+      }
+    });
+  </script>
+
+  <style>
+    .form-field {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background-color: #1e293b;
+      color: #fff;
+      font-size: 16px;
+    }
+    .form-field::placeholder {
+      color: #94a3b8;
+    }
+  </style>
+</body>
+</html>
