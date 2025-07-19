@@ -11,7 +11,7 @@ import { getPerformance } from "https://www.gstatic.com/firebasejs/10.12.2/fireb
 
 // ✅ EANO App Firebase Configuration (new project)
 const firebaseConfig = {
-  apiKey: "AIzaSyC8fSr1NX1jE0uJ5QfRikf6j-PMb1XhtUs",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,",
   authDomain: "eano-app-3f678.firebaseapp.com",
   projectId: "eano-app-3f678",
   storageBucket: "eano-app-3f678.appspot.com",
