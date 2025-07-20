@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EANO Dashboard</title>
+
+  <!-- SEO Meta -->
+  <meta name="description" content="EANO - Earn and network through mining, gaming, avatars, and more.">
+  <meta name="keywords" content="EANO, mining, crypto, Pi Network, Web3, earn online, social crypto">
+  <meta name="author" content="Santus Chukwuneke">
+
+  <!-- PWA -->
+  <meta name="theme-color" content="#0d1117" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+  <link rel="icon" type="image/png" href="icons/icon-192x192.png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase -->
+  <script type="module" src="firebase.js"></script>
+
+  <!-- Register Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/serviceWorker.js')
+          .then(reg => console.log('✅ Service Worker registered', reg.scope))
+          .catch(err => console.error('❌ Service Worker registration failed:', err));
+      });
+    }
+  </script>
+</head>
+
+<body class="dark">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="balance">Balance: <span id="balance">0.000</span> EANO</div>
+    <div class="lang-toggle">
+      <select id="languageSelect"></select>
+    </div>
+  </div>
+
+  <!-- Announcement -->
+  <div id="announcement" class="announcement">
+    <img id="announcementImage" src="assets/announcement.jpg" alt="🚀 EANO Announcement" onerror="this.style.display='none'"/>
+    <p id="announcementText">🚀 Welcome to EANO – Let's mine together!</p>
+  </div>
+
+  <!-- Mining Status -->
+  <div class="mining-status" id="mining-status">
+    <span id="miningStatus">Mining active</span> ⛏
+    <div id="countdown">24:00:00</div>
+  </div>
+
+  <!-- Fixed Mine Button -->
+  <button id="mineBtn" class="mine-button">🔵</button>
+
+  <!-- Main Scrollable Area -->
+  <main class="scrollable">
+    <nav class="menu">
+      <a href="#home">🏡 Home</a>
+      <a href="#mainnet">🔐 Mainnet-KYC (soon)</a>
+      <a href="leaderboard.html">🏆 Leaderboard</a>
+      <a href="team.html">👥 Team</a>
+      <a href="#chat">💬 Chat</a>
+      <a href="profile.html">🙋 Profile</a>
+      <a href="#author">👨‍💻 Author</a>
+      <a href="#whitepaper">📜 WhitePaper (soon)</a>
+      <a href="https://t.me/eano_support">🛟 Support</a>
+      <a href="index.html">🚪 Logout</a>
+    </nav>
+
+    <!-- Coming Soon Sections -->
+    <section class="features">
+      <div class="feature-card">🎮 Games<br><small>Coming Soon</small></div>
+      <div class="feature-card">🎙 Studio<br><small>Coming Soon</small></div>
+      <div class="feature-card">🛒 Marketplace<br><small>Coming Soon</small></div>
+      <div class="feature-card">📋 Tasks<br><small>Coming Soon</small></div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 EANO Project • Built with 💡 by Santus</p>
+    <button id="themeToggle">🌙 Toggle Dark/Light</button>
+  </footer>
+
+  <!-- Scripts -->
+  <script type="module" src="ui.js"></script>
+  <script>
+    // Language options
+    document.getElementById("languageSelect").innerHTML = `
+      <option value="en">English</option>
+      <option value="ig">Igbo</option>
+      <option value="fr">French</option>
+    `;
+
+    // Theme toggle
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+
+    // Countdown timer
+    function startCountdown(duration = 86400) {
+      let remaining = duration;
+      const countdown = document.getElementById("countdown");
+      setInterval(() => {
+        if (remaining <= 0) return;
+        remaining--;
+        const hrs = String(Math.floor(remaining / 3600)).padStart(2, '0');
+        const mins = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+        const secs = String(remaining % 60).padStart(2, '0');
+        countdown.textContent = `${hrs}:${mins}:${secs}`;
+      }, 1000);
+    }
+    startCountdown();
+
+    // Mine Button visual feedback
+    const mineBtn = document.getElementById("mineBtn");
+    mineBtn.addEventListener("click", () => {
+      document.getElementById("mining-status").classList.add("mining");
+      alert("⛏ Mining already running in background.");
+    });
+  </script>
+
+  <!-- Mine Button Pulse Animation -->
+  <style>
+    #mining-status.mining {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 10px #0ea5e9; }
+      50% { box-shadow: 0 0 20px #0ea5e9; }
+    }
+  </style>
+</body>
+</html>
