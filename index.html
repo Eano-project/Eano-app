@@ -1,384 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EANO Project • Web3 Mining Redefined</title>
-  <meta name="title" content="EANO Project • Web3 Mining Redefined">
-  <meta name="description" content="Start mining EANO like Pi Network. Build your balance and TrustScore with the EANO Project.">
-  <meta name="author" content="Santus Santorum">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EANO - Decentralized Mining with Real Utility" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <title>EANO • Sign In</title>
   
-  <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" sizes="57x57" href="assets/icons/apple-icon-57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="assets/icons/apple-icon-60x60.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="assets/icons/apple-icon-72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="assets/icons/apple-icon-76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="assets/icons/apple-icon-114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="assets/icons/apple-icon-120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="assets/icons/apple-icon-144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/apple-icon-152x152.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-icon-180x180.png">
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.png" type="image/png" />
   
-  <!-- Android + Browser Favicons -->
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/android-icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="96x96" href="assets/icons/favicon-96x96.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
-  
-  <!-- Windows Tiles -->
-  <meta name="msapplication-TileColor" content="#000000">
-  <meta name="msapplication-TileImage" content="assets/icons/ms-icon-144x144.png">
-  
-  <!-- Web App Manifest -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://eano-coin.netlify.app/index.html" />
-  
-  <!-- Social Preview -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://eano-coin.netlify.app/">
-  <meta property="og:title" content="EANO Project • Web3 Mining Redefined">
-  <meta property="og:description" content="Join the EANO Project and mine crypto daily. Built on trust, growth, and decentralization.">
-  <meta property="og:image" content="https://eano-coin.netlify.app/logo512.png">
-
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EANO Project • Web3 Mining Redefined">
-  <meta name="twitter:description" content="Join the EANO Project and start earning daily. Just like Pi Network, but better.">
-  <meta name="twitter:image" content="https://eano-coin.netlify.app/logo512.png">
-    
+  <!-- Manifest for PWA -->
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <meta name="theme-color" content="#000000" />
   
-  <!-- Stylesheet -->
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
   
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(45deg, #4b6cb7, #182848); /* Cool background gradient */
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      text-align: center;
-    }
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script src="firebase.js" defer></script>
 
-    .auth-container {
-      background: rgba(0, 0, 0, 0.75);
-      max-width: 95%;
-      width: 100%;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
-      margin: 70px auto;
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('serviceWorker.js')
+        .then(reg => console.log("SW registered"))
+        .catch(err => console.error("SW registration failed", err));
     }
-
-    @media (min-width: 480px) {
-      .auth-container {
-        max-width: 420px;
-      }
-    }
-
-    h2 {
-      text-align: center;
-      color: gold;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-control {
-      margin-bottom: 1rem;
-      padding: 0.75rem;
-      border-radius: 10px;
-      border: none;
-    }
-
-    .btn-auth {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 10px;
-      font-weight: bold;
-      margin-top: 0.5rem;
-    }
-
-    .toggle-link {
-      margin-top: 1rem;
-      text-align: center;
-      cursor: pointer;
-      color: #ccc;
-    }
-
-    .toggle-link:hover {
-      color: #fff;
-    }
-
-    .lang-select, #theme-toggle {
-      margin-top: 1rem;
-      width: 100%;
-      border-radius: 10px;
-      padding: 0.6rem;
-    }
-
-    .light-mode {
-      background-color: #f0f0f0;
-      color: #111;
-    }
-
-    .light-mode .auth-container {
-      background: rgba(255, 255, 255, 0.9);
-      color: #111;
-    }
-
-    .light-mode input, .light-mode select, .light-mode button {
-      color: #111;
-    }
-  </style>
+  </script>
 </head>
+<body>
+  <div class="entry-container">
+    <div class="entry-box">
+      <img src="logo.png" alt="EANO Logo" class="entry-logo" />
 
-<body id="auth-body">
+      <h2>Welcome to EANO</h2>
+      <p class="tagline">Decentralized Mining, Real Utility.</p>
 
-  <div class="auth-container">
-    <h2>🚀 Welcome to EANO</h2>
-
-    <select id="lang-select" class="form-select lang-select">
-      <option value="en">🌍 English</option>
-      <option value="fr">🇫🇷 French</option>
-      <option value="sw">🇰🇪 Swahili</option>
-      <option value="ig">🇳🇬 Igbo</option>
-      <option value="ha">🇳🇬 Hausa</option>
-      <option value="efik">🇳🇬 Efik</option>
-      <option value="pid">🇳🇬 Pidgin</option>
-      <option value="zh">🇨🇳 中文</option>
-    </select>
-
-    <button id="theme-toggle" class="btn btn-outline-light mt-2">🌗 Toggle Light/Dark</button>
-
-    <!-- 📝 Sign-Up Section -->
-    <form id="signup-form">
-      <div id="signup-section">
-        <input type="text" id="signup-firstname" class="form-control" placeholder="First Name" required />
-        <input type="text" id="signup-lastname" class="form-control" placeholder="Last Name" required />
-        <input type="text" id="signup-username" class="form-control" placeholder="Username" required />
-        <input type="hidden" id="signup-referral" />
-        <input type="email" id="signup-email" class="form-control" placeholder="Email" required />
-        <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
-        <button type="submit" class="btn btn-warning btn-auth">Sign Up</button>
+      <div class="login-box">
+        <button id="google-login" class="login-btn">🔐 Sign in with Google</button>
+        <br /><br />
+        <button id="facebook-login" class="login-btn">📘 Login with Facebook</button>
       </div>
-    </form>
 
-    <!-- 🔐 Login Section -->
-    <form id="login-form" style="display: none;">
-      <div id="login-section">
-        <input type="email" id="login-email" class="form-control" placeholder="Email" required />
-        <input type="password" id="login-password" class="form-control" placeholder="Password" required />
-        <button type="submit" class="btn btn-success btn-auth">Login</button>
-        <button type="button" id="google-signin" class="btn btn-light btn-auth">🔐 Sign in with Google</button>
+      <div class="entry-footer">
+        <p>© 2025 EANO. All rights reserved.</p>
       </div>
-    </form>
-
-    <!-- Toggle -->
-    <div class="toggle-link" id="toggle-auth">Already have an account? Login</div>
+    </div>
   </div>
 
-  <!-- Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "Window_API FIREBASE",
-      authDomain: "eano-miner.firebaseapp.com",
-      projectId: "eano-miner",
-      storageBucket: "eano-miner.appspot.com",
-      messagingSenderId: "50186911438",
-      appId: "1:50186911438:web:85410fccc7c5933d761a9f",
-      measurementId: "G-NS0W6QSS69"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Sign Up
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-const db = getFirestore(app);
-
-// 🔁 Capture Referral from URL
-const urlParams = new URLSearchParams(window.location.search);
-const refCode = urlParams.get("ref");
-if (refCode) {
-  document.getElementById("signup-referral").value = refCode;
-}
-
-// ✅ Sign-Up with Referrals and Firestore User Save
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const firstname = document.getElementById("signup-firstname").value.trim();
-  const lastname = document.getElementById("signup-lastname").value.trim();
-  const username = document.getElementById("signup-username").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const referredBy = document.getElementById("signup-referral").value || null;
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCred.user;
-
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      name: firstname + " " + lastname,
-      firstName: firstname,
-      lastName: lastname,
-      username,
-      email,
-      photoURL: "",
-      balance: 0,
-      score: 0,
-      trustScore: 0,
-      referredBy,
-      miningStart: null,
-      miningEnd: null,
-      lastUpdate: null,
-      joinedAt: new Date().toISOString()
-    });
-
-    // ✅ Save locally
-    localStorage.setItem("username", username);
-
-    window.location.href = "dashboard.html";
-
-  } catch (e) {
-    alert("❌ Error: " + e.message);
-      }
-    });
-
-    // Login
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        alert(e.message);
-      }
-    });
-
-    // Google Sign In
-    document.getElementById("google-signin").addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    const userRef = doc(getFirestore(), "users", user.uid);
-    const docSnap = await getDoc(userRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      // ✅ Check if required fields are set
-      if (userData.username && userData.firstName && userData.lastName) {
-        window.location.href = "dashboard.html";
-      } else {
-        window.location.href = "complete-profile.html";
-      }
-    } else {
-      // 🆕 New user — create minimal record first, then redirect to complete it
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email || "",
-        photoURL: user.photoURL || "",
-        createdAt: new Date().toISOString(),
-        // Empty fields to be filled in complete-profile
-        firstName: "",
-        lastName: "",
-        username: "",
-        referredBy: "",
-        balance: 0,
-        score: 0,
-        trustScore: 0,
-        miningStart: null,
-        miningEnd: null
-      });
-
-      window.location.href = "complete-profile.html";
-    }
-
-  } catch (e) {
-    alert(e.message);
-      }
-    });
-
-    // Auto-redirect if user already logged in (on page load)
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    window.location.href = "dashboard.html";
-  } else if (!localStorage.getItem("seenWelcome")) {
-    window.location.href = "welcome.html";
-      }
-    });
-  </script>
-
-  <!-- Toggle Auth -->
+  <!-- Auth Logic -->
   <script>
-    const toggleLink = document.getElementById("toggle-auth");
-    const signupSection = document.getElementById("signup-form");
-    const loginSection = document.getElementById("login-form");
+    const auth = firebase.auth();
 
-    toggleLink.addEventListener("click", () => {
-      const isSignupVisible = signupSection.style.display !== "none";
-      signupSection.style.display = isSignupVisible ? "none" : "block";
-      loginSection.style.display = isSignupVisible ? "block" : "none";
-      toggleLink.textContent = isSignupVisible
-        ? "Don't have an account? Sign up"
-        : "Already have an account? Login";
-    });
-  </script>
-
-  <!-- Theme Toggle -->
-  <script>
-    const themeToggle = document.getElementById("theme-toggle");
-    const body = document.getElementById("auth-body");
-
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-      body.classList.add("light-mode");
-    }
-
-    themeToggle.addEventListener("click", () => {
-      body.classList.toggle("light-mode");
-      const mode = body.classList.contains("light-mode") ? "light" : "dark";
-      localStorage.setItem("theme", mode);
-    });
-  </script>
-
-  <!-- PWA -->
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
+    // Google Login
+    document.getElementById("google-login").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(() => {
+          window.location.href = "dashboard.html";
         })
-        .catch(error => {
-          console.log('Service Worker registration failed:', error);
-        });
+        .catch(err => alert(err.message));
     });
-    }
+
+    // Facebook Login
+    document.getElementById("facebook-login").addEventListener("click", () => {
+      const provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(() => {
+          window.location.href = "dashboard.html";
+        })
+        .catch(err => alert(err.message));
+    });
+
+    // Auto Redirect
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
   </script>
-<button id="installBtn" class="install-btn" style="display: none;">
-  📲 Install EANO App
-</button>
 </body>
 </html>
