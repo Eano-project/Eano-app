@@ -1,81 +1,68 @@
-// ✅ Import Firebase v10.12.2 CDN Modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { getPerformance } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-performance.js";
-import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { getMessaging, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="EANO – Decentralized mining & referral-based crypto platform." />
+  <meta name="keywords" content="EANO, crypto, mining, Pi Network alternative, blockchain, referral earning" />
+  <meta name="author" content="Santorum Chukwuneke" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="EANO – Crypto Mining Simplified" />
+  <meta property="og:description" content="Mine and earn with friends using EANO's referral-based crypto ecosystem." />
+  <meta property="og:image" content="https://yourdomain.netlify.app/assets/eano-logo.png" />
+  <meta property="og:url" content="https://yourdomain.netlify.app" />
+  <meta property="og:type" content="website" />
 
-// ✅ EANO App Firebase Configuration
-const firebaseConfig = {
-  apiKey: window.FIREBASE_API_KEY,
-  authDomain: "eano-app-3f678.firebaseapp.com",
-  projectId: "eano-app-3f678",
-  storageBucket: "eano-app-3f678.appspot.com",
-  messagingSenderId: "566183355081",
-  appId: "1:566183355081:web:e8d8aa13ba30099392e318",
-  measurementId: "G-GE2V793DCE"
-};
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EANO – Crypto Mining Simplified" />
+  <meta name="twitter:description" content="Earn crypto with ease. Mine with referrals in the EANO ecosystem." />
+  <meta name="twitter:image" content="https://yourdomain.netlify.app/assets/eano-logo.png" />
 
-// ✅ Initialize Firebase App
-const app = initializeApp(firebaseConfig);
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/assets/favicon.ico" />
+  <title>EANO – Sign In</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
 
-// ✅ Initialize Core Services
-const auth = getAuth(app);
-const rtdb = getDatabase(app);
-const storage = getStorage(app);
-const performance = getPerformance(app);
+<body class="dark-mode">
+  <div class="container">
+    <img src="assets/eano-logo.png" alt="EANO Logo" class="logo" />
 
-// ✅ Initialize Optional Services (Analytics + Messaging)
-let analytics = null;
-let messaging = null;
+    <h1>Welcome to <span class="glow">EANO</span></h1>
+    <p>Secure mining starts here.</p>
 
-isAnalyticsSupported().then((supported) => {
-  if (supported) {
-    analytics = getAnalytics(app);
-  }
-});
+    <div class="login-buttons">
+      <button onclick="signInWithGoogle()" class="google-btn">Sign in with Google</button>
+      <button onclick="signInWithFacebook()" class="facebook-btn">Sign in with Facebook</button>
+    </div>
+  </div>
 
-isMessagingSupported().then((supported) => {
-  if (supported) {
-    messaging = getMessaging(app);
-  }
-});
+  <!-- ✅ Inject Firebase Key from Netlify -->
+  <script>
+    window.FIREBASE_API_KEY = "{{FIREBASE_API_KEY}}"; // Netlify ENV will replace this
+  </script>
 
-// ✅ Google Sign-In Handler
-async function signInWithGoogle() {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("✅ Google Sign-In:", user.displayName);
-  } catch (error) {
-    console.error("❌ Google Sign-In failed:", error.message);
-  }
-}
+  <!-- ✅ Firebase Login Handler (Modular) -->
+  <script type="module">
+    import {
+      signInWithGoogle,
+      signInWithFacebook,
+    } from './firebase.js';
 
-// ✅ Facebook Sign-In Handler
-async function signInWithFacebook() {
-  const provider = new FacebookAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    console.log("✅ Facebook Sign-In:", user.displayName);
-  } catch (error) {
-    console.error("❌ Facebook Sign-In failed:", error.message);
-  }
-}
+    window.signInWithGoogle = signInWithGoogle;
+    window.signInWithFacebook = signInWithFacebook;
+  </script>
 
-// ✅ Export Firebase services and sign-in methods
-export {
-  app,
-  auth,
-  rtdb,
-  storage,
-  performance,
-  analytics,
-  messaging,
-  signInWithGoogle,
-  signInWithFacebook
-};
+  <!-- ✅ Optional: Register PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log("✅ Service Worker Registered"))
+        .catch(err => console.error("❌ SW Error:", err));
+    }
+  </script>
+</body>
+</html>
