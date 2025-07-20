@@ -1,0 +1,35 @@
+# Node modules and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables (VERY IMPORTANT)
+.env
+.env.local
+.env.development
+.env.production
+
+# Firebase Admin credentials (move to .env and ignore JSON key files)
+firebase-admin.js
+serviceAccountKey.json
+
+# Firebase Functions (if you're using it)
+functions/node_modules/
+functions/lib/
+functions/.env
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
+
+# System files
+Thumbs.db
+
+# Build/output folders
+dist/
+build/
+
+# Coverage reports
+coverage/
