@@ -1,6 +1,6 @@
 // ui.js
 
-// ✅ Update the balance on the dashboard
+// ✅ Update balance on dashboard
 export function updateBalanceUI(balance) {
   const el = document.getElementById("balance");
   if (el) {
@@ -9,7 +9,7 @@ export function updateBalanceUI(balance) {
   }
 }
 
-// ✅ Update the mining countdown timer
+// ✅ Update mining timer
 export function updateTimerUI(remainingSeconds) {
   const timerEl = document.getElementById("timer");
   if (timerEl) {
@@ -20,7 +20,7 @@ export function updateTimerUI(remainingSeconds) {
   }
 }
 
-// ✅ Update user email on UI
+// ✅ Update user email
 export function updateUserEmailUI(email) {
   const el = document.getElementById("user-email");
   if (el) {
@@ -29,7 +29,7 @@ export function updateUserEmailUI(email) {
   }
 }
 
-// ✅ Update referral count on UI
+// ✅ Update referrals
 export function updateReferralCountUI(count) {
   const el = document.getElementById("referral-count");
   if (el) {
@@ -38,7 +38,7 @@ export function updateReferralCountUI(count) {
   }
 }
 
-// ✅ Determine mining level from balance
+// ✅ Mining Levels
 export function getLevelFromBalance(balance) {
   if (balance >= 3000) return "🐘 Elephant";
   if (balance >= 2000) return "🦍 Gorilla";
@@ -51,7 +51,7 @@ export function getLevelFromBalance(balance) {
   return "⛏ Beginner";
 }
 
-// ✅ Determine trust badge from trust score
+// ✅ Trust Badges
 export function getTrustBadge(score) {
   if (score >= 1000) return "✅ Trusted Miner";
   if (score >= 500) return "🛡 Reliable Miner";
@@ -59,11 +59,10 @@ export function getTrustBadge(score) {
   return "⚠ Low Trust";
 }
 
-// ✅ Show announcement message in box
+// ✅ Show announcement
 export function showAnnouncement(message) {
   const box = document.getElementById("announcement-box");
   const msg = document.getElementById("latest-announcement");
-
   if (box && msg && message) {
     box.style.display = "block";
     msg.textContent = message;
@@ -73,8 +72,9 @@ export function showAnnouncement(message) {
   }
 }
 
-// ✅ Sidebar Menu Toggle
+// ✅ UI Toggles (Dark mode + Menu toggle)
 document.addEventListener("DOMContentLoaded", () => {
+  // Sidebar toggle
   const toggleBtn = document.getElementById("menu-toggle");
   const sidebarMenu = document.getElementById("sidebar-menu");
 
@@ -89,10 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
-});
 
-// ✅ Dark/Light Mode Toggle
-document.addEventListener("DOMContentLoaded", () => {
+  // Dark/Light toggle
   const toggle = document.getElementById("dark-toggle");
   if (toggle) {
     toggle.addEventListener("click", () => {
