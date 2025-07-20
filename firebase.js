@@ -1,11 +1,13 @@
-// firebase.js
-
 // ✅ Import Firebase v10.12.2 CDN Modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const rtdb = getDatabase(app);
-export { rtdb };
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { getPerformance } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-performance.js";
+import { getAnalytics, isSupported as isAnalyticsSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import { getMessaging, isSupported as isMessagingSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
-// ✅ EANO App Firebase Configuration (new project)
+// ✅ EANO App Firebase Configuration
 const firebaseConfig = {
   apiKey: window.FIREBASE_API_KEY,
   authDomain: "eano-app-3f678.firebaseapp.com",
@@ -21,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 
 // ✅ Initialize Core Services
 const auth = getAuth(app);
-const db = getFirestore(app);
+const rtdb = getDatabase(app);
 const storage = getStorage(app);
 const performance = getPerformance(app);
 
@@ -41,43 +43,39 @@ isMessagingSupported().then((supported) => {
   }
 });
 
-// ✅ Google Sign-In Handler (Modular Style)
+// ✅ Google Sign-In Handler
 async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    console.log("✅ Signed in as:", user.displayName);
-    // You can redirect or update UI here
+    console.log("✅ Google Sign-In:", user.displayName);
   } catch (error) {
     console.error("❌ Google Sign-In failed:", error.message);
   }
 }
 
-import { FacebookAuthProvider, signInWithPopup as facebookSignInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 // ✅ Facebook Sign-In Handler
 async function signInWithFacebook() {
   const provider = new FacebookAuthProvider();
   try {
-    const result = await facebookSignInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    console.log("✅ Facebook sign-in successful:", user.displayName);
-    // Optionally redirect or update UI
+    console.log("✅ Facebook Sign-In:", user.displayName);
   } catch (error) {
     console.error("❌ Facebook Sign-In failed:", error.message);
   }
 }
 
-// ✅ Export Firebase services and functions
+// ✅ Export Firebase services and sign-in methods
 export {
   app,
   auth,
-  db,
+  rtdb,
   storage,
   performance,
   analytics,
   messaging,
   signInWithGoogle,
-  signInWithFacebook // 👈 export this
+  signInWithFacebook
 };
