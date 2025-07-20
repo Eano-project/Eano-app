@@ -2,91 +2,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="description" content="EANO – Decentralized Mining With Real Utility" />
-  <meta name="keywords" content="EANO, mining app, crypto, decentralized, rewards, kyc, trustscore, avatar" />
-  <meta name="author" content="Santorum Santus" />
-  <meta name="theme-color" content="#0ea5e9" />
-  <meta property="og:title" content="EANO – Earn with Trust" />
-  <meta property="og:description" content="Mine EANO coins with real-world utility, avatars, team referrals, leaderboard, and more." />
-  <meta property="og:image" content="assets/logo.png" />
-  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/" />
-  <meta name="twitter:card" content="summary_large_image" />
-
-  <title>EANO • Sign In</title>
-
-  <!-- Favicon + Manifest -->
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <link rel="manifest" href="manifest.json" />
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-  <script src="firebase.js" defer></script>
-
-  <!-- Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('serviceWorker.js')
-        .then(reg => console.log("✅ Service Worker registered"))
-        .catch(err => console.error("❌ SW registration failed:", err));
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Join EANO - a decentralized mobile mining platform for everyone."/>
+  <meta name="theme-color" content="#000000"/>
+  <meta property="og:title" content="EANO Coin"/>
+  <meta property="og:description" content="Start mining EANO tokens from your phone."/>
+  <meta property="og:image" content="assets/logo.png"/>
+  <link rel="icon" href="assets/favicon.ico"/>
+  <link rel="manifest" href="manifest.json"/>
+  <title>EANO | Sign In</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="firebase.js"></script>
 </head>
-<body>
-  <div class="entry-container">
-    <div class="entry-box">
-      <img src="assets/logo.png" alt="EANO Logo" class="entry-logo" />
-      <h2>Welcome to EANO</h2>
-      <p class="tagline">Decentralized Mining. Real Utility.</p>
+<body class="dark">
+  <main class="auth-container">
+    <img src="assets/logo.png" alt="EANO Logo" class="logo"/>
 
-      <div class="login-box">
-        <button id="google-login" class="login-btn">🔐 Sign in with Google</button>
-        <br /><br />
-        <button id="facebook-login" class="login-btn">📘 Login with Facebook</button>
-      </div>
-
-      <div class="entry-footer">
-        <p>© 2025 EANO. All rights reserved.</p>
-      </div>
+    <div class="form-toggle">
+      <button id="loginTab" class="active">Sign In</button>
+      <button id="registerTab">Sign Up</button>
     </div>
-  </div>
 
-  <!-- Auth + Setup Check -->
-  <script>
-    const auth = firebase.auth();
-    const db = firebase.database();
+    <form id="authForm">
+      <input type="email" id="email" placeholder="Email" required/>
+      <input type="password" id="password" placeholder="Password" required/>
+      <input type="text" id="referral" placeholder="Referral Code (optional)" style="display:none"/>
+      <button type="submit" id="authButton">Sign In</button>
+    </form>
 
-    document.getElementById("google-login").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithRedirect(provider);
-    });
+    <button id="forgotPasswordBtn" class="link-button">Forgot Password?</button>
+    <p id="authError" class="error-message"></p>
+  </main>
 
-    document.getElementById("facebook-login").addEventListener("click", () => {
-      const provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithRedirect(provider);
-    });
+  <script type="module">
+    import { auth, rtdb } from './firebase.js';
+    import { ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import {
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        try {
-          const snapshot = await db.ref(`users/${user.uid}`).once('value');
-          const data = snapshot.val();
-          if (!data || !data.username || !data.realname || !data.avatar) {
-            window.location.href = "setup.html";
-          } else {
-            window.location.href = "dashboard.html";
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const authForm = document.getElementById("authForm");
+    const authButton = document.getElementById("authButton");
+    const referralInput = document.getElementById("referral");
+    const forgotBtn = document.getElementById("forgotPasswordBtn");
+    const authError = document.getElementById("authError");
+
+    let isLogin = true;
+
+    loginTab.onclick = () => {
+      isLogin = true;
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+      referralInput.style.display = "none";
+      authButton.textContent = "Sign In";
+      authError.textContent = "";
+    };
+
+    registerTab.onclick = () => {
+      isLogin = false;
+      registerTab.classList.add("active");
+      loginTab.classList.remove("active");
+      referralInput.style.display = "block";
+      authButton.textContent = "Sign Up";
+      authError.textContent = "";
+    };
+
+    authForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const referral = document.getElementById("referral").value.trim();
+
+      try {
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          const userCred = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = userCred.user.uid;
+          const createdAt = new Date().toISOString();
+
+          await set(ref(rtdb, `users/${uid}`), {
+            email,
+            uid,
+            createdAt,
+            referral: referral || null
+          });
+
+          if (referral) {
+            await set(ref(rtdb, `referrals/${uid}`), {
+              referredBy: referral,
+              createdAt
+            });
           }
-        } catch (err) {
-          console.error("Setup check failed:", err);
         }
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        authError.textContent = err.message;
       }
-    });
+    };
+
+    forgotBtn.onclick = async () => {
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        authError.textContent = "Enter your email first.";
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, email);
+        authError.textContent = "📧 Password reset link sent!";
+      } catch (error) {
+        authError.textContent = error.message;
+      }
+    };
   </script>
 </body>
 </html>
