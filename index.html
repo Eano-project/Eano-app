@@ -63,30 +63,41 @@
     const db = firebase.firestore();
 
     document.getElementById("google-login").addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider).catch(err => alert(err.message));
-    });
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
+});
 
     document.getElementById("facebook-login").addEventListener("click", () => {
-      const provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithPopup(provider).catch(err => alert(err.message));
-    });
+  const provider = new firebase.auth.FacebookAuthProvider();
+  <script>
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        try {
-          const doc = await db.collection("users").doc(user.uid).get();
-          const data = doc.data();
-          if (!doc.exists || !data?.username || !data?.realname || !data?.avatar) {
-            window.location.href = "setup.html";
-          } else {
-            window.location.href = "dashboard.html";
-          }
-        } catch (err) {
-          console.error("Setup check failed:", err);
+  document.getElementById("google-login").addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithRedirect(provider); // ✅ works better on mobile
+  });
+
+  document.getElementById("facebook-login").addEventListener("click", () => {
+    const provider = new firebase.auth.FacebookAuthProvider();
+    auth.signInWithRedirect(provider);
+  });
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      try {
+        const doc = await db.collection("users").doc(user.uid).get();
+        const data = doc.data();
+        if (!doc.exists || !data?.username || !data?.realname || !data?.avatar) {
+          window.location.href = "setup.html";
+        } else {
+          window.location.href = "dashboard.html";
         }
+      } catch (err) {
+        console.error("Setup check failed:", err);
       }
-    });
-  </script>
+    }
+  });
+</script>
 </body>
 </html>
