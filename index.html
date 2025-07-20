@@ -64,6 +64,20 @@
         })
         .catch(err => alert(err.message));
     });
+    firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    const db = firebase.firestore();
+    const doc = await db.collection("users").doc(user.uid).get();
+
+    if (!doc.exists || !doc.data().username || !doc.data().avatar || !doc.data().realname) {
+      // 👇 Redirect to setup
+      window.location.href = "setup.html";
+    } else {
+      // ✅ Setup done, go to dashboard
+      window.location.href = "dashboard.html";
+    }
+  }
+});
 
     // Facebook Login
     document.getElementById("facebook-login").addEventListener("click", () => {
