@@ -44,6 +44,11 @@
       <div id="google-btn"></div>
     </div>
 
+    <div class="login-box">
+      <p>Or sign in with Facebook:</p>
+      <button id="fb-login" class="login-btn">Login with Facebook</button>
+    </div>
+
     <footer class="footer">
       <p>&copy; <span id="year"></span> EANO. All rights reserved.</p>
       <a href="whitepaper.html">Whitepaper</a> |
@@ -51,16 +56,15 @@
     </footer>
   </main>
 
-  <!-- Firebase -->
+  <!-- Firebase Core -->
   <script type="module" src="firebase.js"></script>
-
-  <!-- Lang / Theme / Auth -->
   <script src="lang.js"></script>
+
   <script>
-    // 🔁 Year in footer
+    // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // 🌗 Toggle Theme
+    // Theme toggle
     const toggleBtn = document.getElementById("theme-toggle");
     toggleBtn.addEventListener("click", () => {
       const html = document.documentElement;
@@ -68,82 +72,101 @@
       html.setAttribute("data-theme", isDark ? "light" : "dark");
     });
 
-    // 🌍 Load Language Options
+    // Load language dropdown
     loadLanguageOptions("language-select");
+  </script>
 
-    // 🔒 Google Sign-In Flow
-    import("./firebase.js").then(({ auth }) => {
-      import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js").then(firebaseAuth => {
-        const provider = new firebaseAuth.GoogleAuthProvider();
-        firebaseAuth.onAuthStateChanged(auth, (user) => {
-          if (user) {
-            // Redirect to dashboard if profile is verified
-            const uid = user.uid;
-            fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`)
-              .then(res => res.json())
-              .then(data => {
-                if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
-                  window.location.href = "dashboard.html";
-                } else {
-                  window.location.href = "setup.html";
-                }
-              }).catch(() => {
-                window.location.href = "setup.html";
-              });
-          }
-        });
-
-        // Show Google sign-in button
-        window.renderGoogleButton = () => {
-          google.accounts.id.initialize({
-            client_id: "50186911438-abc.apps.googleusercontent.com", // Replace with your correct Google OAuth client ID
-            callback: async (response) => {
-              try {
-                const credential = firebaseAuth.GoogleAuthProvider.credential(response.credential);
-                await firebaseAuth.signInWithCredential(auth, credential);
-              } catch (err) {
-                console.error("Google Sign-In Error", err);
-              }
-            }
-          });
-          google.accounts.id.renderButton(
-            document.getElementById("google-btn"),
-            { theme: "outline", size: "large" }
-          );
-        };
-        const script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.onload = renderGoogleButton;
-        document.body.appendChild(script);
-      });
-    });
-  <script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/serviceWorker.js")
-        .then(reg => console.log("ServiceWorker registered ✅"))
-        .catch(err => console.log("ServiceWorker failed:", err));
-    });
-  }
+  <!-- Google Login Logic -->
   <script type="module">
-  import { auth, provider } from "./firebase.js";
-  import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { auth } from "./firebase.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      GoogleAuthProvider,
+      signInWithCredential
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const fbLoginBtn = document.getElementById("fb-login");
+    const provider = new GoogleAuthProvider();
 
-  fbLoginBtn.addEventListener("click", async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      // You can also store user data in localStorage or Firebase DB here
-      window.location.href = "setup.html"; // redirect after login
-    } catch (error) {
-      console.error("Login failed", error);
-      alert("Facebook login failed. Try again.");
-      <button id="fb-login" class="login-btn">
-  Login with Facebook
-</button>
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const uid = user.uid;
+        fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`)
+          .then(res => res.json())
+          .then(data => {
+            if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
+              window.location.href = "dashboard.html";
+            } else {
+              window.location.href = "setup.html";
+            }
+          }).catch(() => {
+            window.location.href = "setup.html";
+          });
+      }
+    });
+
+    // Render Google Button
+    window.renderGoogleButton = () => {
+      google.accounts.id.initialize({
+        client_id: "50186911438-abc.apps.googleusercontent.com", // Replace this with your real client ID
+        callback: async (response) => {
+          try {
+            const credential = GoogleAuthProvider.credential(response.credential);
+            await signInWithCredential(auth, credential);
+          } catch (err) {
+            console.error("Google Sign-In Error", err);
+          }
+        }
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("google-btn"),
+        { theme: "outline", size: "large" }
+      );
+    };
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.onload = renderGoogleButton;
+    document.body.appendChild(script);
+  </script>
+
+  <!-- Facebook Login Logic -->
+  <script type="module">
+    import { auth, provider } from "./firebase.js";
+    import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const fbLoginBtn = document.getElementById("fb-login");
+
+    fbLoginBtn.addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const uid = result.user.uid;
+
+        // Check Firebase DB for user setup
+        const res = await fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`);
+        const data = await res.json();
+
+        if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
+          window.location.href = "dashboard.html";
+        } else {
+          window.location.href = "setup.html";
+        }
+      } catch (error) {
+        console.error("Facebook login failed", error);
+        alert("Facebook login failed. Try again.");
+      }
+    });
+  </script>
+
+  <!-- PWA support -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/serviceWorker.js")
+          .then(reg => console.log("ServiceWorker registered ✅"))
+          .catch(err => console.log("ServiceWorker failed:", err));
+      });
     }
-  });
   </script>
 </body>
 </html>
