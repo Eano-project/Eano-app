@@ -96,8 +96,13 @@ body.light .balance-box {
   margin-top: 1rem;
   font-weight: bold;
 }
-body.light #mining-status {
-  background: #0284c7;
+#mining-status.mining {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 10px #0ea5e9; }
+  50% { box-shadow: 0 0 20px #0ea5e9; }
 }
 
 /* === ANNOUNCEMENT BLOCK === */
