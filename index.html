@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="description" content="EANO – Decentralized Mining With Real Utility" />
+  <meta name="keywords" content="EANO, mining app, crypto, decentralized, rewards, kyc, trustscore, avatar" />
+  <meta name="author" content="Santorum Santus" />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta property="og:title" content="EANO – Earn with Trust" />
+  <meta property="og:description" content="Mine EANO coins with real-world utility, avatars, team referrals, leaderboard, and more." />
+  <meta property="og:image" content="logo.png" />
+  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <title>EANO • Sign In</title>
+
+  <!-- Favicon + Manifest -->
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script src="firebase.js" defer></script>
+
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('serviceWorker.js')
+        .then(reg => console.log("✅ Service Worker registered"))
+        .catch(err => console.error("❌ SW registration failed:", err));
+    }
+  </script>
+</head>
+<body>
+  <div class="entry-container">
+    <div class="entry-box">
+      <img src="logo.png" alt="EANO Logo" class="entry-logo" />
+      <h2>Welcome to EANO</h2>
+      <p class="tagline">Decentralized Mining. Real Utility.</p>
+
+      <div class="login-box">
+        <button id="google-login" class="login-btn">🔐 Sign in with Google</button>
+        <br /><br />
+        <button id="facebook-login" class="login-btn">📘 Login with Facebook</button>
+      </div>
+
+      <div class="entry-footer">
+        <p>© 2025 EANO. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth + Setup Check -->
+  <script>
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    document.getElementById("google-login").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider).catch(err => alert(err.message));
+    });
+
+    document.getElementById("facebook-login").addEventListener("click", () => {
+      const provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithPopup(provider).catch(err => alert(err.message));
+    });
+
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          const doc = await db.collection("users").doc(user.uid).get();
+          const data = doc.data();
+          if (!doc.exists || !data?.username || !data?.realname || !data?.avatar) {
+            window.location.href = "setup.html";
+          } else {
+            window.location.href = "dashboard.html";
+          }
+        } catch (err) {
+          console.error("Setup check failed:", err);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
