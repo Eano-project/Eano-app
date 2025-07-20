@@ -1,440 +1,280 @@
-/* === GLOBAL RESETS === */
-* {
-  box-sizing: border-box;
+/* ------------------ ROOT VARIABLES ------------------ */
+:root {
+  --eano-blue: #0ea5e9;
+  --eano-dark: #1e293b;
+  --eano-light: #f1f5f9;
+  --eano-glow: rgba(14, 165, 233, 0.7);
+  --badge-trusted: #22c55e;
+  --badge-reliable: #facc15;
+  --badge-new: #3b82f6;
+  --badge-low: #ef4444;
 }
-html, body {
+
+/* ------------------ RESET & BASE ------------------ */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+body, html {
   font-family: 'Segoe UI', sans-serif;
   height: 100%;
-  background-color: #0f172a;
-  color: #fff;
-  scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+  background-color: var(--eano-dark);
+  color: white;
+  transition: all 0.3s ease;
 }
 a {
-  color: #0ea5e9;
   text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
+  color: inherit;
 }
 img {
   max-width: 100%;
-  display: block;
-}
-:root {
-  --eano-primary: #00bfff;
-  --eano-dark: #1c1c2b;
-  --eano-glow: #0ea5e9;
-  --eano-bg-blur: rgba(0, 0, 0, 0.6);
+  height: auto;
 }
 
-/* === LIGHT/DARK TOGGLE === */
-body.light {
-  background-color: #f1f5f9;
+/* ------------------ DARK/LIGHT MODE ------------------ */
+body.light-mode {
+  background-color: var(--eano-light);
   color: #1e293b;
 }
-body.light a {
-  color: #0284c7;
+.light-mode .card,
+.light-mode .entry-box {
+  background-color: #ffffff;
+  color: #1e293b;
 }
-
-/* === CENTERED LOGIN PAGE (index.html) === */
-main.centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 2rem;
-  text-align: center;
-}
-.login-box {
-  margin: 1.5rem 0;
-}
-.login-btn {
+.light-mode .login-btn {
   background: #0ea5e9;
   color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  cursor: pointer;
 }
-.login-btn:hover {
+.light-mode .login-btn:hover {
   background: #0284c7;
 }
 
-/* === DASHBOARD GENERAL === */
-.dashboard {
-  padding: 1.5rem;
-}
-section {
-  margin-bottom: 2rem;
-}
-.section-title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
+/* ------------------ OPTIONAL DARK SYSTEM DETECTION ------------------ */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
 }
 
-/* === BALANCE DISPLAY === */
-.balance-box {
-  background: #1e293b;
-  padding: 1rem 2rem;
-  border-radius: 20px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  box-shadow: 0 0 12px #0ea5e9;
+/* ------------------ SCROLLBAR ------------------ */
+::-webkit-scrollbar {
+  width: 6px;
 }
-body.light .balance-box {
-  background: #e2e8f0;
-  color: #1e293b;
+::-webkit-scrollbar-thumb {
+  background: var(--eano-glow);
+  border-radius: 4px;
 }
 
-/* === MINING STATUS === */
-#mining-status {
-  background: #0ea5e9;
-  color: #fff;
-  padding: 0.75rem;
-  border-radius: 12px;
-  text-align: center;
-  margin-top: 1rem;
-  font-weight: bold;
+/* ------------------ ANIMATIONS ------------------ */
+.fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 #mining-status.mining {
   animation: pulse 2s infinite;
 }
-
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 10px #0ea5e9; }
-  50% { box-shadow: 0 0 20px #0ea5e9; }
+  0%, 100% { box-shadow: 0 0 10px var(--eano-blue); }
+  50% { box-shadow: 0 0 20px var(--eano-blue); }
 }
 
-/* === ANNOUNCEMENT BLOCK === */
-.announcement-box {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid #0ea5e9;
-  border-radius: 20px;
-  padding: 1rem;
+/* ------------------ WELCOME / ENTRY PAGE ------------------ */
+.entry-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  min-height: 100vh;
   text-align: center;
-  max-width: 400px;
-  margin: 0 auto;
 }
-.announcement-box img {
-  max-width: 100%;
-  border-radius: 16px;
+.entry-logo {
+  max-width: 120px;
+  margin-bottom: 1rem;
+}
+.entry-box {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.2);
+  width: 100%;
+  max-width: 420px;
+}
+.entry-box h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.entry-box p {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+.login-box {
   margin-top: 1rem;
 }
-body.light .announcement-box {
-  background: #f8fafc;
-  color: #1e293b;
+.login-btn {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--eano-blue);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.login-btn:hover {
+  background: #0284c7;
+}
+.entry-footer {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+.entry-footer a {
+  margin: 0 0.75rem;
+  color: var(--eano-blue);
 }
 
-/* === AVATAR SELECTION === */
+/* ------------------ MINING STATUS / LEVEL ------------------ */
+#mining-status {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  background-color: rgba(14, 165, 233, 0.15);
+  margin: 1rem 0;
+  display: inline-block;
+  font-weight: bold;
+  color: var(--eano-blue);
+}
+
+/* ------------------ TRUST BADGE STYLES ------------------ */
+.trust-badge {
+  display: inline-block;
+  padding: 0.4rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+.trust-og { background-color: #8b5cf6; color: white; }
+.trust-trusted { background-color: var(--badge-trusted); color: white; }
+.trust-reliable { background-color: var(--badge-reliable); color: black; }
+.trust-new { background-color: var(--badge-new); color: white; }
+.trust-low { background-color: var(--badge-low); color: white; }
+
+/* ------------------ AVATAR GALLERY ------------------ */
 .avatar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
   gap: 1rem;
   margin-top: 1rem;
 }
-.avatar-grid img {
-  border: 2px solid transparent;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: border 0.3s;
-}
-.avatar-grid img:hover,
-.avatar-grid img.selected {
-  border: 2px solid #0ea5e9;
-}
-
-/* === TRUSTSCORE BADGES === */
-.trust-badge {
-  padding: 0.2rem 0.6rem;
+.avatar-option {
+  width: 80px;
+  height: 80px;
+  border: 3px solid transparent;
   border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  display: inline-block;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s, border-color 0.3s;
 }
-.badge-og { background: gold; color: black; }
-.badge-trusted { background: green; color: white; }
-.badge-reliable { background: yellow; color: black; }
-.badge-new { background: blue; color: white; }
-.badge-low { background: red; color: white; }
-
-/* === SCORE LEVELS === */
-.level-badge {
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 0.25rem 0.75rem;
-  border-radius: 16px;
-  display: inline-block;
-  margin-top: 0.5rem;
+.avatar-option:hover {
+  transform: scale(1.05);
+  border-color: var(--eano-blue);
 }
-.level-dragon { background: crimson; color: #fff; }
-.level-elephant { background: darkorange; color: #fff; }
-.level-gorilla { background: purple; color: #fff; }
-.level-bear { background: darkgreen; color: #fff; }
-.level-lion { background: goldenrod; color: #fff; }
-.level-panda { background: gray; color: #fff; }
-.level-wolf { background: slateblue; color: #fff; }
-.level-hamster { background: pink; color: #000; }
-.level-chicken { background: lightyellow; color: #000; }
+.avatar-option.selected {
+  border-color: var(--eano-blue);
+  box-shadow: 0 0 12px var(--eano-glow);
+}
 
-/* === REFERRAL SECTION === */
-.referral-box {
-  background: #1e293b;
+/* ------------------ ANNOUNCEMENT BOX ------------------ */
+#announcement-box {
+  background-color: rgba(14, 165, 233, 0.1);
+  border: 1px solid var(--eano-blue);
   padding: 1rem;
-  border-radius: 16px;
+  margin: 1rem auto;
+  border-radius: 1rem;
+  max-width: 480px;
+  display: none;
   text-align: center;
 }
-.qr-code {
-  margin-top: 1rem;
-  border: 6px solid #0ea5e9;
-  padding: 0.5rem;
-  border-radius: 20px;
+#announcement-box img {
+  max-height: 120px;
+  margin-bottom: 1rem;
 }
-.share-btns {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-.share-btns button {
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  background: #0ea5e9;
-  color: #fff;
+
+/* ------------------ MINE BUTTON ------------------ */
+.mine-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--eano-blue);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
   border: none;
+  box-shadow: 0 0 12px var(--eano-glow);
   cursor: pointer;
+  transition: background 0.3s;
+  z-index: 999;
 }
-.share-btns button:hover {
+.mine-btn:hover {
   background: #0284c7;
 }
 
-/* === GAMES / STUDIO / MARKETPLACE / TASKS === */
+/* ------------------ FEATURE BLOCKS ------------------ */
+.feature-blocks {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 0;
+  justify-content: center;
+}
 .feature-card {
-  background: rgba(255,255,255,0.03);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
   padding: 1rem;
+  border-radius: 1rem;
   text-align: center;
-  box-shadow: 0 0 10px rgba(14,165,233,0.3);
-  margin-bottom: 1rem;
-  transition: transform 0.2s;
+  min-width: 160px;
+  flex: 1 0 40%;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.2);
+  transition: transform 0.3s;
 }
 .feature-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
 }
-.feature-card.coming-soon {
-  opacity: 0.5;
+.feature-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
 }
-
-/* === LEADERBOARD === */
-.leaderboard-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.leaderboard-table th,
-.leaderboard-table td {
-  padding: 0.75rem;
-  border-bottom: 1px solid #334155;
-  text-align: left;
-}
-.leaderboard-table th {
-  background: #0ea5e9;
-  color: #fff;
-}
-body.light .leaderboard-table th {
-  background: #0284c7;
+.feature-card p {
+  font-size: 0.85rem;
+  opacity: 0.75;
 }
 
-/* === RESPONSIVE === */
-@media screen and (max-width: 600px) {
+/* ------------------ RESPONSIVE ------------------ */
+@media (max-width: 480px) {
+  .entry-box, #announcement-box {
+    padding: 1.25rem;
+  }
+  .mine-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 1.1rem;
+  }
   .avatar-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   }
-  .balance-box {
-    font-size: 1.2rem;
-  }
-  }
-
-/* ===========================
-   INDEX ENTRY PAGE STYLES
-   =========================== */
-
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.entry-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background: linear-gradient(to bottom, #1c1c2b, #2d2d44); /* EANO style */
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-}
-
-.entry-box {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 16px;
-  padding: 30px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-  backdrop-filter: blur(6px);
-}
-
-.entry-logo {
-  width: 100px;
-  margin-bottom: 20px;
-}
-
-.tagline {
-  font-size: 1.1rem;
-  margin-bottom: 25px;
-}
-
-.login-box {
-  margin: 20px 0;
-}
-
-.login-btn {
-  background-color: #00bfff;
-  border: none;
-  padding: 10px 20px;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.login-btn:hover {
-  background-color: #009acd;
-}
-
-/* =========================
-   General Layout (Welcome)
-   ========================= */
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #121212;
-  color: #ffffff;
-}
-
-.dark-mode {
-  background: linear-gradient(to bottom, #1c1c2b, #2d2d44);
-}
-
-.entry-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 20px;
-  text-align: center;
-}
-
-.entry-box {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 16px;
-  padding: 30px 25px;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-  backdrop-filter: blur(6px);
-  animation: fadeIn 1s ease-in-out;
-}
-
-.entry-logo {
-  width: 100px;
-  margin-bottom: 20px;
-}
-
-.tagline {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  color: #a8eaff;
-}
-
-/* ========================
-   Button + Login Section
-   ======================== */
-.login-box {
-  margin: 20px 0;
-}
-
-.login-btn {
-  background-color: #00bfff;
-  border: none;
-  padding: 10px 25px;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 191, 255, 0.3);
-}
-
-.login-btn:hover {
-  background-color: #009acd;
-  box-shadow: 0 0 12px #00bfff;
-}
-
-/* ========================
-   Footer + Language
-   ======================== */
-.entry-footer {
-  margin-top: 30px;
-  font-size: 0.85rem;
-  color: #ccc;
-}
-
-#language-selector {
-  margin-top: 5px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  border: none;
-  background-color: #222;
-  color: #fff;
-  font-size: 0.85rem;
-}
-
-/* =========================
-   Tutorial List
-   ========================= */
-.entry-box ul {
-  list-style-type: "✅ ";
-  padding-left: 20px;
-  margin-top: 10px;
-  color: #dddddd;
-}
-
-.entry-box ul li {
-  margin-bottom: 8px;
-  text-align: left;
-}
-
-/* =========================
-   Simple Animation
-   ========================= */
-@keyframes fadeIn {
-  0% { opacity: 0; transform: scale(0.95); }
-  100% { opacity: 1; transform: scale(1); }
-}
-.entry-footer {
-  margin-top: 30px;
-  font-size: 0.85rem;
-  color: #ccc;
 }
