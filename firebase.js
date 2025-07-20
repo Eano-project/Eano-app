@@ -58,6 +58,21 @@ async function signInWithGoogle() {
   }
 }
 
+import { FacebookAuthProvider, signInWithPopup as facebookSignInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// ✅ Facebook Sign-In Handler
+async function signInWithFacebook() {
+  const provider = new FacebookAuthProvider();
+  try {
+    const result = await facebookSignInWithPopup(auth, provider);
+    const user = result.user;
+    console.log("✅ Facebook sign-in successful:", user.displayName);
+    // Optionally redirect or update UI
+  } catch (error) {
+    console.error("❌ Facebook Sign-In failed:", error.message);
+  }
+}
+
 // ✅ Export Firebase services and functions
 export {
   app,
@@ -67,5 +82,6 @@ export {
   performance,
   analytics,
   messaging,
-  signInWithGoogle
+  signInWithGoogle,
+  signInWithFacebook // 👈 export this
 };
