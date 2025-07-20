@@ -1,4 +1,3 @@
-<!-- 🔥 FULL admin.html (Replaces seed.html functionality) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,25 +22,30 @@
       border-radius: 16px;
     }
 
-    h2, h3 {
+    h2 {
       text-align: center;
       color: gold;
       margin-bottom: 20px;
     }
 
-    textarea, .btn {
+    textarea {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
-      font-size: 1rem;
       border: none;
+      resize: vertical;
+      font-size: 1rem;
     }
 
     .btn {
-      margin: 0.5rem 0;
+      display: block;
+      margin: 1rem 0;
       background: gold;
       color: #000;
       font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
     }
 
@@ -63,8 +67,13 @@
     }
 
     @media screen and (max-width: 600px) {
-      body { padding: 1rem; }
-      .admin-panel { padding: 1rem; }
+      body {
+        padding: 1rem;
+      }
+
+      .admin-panel {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -81,24 +90,15 @@
 
     <h3>📜 Latest Announcement</h3>
     <div id="latestAnnouncement">Loading...</div>
-
-    <hr style="margin:2rem 0; border-color:#666" />
-
-    <h3>🔧 Seeding Tools</h3>
-    <button class="btn" id="seedAvatars">🎨 Seed Avatars</button>
-    <button class="btn" id="seedLevels">📈 Seed Mining Levels</button>
-    <button class="btn" id="seedTrustScores">⭐ Seed TrustScore Badges</button>
-    <button class="btn" id="seedLeaderboard">🏆 Seed Leaderboard Test</button>
   </div>
 
   <script type="module">
-    import { auth, db } from './firebase.js';
+    import { auth, db } from './firebase.js'; // uses your updated firebase.js
+
     import {
       doc,
-      setDoc,
       getDoc,
-      collection,
-      writeBatch,
+      setDoc,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -109,21 +109,28 @@
         return;
       }
 
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
-      if (!userSnap.exists || userSnap.data().isAdmin !== true) {
-        alert("Access denied. Not an admin.");
-        window.location.href = "index.html";
-        return;
-      }
+      try {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
 
-      const latestRef = doc(db, "announcements", "latest");
-      const latestSnap = await getDoc(latestRef);
-      document.getElementById("latestAnnouncement").innerText = latestSnap.exists()
-        ? latestSnap.data().message
-        : "No announcements yet.";
+        if (!userSnap.exists() || userSnap.data().isAdmin !== true) {
+          alert("⛔ Access denied. You are not an admin.");
+          window.location.href = "index.html";
+          return;
+        }
+
+        // ✅ Load the latest announcement
+        const latestRef = doc(db, "announcements", "latest");
+        const latestSnap = await getDoc(latestRef);
+        document.getElementById("latestAnnouncement").innerText =
+          latestSnap.exists() ? latestSnap.data().message : "No announcements yet.";
+      } catch (error) {
+        console.error("Error loading admin data:", error);
+        alert("⚠️ Error verifying admin access.");
+      }
     });
 
+    // ✅ Post a new announcement
     document.getElementById("postBtn").onclick = async () => {
       const text = document.getElementById("announcementInput").value.trim();
       if (!text) return alert("Announcement cannot be empty.");
@@ -140,84 +147,13 @@
         document.getElementById("announcementInput").value = "";
       } catch (err) {
         console.error("Error posting:", err);
-        alert("Failed to post announcement.");
+        alert("⚠️ Failed to post announcement.");
       }
     };
 
+    // ✅ Logout
     document.getElementById("logoutBtn").onclick = () => {
       auth.signOut().then(() => window.location.href = "index.html");
-    };
-
-    // 🧬 Seeder: Avatars
-    document.getElementById("seedAvatars").onclick = async () => {
-      const batch = writeBatch(db);
-      const avatars = [
-        "avatar1.png", "avatar2.png", "avatar3.png",
-        "pixel1.png", "pixel2.png", "pixel3.png"
-      ];
-      avatars.forEach((url, index) => {
-        const ref = doc(db, "avatars", `avatar${index + 1}`);
-        batch.set(ref, { url });
-      });
-      await batch.commit();
-      alert("✅ Avatars seeded!");
-    };
-
-    // 🦍 Seeder: Levels
-    document.getElementById("seedLevels").onclick = async () => {
-      const batch = writeBatch(db);
-      const levels = [
-        { level: "🐥 Chicken", min: 0 },
-        { level: "🐹 Hamster", min: 50 },
-        { level: "🐺 Wolf", min: 150 },
-        { level: "🐼 Panda", min: 300 },
-        { level: "🐯 Lion", min: 600 },
-        { level: "🐻 Bear", min: 1200 },
-        { level: "🦍 Gorilla", min: 2500 },
-        { level: "🐘 Elephant", min: 5000 },
-        { level: "🐉 Dragon", min: 10000 }
-      ];
-      levels.forEach(lvl => {
-        const ref = doc(db, "levels", lvl.level);
-        batch.set(ref, { ...lvl });
-      });
-      await batch.commit();
-      alert("✅ Mining levels seeded!");
-    };
-
-    // 🟢 Seeder: TrustScore Badges
-    document.getElementById("seedTrustScores").onclick = async () => {
-      const batch = writeBatch(db);
-      const trust = [
-        { score: 0, badge: "🔴 Low Trust" },
-        { score: 300, badge: "🔵 New Miner" },
-        { score: 500, badge: "🟡 Reliable Miner" },
-        { score: 1000, badge: "🟢 Trusted Miner" },
-        { score: 5000, badge: "💠 O.G" }
-      ];
-      trust.forEach(t => {
-        const ref = doc(db, "trustScores", `score${t.score}`);
-        batch.set(ref, { ...t });
-      });
-      await batch.commit();
-      alert("✅ TrustScore badges seeded!");
-    };
-
-    // 🏆 Seeder: Leaderboard Test
-    document.getElementById("seedLeaderboard").onclick = async () => {
-      const batch = writeBatch(db);
-      const testUsers = [
-        { username: "admin", balance: 10000, score: 6000 },
-        { username: "john", balance: 7500, score: 3000 },
-        { username: "mary", balance: 4200, score: 1200 },
-        { username: "kate", balance: 1000, score: 400 },
-      ];
-      testUsers.forEach((user, i) => {
-        const ref = doc(db, "leaderboard", `user${i + 1}`);
-        batch.set(ref, { ...user });
-      });
-      await batch.commit();
-      alert("✅ Leaderboard test data seeded!");
     };
   </script>
 </body>
