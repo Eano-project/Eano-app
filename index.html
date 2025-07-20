@@ -125,6 +125,22 @@
         .catch(err => console.log("ServiceWorker failed:", err));
     });
   }
+  <script type="module">
+  import { auth, provider } from "./firebase.js";
+  import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const fbLoginBtn = document.getElementById("fb-login");
+
+  fbLoginBtn.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      // You can also store user data in localStorage or Firebase DB here
+      window.location.href = "setup.html"; // redirect after login
+    } catch (error) {
+      console.error("Login failed", error);
+      alert("Facebook login failed. Try again.");
+    }
+  });
   </script>
 </body>
 </html>
