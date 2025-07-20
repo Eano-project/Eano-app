@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EANO - Decentralized Mining with Real Utility" />
+  <meta name="description" content="EANO - Decentralized Mining with Real Utility." />
   <meta name="theme-color" content="#0ea5e9" />
   <title>EANO • Sign In</title>
-  
+
   <!-- Favicon -->
   <link rel="icon" href="favicon.png" type="image/png" />
-  
-  <!-- Manifest for PWA -->
+
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json" />
-  
+
   <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-  
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
@@ -26,8 +26,8 @@
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('serviceWorker.js')
-        .then(reg => console.log("SW registered"))
-        .catch(err => console.error("SW registration failed", err));
+        .then(reg => console.log("✅ Service Worker registered"))
+        .catch(err => console.error("❌ Service Worker registration failed:", err));
     }
   </script>
 </head>
@@ -35,7 +35,6 @@
   <div class="entry-container">
     <div class="entry-box">
       <img src="logo.png" alt="EANO Logo" class="entry-logo" />
-
       <h2>Welcome to EANO</h2>
       <p class="tagline">Decentralized Mining, Real Utility.</p>
 
@@ -54,45 +53,35 @@
   <!-- Auth Logic -->
   <script>
     const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    // Google Login
+    // ✅ Sign in with Google
     document.getElementById("google-login").addEventListener("click", () => {
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(() => {
-          window.location.href = "dashboard.html";
-        })
-        .catch(err => alert(err.message));
+      auth.signInWithPopup(provider).catch(err => alert(err.message));
     });
-    firebase.auth().onAuthStateChanged(async (user) => {
-  if (user) {
-    const db = firebase.firestore();
-    const doc = await db.collection("users").doc(user.uid).get();
 
-    if (!doc.exists || !doc.data().username || !doc.data().avatar || !doc.data().realname) {
-      // 👇 Redirect to setup
-      window.location.href = "setup.html";
-    } else {
-      // ✅ Setup done, go to dashboard
-      window.location.href = "dashboard.html";
-    }
-  }
-});
-
-    // Facebook Login
+    // ✅ Sign in with Facebook
     document.getElementById("facebook-login").addEventListener("click", () => {
       const provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(() => {
-          window.location.href = "dashboard.html";
-        })
-        .catch(err => alert(err.message));
+      auth.signInWithPopup(provider).catch(err => alert(err.message));
     });
 
-    // Auto Redirect
-    auth.onAuthStateChanged(user => {
+    // ✅ Auth Redirect Logic
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
-        window.location.href = "dashboard.html";
+        try {
+          const doc = await db.collection("users").doc(user.uid).get();
+          const data = doc.data();
+
+          if (!doc.exists || !data?.username || !data?.realname || !data?.avatar) {
+            window.location.href = "setup.html"; // Incomplete profile
+          } else {
+            window.location.href = "dashboard.html"; // Ready
+          }
+        } catch (err) {
+          console.error("Error checking user profile:", err);
+        }
       }
     });
   </script>
