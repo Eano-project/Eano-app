@@ -1,6 +1,4 @@
-// ui.js
-
-// ✅ Update balance on dashboard
+// ✅ Update the balance on the dashboard
 export function updateBalanceUI(balance) {
   const el = document.getElementById("balance");
   if (el) {
@@ -9,7 +7,7 @@ export function updateBalanceUI(balance) {
   }
 }
 
-// ✅ Update mining timer
+// ✅ Update the mining countdown timer
 export function updateTimerUI(remainingSeconds) {
   const timerEl = document.getElementById("timer");
   if (timerEl) {
@@ -20,7 +18,7 @@ export function updateTimerUI(remainingSeconds) {
   }
 }
 
-// ✅ Update user email
+// ✅ Update user email on UI
 export function updateUserEmailUI(email) {
   const el = document.getElementById("user-email");
   if (el) {
@@ -29,7 +27,7 @@ export function updateUserEmailUI(email) {
   }
 }
 
-// ✅ Update referrals
+// ✅ Update referral count on UI
 export function updateReferralCountUI(count) {
   const el = document.getElementById("referral-count");
   if (el) {
@@ -38,31 +36,33 @@ export function updateReferralCountUI(count) {
   }
 }
 
-// ✅ Mining Levels
+// ✅ Determine mining level from balance
 export function getLevelFromBalance(balance) {
-  if (balance >= 3000) return "🐘 Elephant";
-  if (balance >= 2000) return "🦍 Gorilla";
-  if (balance >= 1000) return "🦁 Lion";
-  if (balance >= 500) return "🦒 Giraffe";
-  if (balance >= 250) return "🐺 Wolf";
-  if (balance >= 100) return "🐶 Dog";
-  if (balance >= 5) return "🐹 Hamster";
-  if (balance >= 1) return "🐥 Chicken";
-  return "⛏ Beginner";
+  if (balance >= 10000) return "🐉 Dragon";
+  if (balance >= 5000) return "🐘 Elephant";
+  if (balance >= 2500) return "🦍 Gorilla";
+  if (balance >= 1200) return "🐻 Bear";
+  if (balance >= 600) return "🐯 Lion";
+  if (balance >= 300) return "🐼 Panda";
+  if (balance >= 150) return "🐺 Wolf";
+  if (balance >= 50)  return "🐹 Hamster";
+  return "🐥 Chicken";
 }
 
-// ✅ Trust Badges
+// ✅ Determine trust badge from trust score
 export function getTrustBadge(score) {
-  if (score >= 1000) return "✅ Trusted Miner";
-  if (score >= 500) return "🛡 Reliable Miner";
-  if (score >= 300) return "📈 New Miner";
-  return "⚠ Low Trust";
+  if (score >= 10000) return "💎 O.G";
+  if (score >= 5000) return "🟢 Trusted Miner";
+  if (score >= 1000) return "🟡 Reliable Miner";
+  if (score >= 500) return "🔵 New Miner";
+  return "🔴 Low Trust";
 }
 
-// ✅ Show announcement
+// ✅ Show announcement message in box
 export function showAnnouncement(message) {
   const box = document.getElementById("announcement-box");
   const msg = document.getElementById("latest-announcement");
+
   if (box && msg && message) {
     box.style.display = "block";
     msg.textContent = message;
@@ -72,9 +72,8 @@ export function showAnnouncement(message) {
   }
 }
 
-// ✅ UI Toggles (Dark mode + Menu toggle)
+// ✅ Sidebar Menu Toggle
 document.addEventListener("DOMContentLoaded", () => {
-  // Sidebar toggle
   const toggleBtn = document.getElementById("menu-toggle");
   const sidebarMenu = document.getElementById("sidebar-menu");
 
@@ -89,8 +88,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+});
 
-  // Dark/Light toggle
+// ✅ Dark/Light Mode Toggle
+document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("dark-toggle");
   if (toggle) {
     toggle.addEventListener("click", () => {
