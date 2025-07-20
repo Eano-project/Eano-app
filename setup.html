@@ -2,111 +2,161 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Complete Your Setup | EANO</title>
+  <title>Setup Profile – EANO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Complete your EANO setup by choosing your username, name, and avatar." />
+  <meta name="theme-color" content="#0d1117" />
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f172a" />
-  <meta name="description" content="Finish setting up your EANO account for mining and rewards." />
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="icons/icon-192x192.png" />
+
   <script type="module" src="firebase.js"></script>
 </head>
-<body>
-  <div class="centered-box">
-    <img src="logo.png" alt="EANO Logo" class="app-logo" />
-    <h2 class="glow-text">Finish Account Setup</h2>
-    <p class="sub-text">This is required for mining and KYC verification.</p>
 
-    <form id="setupForm" style="width: 100%; max-width: 400px; margin-top: 1rem;">
-      <input type="text" id="firstName" placeholder="First Name" required class="form-field" />
-      <input type="text" id="lastName" placeholder="Last Name" required class="form-field" />
-      <input type="text" id="username" placeholder="Username (unique)" required class="form-field" />
-      <input type="email" id="email" placeholder="Email" required class="form-field" disabled />
-      <input type="text" id="referral" placeholder="Referral Code (optional)" class="form-field" />
-      <button type="submit" class="google-btn" style="margin-top: 1rem;">Complete Setup</button>
+<body class="dark">
+  <main class="setup-container">
+    <h1>👋 Welcome to EANO</h1>
+    <p>Let’s complete your profile before entering the dashboard.</p>
+
+    <form id="setupForm">
+      <label>Username <small>(unique, cannot change later)</small></label>
+      <input type="text" id="username" required minlength="3" maxlength="15" placeholder="e.g. satoshi123" />
+
+      <label>Full Name</label>
+      <input type="text" id="realname" required placeholder="Your real name" />
+
+      <label>Choose an Avatar</label>
+      <div class="avatar-gallery" id="avatarGallery"></div>
+      <input type="hidden" id="selectedAvatar" value="" required />
+
+      <button type="submit">Finish Setup ✅</button>
     </form>
+  </main>
 
-    <p class="status-msg" id="status"></p>
-  </div>
+  <script>
+    // Avatar selection list
+    const avatars = [
+      "avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png",
+      "avatar5.png", "avatar6.png", "avatar7.png", "avatar8.png"
+    ];
 
-  <script type="module">
-    import { auth, db } from './firebase.js';
-    import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    const gallery = document.getElementById("avatarGallery");
+    const selectedAvatarInput = document.getElementById("selectedAvatar");
 
-    const setupForm = document.getElementById("setupForm");
-    const emailField = document.getElementById("email");
-    const statusMsg = document.getElementById("status");
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists() && userSnap.data().verified) {
-          // Already verified: go to dashboard
-          window.location.href = "dashboard.html";
-        } else {
-          // Pre-fill email
-          emailField.value = user.email;
-        }
-      } else {
-        window.location.href = "index.html"; // Not logged in
-      }
+    avatars.forEach((file, i) => {
+      const img = document.createElement("img");
+      img.src = `avatars/${file}`;
+      img.alt = `Avatar ${i + 1}`;
+      img.classList.add("avatar-choice");
+      img.addEventListener("click", () => {
+        document.querySelectorAll(".avatar-choice").forEach(el => el.classList.remove("selected"));
+        img.classList.add("selected");
+        selectedAvatarInput.value = file;
+      });
+      gallery.appendChild(img);
     });
 
-    setupForm.addEventListener("submit", async (e) => {
+    // Form submit logic
+    document.getElementById("setupForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const user = auth.currentUser;
-      if (!user) return;
-
-      const firstName = document.getElementById("firstName").value.trim();
-      const lastName = document.getElementById("lastName").value.trim();
       const username = document.getElementById("username").value.trim();
-      const referralCode = document.getElementById("referral").value.trim();
+      const realname = document.getElementById("realname").value.trim();
+      const avatar = selectedAvatarInput.value;
 
-      if (username.length < 3) {
-        statusMsg.textContent = "Username must be at least 3 characters.";
+      if (!avatar) {
+        alert("Please choose an avatar.");
         return;
       }
 
       try {
-        const userRef = doc(db, "users", user.uid);
-        await setDoc(userRef, {
-          uid: user.uid,
-          firstName,
-          lastName,
-          username,
-          email: user.email,
-          referralCode: referralCode || null,
-          verified: true,
-          createdAt: Date.now(),
-          balance: 0,
-          trustScore: 0,
-          referrals: [],
-        });
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          alert("Not signed in. Please login again.");
+          return location.href = "index.html";
+        }
 
-        window.location.href = "dashboard.html";
+        const userData = {
+          username,
+          realname,
+          avatar,
+          createdAt: Date.now(),
+          miningLevel: "🐥 Chicken",
+          trustScore: 0,
+          referrals: 0
+        };
+
+        const db = firebase.firestore();
+        await db.collection("users").doc(user.uid).set(userData);
+        alert("🎉 Profile setup complete!");
+        location.href = "dashboard.html";
       } catch (err) {
-        statusMsg.textContent = "Error saving data. Try again.";
         console.error(err);
+        alert("❌ Failed to complete setup.");
       }
     });
   </script>
 
   <style>
-    .form-field {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 1rem;
-      border-radius: 10px;
-      border: 1px solid #334155;
-      background-color: #1e293b;
-      color: #fff;
-      font-size: 16px;
+    .setup-container {
+      max-width: 500px;
+      margin: auto;
+      padding: 2rem;
+      text-align: center;
     }
-    .form-field::placeholder {
-      color: #94a3b8;
+
+    form label {
+      display: block;
+      margin: 1rem 0 0.25rem;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #111;
+      color: #fff;
+    }
+
+    .avatar-gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .avatar-choice {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .avatar-choice:hover {
+      transform: scale(1.1);
+    }
+
+    .avatar-choice.selected {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 10px #0ea5e9;
+    }
+
+    button[type="submit"] {
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      background: #0ea5e9;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background: #0284c7;
     }
   </style>
 </body>
