@@ -60,7 +60,7 @@
   <!-- Auth + Setup Check -->
   <script>
     const auth = firebase.auth();
-    const db = firebase.firestore();
+    const db = firebase.database();
 
     document.getElementById("google-login").addEventListener("click", () => {
   const provider = new firebase.auth.GoogleAuthProvider();
@@ -86,13 +86,13 @@
   auth.onAuthStateChanged(async (user) => {
     if (user) {
       try {
-        const doc = await db.collection("users").doc(user.uid).get();
-        const data = doc.data();
-        if (!doc.exists || !data?.username || !data?.realname || !data?.avatar) {
-          window.location.href = "setup.html";
-        } else {
-          window.location.href = "dashboard.html";
-        }
+        const snapshot = await db.ref(`users/${user.uid}`).once('value');
+const data = snapshot.val();
+if (!data || !data.username || !data.realname || !data.avatar) {
+  window.location.href = "setup.html";
+} else {
+  window.location.href = "dashboard.html";
+}
       } catch (err) {
         console.error("Setup check failed:", err);
       }
