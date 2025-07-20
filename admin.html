@@ -93,14 +93,15 @@
   </div>
 
   <script type="module">
-    import { auth, db } from './firebase.js'; // uses your updated firebase.js
-
+    import { auth, db } from './firebase.js';
     import {
-      doc,
-      getDoc,
-      setDoc,
-      serverTimestamp
+      doc, getDoc, setDoc, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getDatabase, ref, get
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const rtdb = getDatabase();
 
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
@@ -109,49 +110,38 @@
         return;
       }
 
-      try {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
+      const adminRef = ref(rtdb, `users/${user.uid}/isAdmin`);
+      const snapshot = await get(adminRef);
+      if (!snapshot.exists() || snapshot.val() !== true) {
+        alert("Access denied. You are not an admin.");
+        window.location.href = "index.html";
+        return;
+      }
 
-        if (!userSnap.exists() || userSnap.data().isAdmin !== true) {
-          alert("⛔ Access denied. You are not an admin.");
-          window.location.href = "index.html";
-          return;
-        }
-
-        // ✅ Load the latest announcement
-        const latestRef = doc(db, "announcements", "latest");
-        const latestSnap = await getDoc(latestRef);
-        document.getElementById("latestAnnouncement").innerText =
-          latestSnap.exists() ? latestSnap.data().message : "No announcements yet.";
-      } catch (error) {
-        console.error("Error loading admin data:", error);
-        alert("⚠️ Error verifying admin access.");
+      const latestRef = doc(db, "announcements", "latest");
+      const latestSnap = await getDoc(latestRef);
+      if (latestSnap.exists()) {
+        document.getElementById("latestAnnouncement").innerText = latestSnap.data().message;
+      } else {
+        document.getElementById("latestAnnouncement").innerText = "No announcements yet.";
       }
     });
 
-    // ✅ Post a new announcement
     document.getElementById("postBtn").onclick = async () => {
       const text = document.getElementById("announcementInput").value.trim();
       if (!text) return alert("Announcement cannot be empty.");
 
-      try {
-        const ref = doc(db, "announcements", "latest");
-        await setDoc(ref, {
-          message: text,
-          timestamp: serverTimestamp()
-        });
+      const ref = doc(db, "announcements", "latest");
+      await setDoc(ref, {
+        message: text,
+        timestamp: serverTimestamp()
+      });
 
-        alert("✅ Announcement posted!");
-        document.getElementById("latestAnnouncement").innerText = text;
-        document.getElementById("announcementInput").value = "";
-      } catch (err) {
-        console.error("Error posting:", err);
-        alert("⚠️ Failed to post announcement.");
-      }
+      alert("✅ Announcement posted!");
+      document.getElementById("latestAnnouncement").innerText = text;
+      document.getElementById("announcementInput").value = "";
     };
 
-    // ✅ Logout
     document.getElementById("logoutBtn").onclick = () => {
       auth.signOut().then(() => window.location.href = "index.html");
     };
