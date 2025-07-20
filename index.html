@@ -26,7 +26,7 @@
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script src="firebase.js" defer></script>
 
   <!-- Service Worker -->
@@ -57,47 +57,36 @@
     </div>
   </div>
 
-  <!-- Auth + Setup Check -->
+  <!-- Auth + Redirect -->
   <script>
     const auth = firebase.auth();
     const db = firebase.database();
 
     document.getElementById("google-login").addEventListener("click", () => {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
-});
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithRedirect(provider);
+    });
 
     document.getElementById("facebook-login").addEventListener("click", () => {
-  const provider = new firebase.auth.FacebookAuthProvider();
-  <script>
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+      const provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithRedirect(provider);
+    });
 
-  document.getElementById("google-login").addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider); // ✅ works better on mobile
-  });
-
-  document.getElementById("facebook-login").addEventListener("click", () => {
-    const provider = new firebase.auth.FacebookAuthProvider();
-    auth.signInWithRedirect(provider);
-  });
-
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      try {
-        const snapshot = await db.ref(`users/${user.uid}`).once('value');
-const data = snapshot.val();
-if (!data || !data.username || !data.realname || !data.avatar) {
-  window.location.href = "setup.html";
-} else {
-  window.location.href = "dashboard.html";
-}
-      } catch (err) {
-        console.error("Setup check failed:", err);
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          const snapshot = await db.ref(`users/${user.uid}`).once('value');
+          const data = snapshot.val();
+          if (!data || !data.username || !data.realname || !data.avatar) {
+            window.location.href = "setup.html";
+          } else {
+            window.location.href = "dashboard.html";
+          }
+        } catch (err) {
+          console.error("Setup check failed:", err);
+        }
       }
-    }
-  });
-</script>
+    });
+  </script>
 </body>
 </html>
