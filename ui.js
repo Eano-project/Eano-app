@@ -55,7 +55,8 @@ export function getTrustBadge(score) {
   if (score >= 5000) return "🟢 Trusted Miner";
   if (score >= 1000) return "🟡 Reliable Miner";
   if (score >= 500) return "🔵 New Miner";
-  return "🔴 Low Trust";
+  if (score < 100) return "🔴 Low Trust";
+  return ""; // Between 100–499 gets no badge
 }
 
 // ✅ Show announcement message in box
