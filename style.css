@@ -1,125 +1,249 @@
-/* Reset and base styles */
+/* === GLOBAL RESETS === */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
-
-body, html {
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
   height: 100%;
-  font-family: 'Segoe UI', 'Roboto', sans-serif;
   background-color: #0f172a;
-  color: #ffffff;
+  color: #fff;
   scroll-behavior: smooth;
 }
+a {
+  color: #0ea5e9;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
 
-/* Centered welcome container */
-.centered-box {
-  min-height: 100vh;
+/* === LIGHT/DARK TOGGLE === */
+body.light {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+body.light a {
+  color: #0284c7;
+}
+
+/* === CENTERED LOGIN PAGE (index.html) === */
+main.centered {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
+  justify-content: center;
+  min-height: 100vh;
   padding: 2rem;
+  text-align: center;
 }
-
-/* App logo */
-.app-logo {
-  width: 120px;
-  height: auto;
-  margin-bottom: 1.5rem;
-  border-radius: 20px;
-  box-shadow: 0 0 15px #00ffffaa;
+.login-box {
+  margin: 1.5rem 0;
 }
-
-/* Glowing welcome text */
-.glow-text {
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: #00ffff;
-  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-  margin-bottom: 0.5rem;
-}
-
-/* Subheading */
-.sub-text {
+.login-btn {
+  background: #0ea5e9;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
   font-size: 1rem;
-  color: #d1d5db;
+  cursor: pointer;
+}
+.login-btn:hover {
+  background: #0284c7;
+}
+
+/* === DASHBOARD GENERAL === */
+.dashboard {
+  padding: 1.5rem;
+}
+section {
   margin-bottom: 2rem;
 }
-
-/* Google sign-in button */
-.google-btn {
-  display: inline-block;
-  background-color: #4285F4;
-  color: white;
-  font-size: 16px;
+.section-title {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
   font-weight: bold;
-  padding: 14px 26px;
-  border: none;
-  border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
-  cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.google-btn:hover {
-  background-color: #357ae8;
+/* === BALANCE DISPLAY === */
+.balance-box {
+  background: #1e293b;
+  padding: 1rem 2rem;
+  border-radius: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 0 12px #0ea5e9;
+}
+body.light .balance-box {
+  background: #e2e8f0;
+  color: #1e293b;
 }
 
-/* Language selector */
-.lang-select {
-  margin-top: 1.5rem;
-  padding: 10px 14px;
-  background-color: #1e293b;
+/* === MINING STATUS === */
+#mining-status {
+  background: #0ea5e9;
   color: #fff;
-  border: 1px solid #334155;
-  border-radius: 10px;
-  font-size: 14px;
-  outline: none;
-}
-
-/* Status or debug message */
-.status-msg {
+  padding: 0.75rem;
+  border-radius: 12px;
+  text-align: center;
   margin-top: 1rem;
-  font-size: 14px;
-  color: #94a3b8;
+  font-weight: bold;
+}
+body.light #mining-status {
+  background: #0284c7;
 }
 
-/* Footer or small note */
-.footer-note {
-  margin-top: 2rem;
-  font-size: 12px;
-  color: #64748b;
+/* === ANNOUNCEMENT BLOCK === */
+.announcement-box {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #0ea5e9;
+  border-radius: 20px;
+  padding: 1rem;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.announcement-box img {
+  max-width: 100%;
+  border-radius: 16px;
+  margin-top: 1rem;
+}
+body.light .announcement-box {
+  background: #f8fafc;
+  color: #1e293b;
 }
 
-/* PWA icons and SEO tags (support) */
-::selection {
-  background-color: #22d3ee;
-  color: #000;
+/* === AVATAR SELECTION === */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.avatar-grid img {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border 0.3s;
+}
+.avatar-grid img:hover,
+.avatar-grid img.selected {
+  border: 2px solid #0ea5e9;
 }
 
-/* Responsive design */
+/* === TRUSTSCORE BADGES === */
+.trust-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+}
+.badge-og { background: gold; color: black; }
+.badge-trusted { background: green; color: white; }
+.badge-reliable { background: yellow; color: black; }
+.badge-new { background: blue; color: white; }
+.badge-low { background: red; color: white; }
+
+/* === SCORE LEVELS === */
+.level-badge {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+.level-dragon { background: crimson; color: #fff; }
+.level-elephant { background: darkorange; color: #fff; }
+.level-gorilla { background: purple; color: #fff; }
+.level-bear { background: darkgreen; color: #fff; }
+.level-lion { background: goldenrod; color: #fff; }
+.level-panda { background: gray; color: #fff; }
+.level-wolf { background: slateblue; color: #fff; }
+.level-hamster { background: pink; color: #000; }
+.level-chicken { background: lightyellow; color: #000; }
+
+/* === REFERRAL SECTION === */
+.referral-box {
+  background: #1e293b;
+  padding: 1rem;
+  border-radius: 16px;
+  text-align: center;
+}
+.qr-code {
+  margin-top: 1rem;
+  border: 6px solid #0ea5e9;
+  padding: 0.5rem;
+  border-radius: 20px;
+}
+.share-btns {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.share-btns button {
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  background: #0ea5e9;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+.share-btns button:hover {
+  background: #0284c7;
+}
+
+/* === GAMES / STUDIO / MARKETPLACE / TASKS === */
+.feature-card {
+  background: rgba(255,255,255,0.03);
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(14,165,233,0.3);
+  margin-bottom: 1rem;
+  transition: transform 0.2s;
+}
+.feature-card:hover {
+  transform: scale(1.02);
+}
+.feature-card.coming-soon {
+  opacity: 0.5;
+}
+
+/* === LEADERBOARD === */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+.leaderboard-table th {
+  background: #0ea5e9;
+  color: #fff;
+}
+body.light .leaderboard-table th {
+  background: #0284c7;
+}
+
+/* === RESPONSIVE === */
 @media screen and (max-width: 600px) {
-  .app-logo {
-    width: 80px;
+  .avatar-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
-
-  .glow-text {
-    font-size: 1.5rem;
+  .balance-box {
+    font-size: 1.2rem;
   }
-
-  .google-btn {
-    padding: 12px 20px;
-    font-size: 14px;
   }
-
-  .sub-text {
-    font-size: 0.95rem;
-  }
-
-  .lang-select {
-    padding: 8px 12px;
-  }
-}
