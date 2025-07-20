@@ -5,42 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EANO Project - Login</title>
 
-  <!-- SEO -->
-  <meta name="description" content="EANO is a decentralized mining platform with real user value. Join the future of mining with KYC-ready features.">
-  <meta name="keywords" content="EANO, crypto, mining, decentralized, KYC, blockchain">
-  <meta name="author" content="Santus Osondu">
+  <!-- SEO & Meta -->
+  <meta name="description" content="EANO is a decentralized mining platform with real user value." />
   <meta name="theme-color" content="#000000" />
-
-  <!-- Open Graph -->
   <meta property="og:title" content="EANO - Earn Crypto Simply" />
-  <meta property="og:description" content="Mine EANO safely with KYC and referral rewards." />
   <meta property="og:image" content="assets/logo.png" />
-  <meta property="og:url" content="https://eano-santus.github.io/eano-project/" />
-  <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- Favicon + PWA -->
+  <!-- Styles -->
   <link rel="icon" href="icons/favicon.png" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    main.centered {
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      background-color: rgba(0,0,0,0.6);
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0, 255, 180, 0.3);
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 0.2em;
+    }
+
+    .tagline {
+      font-size: 1.1em;
+      margin-bottom: 1.5em;
+      color: #ccc;
+    }
+
+    .login-box {
+      margin: 1em 0;
+    }
+
+    #google-btn {
+      margin-top: 10px;
+    }
+
+    .login-btn {
+      padding: 10px 20px;
+      background-color: #3b5998;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .logo-glow img {
+      width: 80px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 10px #00ffd5);
+    }
+
+    .footer {
+      margin-top: 2em;
+      font-size: 0.9em;
+      color: #aaa;
+    }
+
+    .footer a {
+      color: #00ffd5;
+      text-decoration: none;
+    }
+
+    .top-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    select, #theme-toggle {
+      background: none;
+      border: 1px solid #444;
+      color: white;
+      padding: 5px 8px;
+      margin-left: 5px;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-  <header class="top-bar">
-    <div class="logo-glow">
-      <img src="assets/logo.png" alt="EANO Logo" class="logo" />
-    </div>
-    <div class="top-controls">
-      <select id="language-select"></select>
-      <button id="theme-toggle">🌓</button>
-    </div>
-  </header>
+  <div class="top-controls">
+    <select id="language-select"></select>
+    <button id="theme-toggle">🌓</button>
+  </div>
 
   <main class="centered">
+    <div class="logo-glow">
+      <img src="assets/logo.png" alt="EANO Logo" />
+    </div>
+
     <h1>Welcome to EANO</h1>
     <p class="tagline">Decentralized Mining, Real Utility.</p>
 
     <div id="google-signin" class="login-box">
-      <p>Sign in with Google to continue:</p>
+      <p>Sign in with Google:</p>
       <div id="google-btn"></div>
     </div>
 
@@ -49,38 +124,32 @@
       <button id="fb-login" class="login-btn">Login with Facebook</button>
     </div>
 
-    <footer class="footer">
+    <div class="footer">
       <p>&copy; <span id="year"></span> EANO. All rights reserved.</p>
-      <a href="whitepaper.html">Whitepaper</a> |
+      <a href="whitepaper.html">Whitepaper</a> | 
       <a href="support.html">Support</a>
-    </footer>
+    </div>
   </main>
 
-  <!-- Firebase Core -->
+  <!-- Firebase -->
   <script type="module" src="firebase.js"></script>
   <script src="lang.js"></script>
 
+  <!-- Scripts -->
   <script>
-    // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Theme toggle
     const toggleBtn = document.getElementById("theme-toggle");
     toggleBtn.addEventListener("click", () => {
       const html = document.documentElement;
-      const isDark = html.getAttribute("data-theme") === "dark";
-      html.setAttribute("data-theme", isDark ? "light" : "dark");
+      html.setAttribute("data-theme", html.getAttribute("data-theme") === "dark" ? "light" : "dark");
     });
-
-    // Load language dropdown
     loadLanguageOptions("language-select");
   </script>
 
-  <!-- Google Login Logic -->
+  <!-- Google Login -->
   <script type="module">
     import { auth } from "./firebase.js";
     import {
-      getAuth,
       onAuthStateChanged,
       GoogleAuthProvider,
       signInWithCredential
@@ -105,10 +174,9 @@
       }
     });
 
-    // Render Google Button
     window.renderGoogleButton = () => {
       google.accounts.id.initialize({
-        client_id: "50186911438-abc.apps.googleusercontent.com", // Replace this with your real client ID
+        client_id: "50186911438-abc.apps.googleusercontent.com",
         callback: async (response) => {
           try {
             const credential = GoogleAuthProvider.credential(response.credential);
@@ -130,20 +198,16 @@
     document.body.appendChild(script);
   </script>
 
-  <!-- Facebook Login Logic -->
+  <!-- Facebook Login -->
   <script type="module">
     import { auth, provider } from "./firebase.js";
     import { signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    const fbLoginBtn = document.getElementById("fb-login");
-
-    fbLoginBtn.addEventListener("click", async () => {
+    document.getElementById("fb-login").addEventListener("click", async () => {
       try {
         const result = await signInWithPopup(auth, provider);
         const uid = result.user.uid;
-
-        // Check Firebase DB for user setup
-        const res = await fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`);
+        const res = await fetch(`https://eano-app-3f678-default-rtdb.firebaseio.com/users/${uid}.json`);
         const data = await res.json();
 
         if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
@@ -152,21 +216,9 @@
           window.location.href = "setup.html";
         }
       } catch (error) {
-        console.error("Facebook login failed", error);
         alert("Facebook login failed. Try again.");
       }
     });
-  </script>
-
-  <!-- PWA support -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/serviceWorker.js")
-          .then(reg => console.log("ServiceWorker registered ✅"))
-          .catch(err => console.log("ServiceWorker failed:", err));
-      });
-    }
   </script>
 </body>
 </html>
