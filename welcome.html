@@ -3,89 +3,113 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="theme-color" content="#0ea5e9" />
+  <title>Welcome to EANO</title>
+  <meta name="description" content="Welcome to EANO - Decentralized mining with real utility. Join the revolution in digital currency.">
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://eano-santus.github.io/eano-coin/welcome.html">
 
-  <!-- ✅ SEO Meta -->
-  <title>Welcome to EANO | Decentralized Mining App</title>
-  <meta name="description" content="Join EANO - The next-gen decentralized mining platform. Start mining EANO Coins with one tap. Powered by community and trust." />
-  <meta name="keywords" content="EANO, crypto mining, mobile mining, decentralized app, earn crypto, EANO coin" />
-  <meta name="author" content="EANO Team" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Welcome to EANO" />
+  <meta property="og:description" content="Decentralized mining with real utility. Explore the EANO revolution." />
+  <meta property="og:image" content="images/eano-logo.png" />
+  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/welcome.html" />
+  <meta property="og:type" content="website" />
 
-  <!-- ✅ Social Meta -->
-  <meta property="og:title" content="Welcome to EANO | Start Mining Crypto" />
-  <meta property="og:description" content="Secure your share of EANO Coins by mining on your phone. Invite friends. Earn together. No battery drain." />
-  <meta property="og:image" content="https://eano-santus.github.io/eano-coin/assets/eano-preview.jpg" />
-  <meta property="og:url" content="https://eano-santus.github.io/eano-coin/" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <!-- Twitter -->
+  <meta name="twitter:title" content="Welcome to EANO">
+  <meta name="twitter:description" content="Start your journey in decentralized mining with EANO.">
+  <meta name="twitter:image" content="images/eano-logo.png">
+  <meta name="twitter:card" content="summary_large_image">
 
-  <!-- ✅ Icons + Manifest -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="assets/eano-logo.png" type="image/png" />
-  <link rel="apple-touch-icon" href="assets/eano-logo.png" />
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="manifest" href="manifest.json">
 
-  <!-- ✅ Styles -->
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-
 </head>
-<body class="dark-mode">
+
+<body>
   <div class="entry-container">
     <div class="entry-box">
-      <img src="assets/eano-logo.png" alt="EANO Logo" class="entry-logo" />
-      
+      <img src="images/eano-logo.png" alt="EANO Logo" class="entry-logo" />
       <h1>Welcome to EANO</h1>
-      <p class="tagline">⛏ Mine. Earn. Grow with EANO.</p>
+      <p class="tagline">🌐 Decentralized Mining, Real Utility</p>
 
-      <p style="font-size: 0.95rem; margin-bottom: 20px;">
-        🚀 EANO is a next-gen decentralized mining platform where anyone can earn EANO Coins by simply tapping once every 24 hours. No power drain. No extra data.
+      <p style="margin-bottom: 1.5rem;">
+        EANO is a next-gen crypto platform built on transparency, community, and sustainable digital mining. You earn daily by mining, referring, and engaging.
       </p>
 
-      <div class="login-box">
-        <a href="index.html">
-          <button class="login-btn">🚀 Start Mining Now</button>
-        </a>
+      <a href="index.html" class="login-btn">🚀 Enter Dashboard</a>
+
+      <div style="margin-top: 1rem;">
+        📘 <a href="tutorial.html" style="color: #00bfff;">How EANO Works</a> <br />
+        🧠 <a href="levels.html" style="color: #00bfff;">Mining Levels & TrustScore</a>
       </div>
 
-      <!-- ✅ Language Selector -->
+      <!-- PWA Install Button -->
+      <button id="installBtn" class="login-btn" style="margin-top: 20px; display: none;">📲 Install App</button>
+
+      <!-- Language Selector -->
       <div style="margin-top: 20px;">
-        <label for="language-selector">🌐 Language:</label>
-        <select id="language-selector">
+        <label for="lang-select" style="color: #ccc;">🌍 Language:</label>
+        <select id="lang-select" onchange="changeLang()" style="margin-left: 8px; padding: 5px;">
           <option value="en">English</option>
-          <option value="ig">Igbo</option>
-          <option value="ha">Hausa</option>
-          <option value="yo">Yoruba</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <!-- Add more languages -->
         </select>
       </div>
 
-      <!-- ✅ Short Tutorial -->
-      <div style="margin-top: 30px; text-align: left; font-size: 0.85rem; color: #ccc;">
-        <h3 style="color: #fff;">📘 How It Works:</h3>
-        <ul>
-          <li>✔️ Tap “Mine” once per 24 hours</li>
-          <li>👥 Invite friends to boost your TrustScore</li>
-          <li>🔥 Earn 0.600 EANO/hour while active</li>
-          <li>🎯 Reach milestones to unlock badges & levels</li>
-        </ul>
-      </div>
-
-      <div class="entry-footer">
-        <p>&copy; 2025 EANO Project • Powered by Trust • Version 1.0</p>
-      </div>
+      <!-- Footer -->
+      <footer class="entry-footer">
+        <p>
+          <a href="whitepaper.pdf">📄 Whitepaper</a> •
+          <a href="https://t.me/eanoofficial">Support (Telegram)</a> •
+          <a href="mailto:santorumsantus@gmail.com">Contact</a>
+        </p>
+        <p>&copy; 2025 EANO. All rights reserved.</p>
+      </footer>
     </div>
   </div>
 
-  <!-- ✅ Optional: Service Worker Registration -->
+  <!-- PWA Install Script -->
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById("installBtn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = "inline-block";
+
+      installBtn.addEventListener("click", () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === "accepted") {
+            console.log("PWA installed");
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+
+    function changeLang() {
+      const selectedLang = document.getElementById("lang-select").value;
+      localStorage.setItem("lang", selectedLang);
+      alert("Language will apply after dashboard loads.");
+    }
+  </script>
+
+  <!-- Register service worker -->
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('✅ Service Worker registered'))
-        .catch(err => console.error('❌ Service Worker failed', err));
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker registration failed:', err));
     }
-
-    // Language selector behavior
-    document.getElementById('language-selector').addEventListener('change', function () {
-      alert("🌐 Language switching coming soon!");
-    });
   </script>
 </body>
 </html>
