@@ -91,7 +91,7 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         const uid = user.uid;
-        fetch(`https://eano-miner.firebaseio.com/users/${uid}.json`)
+        fetch(`https://eano-app-3f678-default-rtdb.firebaseio.com/users/${uid}.json`)
           .then(res => res.json())
           .then(data => {
             if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
