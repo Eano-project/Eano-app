@@ -5,142 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EANO Project - Login</title>
 
-  <!-- SEO & Meta -->
+  <!-- SEO -->
   <meta name="description" content="EANO is a decentralized mining platform with real user value." />
   <meta name="theme-color" content="#000000" />
   <meta property="og:title" content="EANO - Earn Crypto Simply" />
   <meta property="og:image" content="assets/logo.png" />
 
-  <!-- Styles -->
+  <!-- Favicon -->
   <link rel="icon" href="icons/favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(145deg, #0f0f0f, #1a1a1a);
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-
-    main.centered {
-      text-align: center;
-      width: 100%;
-      max-width: 400px;
-      padding: 20px;
-      background-color: rgba(0,0,0,0.6);
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0, 255, 180, 0.3);
-    }
-
-    h1 {
-      font-size: 2em;
-      margin-bottom: 0.2em;
-    }
-
-    .tagline {
-      font-size: 1.1em;
-      margin-bottom: 1.5em;
-      color: #ccc;
-    }
-
-    .login-box {
-      margin: 1em 0;
-    }
-
-    #google-btn {
-      margin-top: 10px;
-    }
-
-    .login-btn {
-      padding: 10px 20px;
-      background-color: #3b5998;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 1em;
-    }
-
-    .logo-glow img {
-      width: 80px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 10px #00ffd5);
-    }
-
-    .footer {
-      margin-top: 2em;
-      font-size: 0.9em;
-      color: #aaa;
-    }
-
-    .footer a {
-      color: #00ffd5;
-      text-decoration: none;
-    }
-
-    .top-controls {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-    }
-
-    select, #theme-toggle {
-      background: none;
-      border: 1px solid #444;
-      color: white;
-      padding: 5px 8px;
-      margin-left: 5px;
-      border-radius: 6px;
-    }
-  </style>
 </head>
 <body>
-  <div class="top-controls">
-    <select id="language-select"></select>
-    <button id="theme-toggle">🌓</button>
-  </div>
-
   <main class="entry-container">
-  <div class="entry-box">
-    <img src="assets/logo.png" alt="EANO Logo" class="entry-logo" />
-    <h1>Welcome to EANO</h1>
-    <p class="tagline">Decentralized Mining, Real Utility.</p>
+    <div class="entry-box">
+      <img src="assets/logo.png" alt="EANO Logo" class="entry-logo" />
+      <h1>Welcome to EANO</h1>
+      <p class="tagline">Decentralized Mining, Real Utility.</p>
 
-    <div id="google-signin" class="login-box">
-      <p>Sign in with Google to continue:</p>
-      <div id="google-btn"></div>
+      <div id="google-signin" class="login-box">
+        <p>Sign in with Google to continue:</p>
+        <div id="google-btn"></div>
+      </div>
+
+      <div class="login-box">
+        <p>Or sign in with Facebook:</p>
+        <button id="fb-login" class="login-btn">Login with Facebook</button>
+      </div>
+
+      <footer class="entry-footer">
+        <p>&copy; <span id="year"></span> EANO. All rights reserved.</p>
+      </footer>
     </div>
-
-    <div class="login-box">
-      <p>Or sign in with Facebook:</p>
-      <button id="fb-login" class="login-btn">Login with Facebook</button>
-    </div>
-
-    <footer class="entry-footer">
-      <p>&copy; <span id="year"></span> EANO. All rights reserved.</p>
-    </footer>
-  </div>
   </main>
 
-  <!-- Firebase -->
+  <!-- Firebase + Lang -->
   <script type="module" src="firebase.js"></script>
   <script src="lang.js"></script>
 
-  <!-- Scripts -->
+  <!-- Year + Google Button -->
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    const toggleBtn = document.getElementById("theme-toggle");
-    toggleBtn.addEventListener("click", () => {
-      const html = document.documentElement;
-      html.setAttribute("data-theme", html.getAttribute("data-theme") === "dark" ? "light" : "dark");
-    });
-    loadLanguageOptions("language-select");
+    loadLanguageOptions?.("language-select");
   </script>
 
   <!-- Google Login -->
@@ -175,12 +83,8 @@
       google.accounts.id.initialize({
         client_id: "50186911438-abc.apps.googleusercontent.com",
         callback: async (response) => {
-          try {
-            const credential = GoogleAuthProvider.credential(response.credential);
-            await signInWithCredential(auth, credential);
-          } catch (err) {
-            console.error("Google Sign-In Error", err);
-          }
+          const credential = GoogleAuthProvider.credential(response.credential);
+          await signInWithCredential(auth, credential);
         }
       });
       google.accounts.id.renderButton(
@@ -206,7 +110,6 @@
         const uid = result.user.uid;
         const res = await fetch(`https://eano-app-3f678-default-rtdb.firebaseio.com/users/${uid}.json`);
         const data = await res.json();
-
         if (data?.firstname && data?.lastname && data?.username && data?.referralcode) {
           window.location.href = "dashboard.html";
         } else {
