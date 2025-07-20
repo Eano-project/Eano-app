@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seed EANO Firebase Data</title>
+</head>
+<body>
+  <h2>⛏️ Seeding EANO Firebase Data...</h2>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY_HERE",
+      authDomain: "eano-app-3f678.firebaseapp.com",
+      databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
+      projectId: "eano-app-3f678",
+      storageBucket: "eano-app-3f678.appspot.com",
+      messagingSenderId: "566183355081",
+      appId: "1:566183355081:web:e8d8aa13ba30099392e318"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Replace this with your actual UID or leave as sample
+    const userUID = "sampleUID123";
+
+    // Set initial user profile
+    await set(ref(db, 'users/' + userUID), {
+      balance: 0,
+      trustScore: 300,
+      level: "🔵 New Miner",
+      avatar: "avatar01.png",
+      referralCode: "eano_" + userUID,
+      referrals: [],
+      profile: {
+        firstname: "Santus",
+        lastname: "Santorum",
+        username: "Santorum"
+      },
+      mining: {
+        active: false,
+        startedAt: null
+      }
+    });
+
+    // Leaderboard
+    await set(ref(db, 'public/leaderboard/top10'), [
+      { username: "Santorum", score: 5000, trustScore: 1000 }
+    ]);
+
+    // Announcements
+    await set(ref(db, 'public/announcements/latest'), {
+      message: "🚀 Welcome to EANO Miner! Mining is now active.",
+      image: "https://yourdomain.com/assets/announcement.jpg"
+    });
+
+    // Avatars
+    await set(ref(db, 'public/avatars'), [
+      "avatar01.png", "avatar02.png", "avatar03.png", "avatar04.png"
+    ]);
+
+    // Score Levels
+    await set(ref(db, 'public/scores/levels'), {
+      "🐥 Chicken": 0,
+      "🐹 Hamster": 50,
+      "🐺 Wolf": 150,
+      "🐼 Panda": 300,
+      "🐯 Lion": 600,
+      "🐻 Bear": 1200,
+      "🦍 Gorilla": 2500,
+      "🐘 Elephant": 5000,
+      "🐉 Dragon": 10000
+    });
+
+    // TrustScore Badges
+    await set(ref(db, 'public/trustScores'), {
+      "🔴 Low Trust": 0,
+      "🔵 New Miner": 300,
+      "🟡 Reliable Miner": 500,
+      "🟢 Trusted Miner": 1000,
+      "O.G": 5000
+    });
+
+    // Admin
+    await set(ref(db, 'admins/' + userUID), true);
+
+    alert("✅ Seed data uploaded successfully.");
+  </script>
+</body>
+</html>
