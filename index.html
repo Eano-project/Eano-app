@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>EANO Login</title>
-  <script type="module" src="./firebase.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="icons/favicon.png" type="image/png">
+  <link rel="manifest" href="manifest.json">
+  <!-- SEO + Social Meta -->
+  <meta name="description" content="EANO Coin is a decentralized mining and empowerment platform for Africa and Igbo survival.">
+  <meta name="keywords" content="EANO Coin, Igbo cryptocurrency, African blockchain, mining app, earn coin">
+  <meta name="author" content="EANO Team">
+  <meta property="og:title" content="EANO Coin | Mine, Empower, Lead">
+  <meta property="og:description" content="Mine EANO daily and rise through trust-based ranks. Join the African digital revolution.">
+  <meta property="og:image" content="icons/banner.png">
+  <meta property="og:url" content="https://eano.app">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="module" src="./firebase.js"></script>
   <style>
     body {
       background-color: #111;
@@ -30,6 +43,11 @@
       font-weight: bold;
       cursor: pointer;
     }
+    footer {
+      margin-top: 30px;
+      color: #aaa;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -43,6 +61,11 @@
     <button onclick="googleLogin()">Sign in with Google</button>
     <button onclick="facebookLogin()">Sign in with Facebook</button>
   </div>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear())</script> EANO Coin. All rights reserved.
+    <br><a href="https://t.me/eanocoin" style="color: #f1c40f;">Join our Telegram</a>
+  </footer>
 
   <script type="module">
     const { auth, db, ref, set, get, signInWithPopup, googleProvider, facebookProvider } = window.firebaseApp;
@@ -64,11 +87,7 @@
         saveReferral(uid, referral);
         const snapshot = await get(ref(db, "users/" + uid));
         const data = snapshot.val();
-        if (data && data.isVerified) {
-          location.href = "dashboard.html";
-        } else {
-          location.href = "setup.html";
-        }
+        location.href = (data && data.isVerified) ? "dashboard.html" : "setup.html";
       } catch (error) {
         alert(error.message);
       }
@@ -77,7 +96,6 @@
     async function googleLogin() {
       try {
         const result = await signInWithPopup(auth, googleProvider);
-        const uid = result.user.uid;
         location.href = "setup.html";
       } catch (error) {
         alert(error.message);
@@ -87,11 +105,17 @@
     async function facebookLogin() {
       try {
         const result = await signInWithPopup(auth, facebookProvider);
-        const uid = result.user.uid;
         location.href = "setup.html";
       } catch (error) {
         alert(error.message);
       }
+    }
+
+    // PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ Service Worker registered'))
+        .catch(err => console.error('❌ SW registration failed:', err));
     }
   </script>
 </body>
