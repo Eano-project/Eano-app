@@ -1,76 +1,51 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EANO Coin - Mine and earn through the spirit of Igbo Market Days (Eke, Afor, Nkwo, Orie)">
+  <meta name="description" content="EANO Coin Mining App – Secure, fair, and community-driven crypto mining." />
+  <meta name="keywords" content="EANO, Mining, Crypto, Igbo, Africa, Pi alternative" />
+  <meta name="author" content="Santus Santorum" />
+  <meta property="og:title" content="EANO Coin Mining App" />
+  <meta property="og:description" content="Start mining EANO Coin and join the revolution for Igbo survival and African empowerment." />
+  <meta property="og:image" content="/eano-icon.png" />
   <meta name="theme-color" content="#000000" />
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <title>EANO Coin - Sign In</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="/favicon.ico" />
+  <title>EANO Coin – Login</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
-      text-align: center;
-    }
-    .container {
-      max-width: 400px;
-      margin: 0 auto;
-      padding-top: 50px;
-    }
-    input, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      font-size: 16px;
-    }
-    footer {
-      margin-top: 50px;
-      color: #999;
-      font-size: 14px;
-    }
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f5f5f5; }
+    .container { max-width: 400px; margin: auto; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.1); }
+    input, button { width: 100%; padding: 0.8rem; margin: 0.5rem 0; }
+    footer { text-align: center; font-size: 12px; color: #777; margin-top: 2rem; }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h1>Welcome to EANO Coin</h1>
-    <p>Sign in to start mining and earning</p><input type="email" id="email" placeholder="Email" />
-<input type="password" id="password" placeholder="Password" />
-<input type="text" id="referralCode" placeholder="Referral Code (optional)" />
-<button onclick="signInWithEmail()">Sign In / Sign Up</button>
+    <h2>Login / Signup</h2>
 
-<hr />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="text" id="referralCode" placeholder="Referral Code (optional)" />
 
-<button onclick="signInWithGoogle()">Sign in with Google</button>
-<button onclick="signInWithFacebook()">Sign in with Facebook</button>
+    <button id="signupBtn">Sign Up</button>
+    <button id="loginBtn">Login</button>
 
-  </div>  <footer>
-    &copy; 2025 EANO Coin. All rights reserved.
-  </footer>  <!-- Firebase JS SDK -->  <script type="module">
+    <hr />
+    <button id="googleLogin">Continue with Google</button>
+    <button id="facebookLogin">Continue with Facebook</button>
+  </div>
+
+  <footer>© 2025 EANO Coin. All rights reserved.</footer>
+
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      GoogleAuthProvider,
-      FacebookAuthProvider,
-      signInWithPopup,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      set,
-      get,
-      child
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCzNpblYEjxZvOtuwao3JakP-FaZAT-Upw",
+      apiKey: "AIzaSyC8fSr1NX1jE0uJ5QfRikf6j-PMb1XhtUs",
       authDomain: "eano-app-3f678.firebaseapp.com",
       databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
       projectId: "eano-app-3f678",
@@ -86,56 +61,65 @@
     const googleProvider = new GoogleAuthProvider();
     const facebookProvider = new FacebookAuthProvider();
 
-    window.signInWithEmail = async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const referralCode = document.getElementById("referralCode").value;
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const referralEl = document.getElementById("referralCode");
 
+    document.getElementById("signupBtn").addEventListener("click", async () => {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        const userCredential = await createUserWithEmailAndPassword(auth, emailEl.value, passwordEl.value);
+        const uid = userCredential.user.uid;
+        await set(ref(db, "users/" + uid), {
+          email: emailEl.value,
+          referral: referralEl.value || null,
+          createdAt: Date.now()
+        });
+        alert("✅ Signed up successfully!");
         window.location.href = "setup.html";
       } catch (error) {
-        if (error.code === "auth/user-not-found") {
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-          await set(ref(db, "users/" + user.uid), {
-            email: email,
-            referralCode: referralCode || null
-          });
-          window.location.href = "setup.html";
-        } else {
-          alert("Login error: " + error.message);
-        }
-      }
-    };
-
-    window.signInWithGoogle = async () => {
-      try {
-        const result = await signInWithPopup(auth, googleProvider);
-        const user = result.user;
-        window.location.href = "setup.html";
-      } catch (error) {
-        alert("Google sign-in failed: " + error.message);
-      }
-    };
-
-    window.signInWithFacebook = async () => {
-      try {
-        const result = await signInWithPopup(auth, facebookProvider);
-        const user = result.user;
-        window.location.href = "setup.html";
-      } catch (error) {
-        alert("Facebook sign-in failed: " + error.message);
-      }
-    };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("✅ Logged in as:", user.uid);
-      } else {
-        console.log("🔴 Not logged in");
+        alert("❌ " + error.message);
       }
     });
-  </script></body>
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      try {
+        await signInWithEmailAndPassword(auth, emailEl.value, passwordEl.value);
+        alert("✅ Logged in successfully!");
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        alert("❌ " + error.message);
+      }
+    });
+
+    document.getElementById("googleLogin").addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const uid = result.user.uid;
+        await set(ref(db, "users/" + uid), {
+          email: result.user.email,
+          referral: referralEl.value || null,
+          createdAt: Date.now()
+        });
+        window.location.href = "setup.html";
+      } catch (error) {
+        alert("❌ Google login failed: " + error.message);
+      }
+    });
+
+    document.getElementById("facebookLogin").addEventListener("click", async () => {
+      try {
+        const result = await signInWithPopup(auth, facebookProvider);
+        const uid = result.user.uid;
+        await set(ref(db, "users/" + uid), {
+          email: result.user.email,
+          referral: referralEl.value || null,
+          createdAt: Date.now()
+        });
+        window.location.href = "setup.html";
+      } catch (error) {
+        alert("❌ Facebook login failed: " + error.message);
+      }
+    });
+  </script>
+</body>
 </html>
