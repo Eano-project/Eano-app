@@ -2,75 +2,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EANO Coin Mining App - Secure, Decentralized, Community-Based" />
-  <meta name="keywords" content="EANO Coin, crypto mining, Pi Network alternative, Igbo blockchain, Eke Afor Nkwo Orie" />
-  <meta name="author" content="Santus Santorum" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="manifest" href="/manifest.json" />
-  <title>EANO Coin - Login or Sign Up</title>
+  <meta name="description" content="EANO Coin - Mine EANO for African empowerment & Igbo survival." />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <title>EANO Coin | Secure Miner Access</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
+      font-family: sans-serif;
       margin: 0;
-      padding: 0;
-      background-image: url('background.jpg');
-      background-size: cover;
+      background: #0b0b0b;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
     }
     .container {
-      max-width: 400px;
-      margin: 10vh auto;
-      background: rgba(0, 0, 0, 0.7);
+      background: #1a1a1a;
       padding: 2rem;
       border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
     }
+    h1 { color: gold; }
     input, button {
-      width: 100%;
       padding: 10px;
-      margin-top: 10px;
+      margin: 5px 0;
+      width: 100%;
       border-radius: 5px;
+      border: none;
+    }
+    button {
+      background: gold;
+      color: black;
+      cursor: pointer;
     }
     footer {
-      text-align: center;
-      margin-top: 40px;
+      margin-top: 2rem;
+      font-size: 0.8rem;
       color: #aaa;
-      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Welcome to EANO Coin</h2>
-    <p>Sign up or log in to continue mining</p><input type="email" id="signupEmail" placeholder="Email" />
-<input type="password" id="signupPassword" placeholder="Password" />
-<input type="text" id="referralCode" placeholder="Referral Code (optional)" />
-<button id="signUpBtn">Sign Up</button>
-
-<hr />
-<button id="googleSignIn">Continue with Google</button>
-<button id="facebookSignIn">Continue with Facebook</button>
-
-  </div>  <footer>
-    &copy; 2025 EANO Coin. All Rights Reserved.
-  </footer>  <!-- Firebase SDK -->  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithPopup,
-      GoogleAuthProvider,
-      FacebookAuthProvider,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import {
-      getDatabase,
-      ref,
-      set
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+    <h1>Login to EANO Coin</h1>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="logIn()">Login</button>
+    <button onclick="signInWithGoogle()">Continue with Google</button>
+    <input type="text" id="referralCode" placeholder="Referral Code (optional)" />
+  </div>
+  <footer>&copy; 2025 EANO Coin | Built for Freedom, Growth & Legacy</footer>  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js';
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
+    import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js';
 
     const firebaseConfig = {
       apiKey: "AIzaSyC8fSr1NX1jE0uJ5QfRikf6j-PMb1XhtUs",
@@ -86,52 +74,53 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
-    const googleProvider = new GoogleAuthProvider();
-    const facebookProvider = new FacebookAuthProvider();
 
-    const signUpBtn = document.getElementById("signUpBtn");
-    signUpBtn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("signupEmail").value;
-      const password = document.getElementById("signupPassword").value;
-      const referralCode = document.getElementById("referralCode").value;
+    window.signUp = function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const referral = document.getElementById('referralCode').value || "none";
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = userCredential.user.uid;
-        await set(ref(db, 'users/' + uid), {
-          email,
-          referralCode: referralCode || null,
-          registeredAt: Date.now()
-        });
-        window.location.href = "setup.html";
-      } catch (error) {
-        alert("Error: " + error.message);
-      }
-    });
-
-    document.getElementById("googleSignIn").addEventListener("click", () => {
-      signInWithPopup(auth, googleProvider)
-        .then((result) => {
-          window.location.href = "setup.html";
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+          const uid = userCredential.user.uid;
+          set(ref(db, 'users/' + uid), {
+            email: email,
+            referral: referral,
+            score: 5,
+            trust: 5
+          });
+          alert("Account created! Redirecting to dashboard...");
+          window.location.href = "dashboard.html";
         })
-        .catch((error) => alert(error.message));
-    });
+        .catch(error => alert(error.message));
+    };
 
-    document.getElementById("facebookSignIn").addEventListener("click", () => {
-      signInWithPopup(auth, facebookProvider)
-        .then((result) => {
-          window.location.href = "setup.html";
+    window.logIn = function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Welcome back!");
+          window.location.href = "dashboard.html";
         })
-        .catch((error) => alert(error.message));
-    });
+        .catch(error => alert(error.message));
+    };
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log("✅ Logged in as:", user.uid);
-      } else {
-        console.log("🔴 Not logged in");
-      }
-    });
+    window.signInWithGoogle = function () {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then(result => {
+          const uid = result.user.uid;
+          const email = result.user.email;
+          set(ref(db, 'users/' + uid), {
+            email: email,
+            referral: "google",
+            score: 5,
+            trust: 5
+          });
+          window.location.href = "dashboard.html";
+        })
+        .catch(error => alert(error.message));
+    };
   </script></body>
 </html>
