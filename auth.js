@@ -1,30 +1,32 @@
-// auth.js
+// auth.js (Realtime DB version, for Firebase 12)
 import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+  ref,
+  set,
+  get,
+  child
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const signupBtn = document.getElementById("signup-btn");
 const loginBtn = document.getElementById("login-btn");
 const googleBtn = document.getElementById("google-signin");
+const facebookBtn = document.getElementById("facebook-signin");
 
-// ✅ SIGN UP
+// SIGN UP (Realtime DB)
 if (signupBtn) {
   signupBtn.addEventListener("click", async () => {
     const email = document.getElementById("signup-email").value.trim();
     const password = document.getElementById("signup-password").value.trim();
     const username = document.getElementById("signup-username").value.trim();
-    const firstname = document.getElementById("signup-firstname").value.trim();
-    const lastname = document.getElementById("signup-lastname").value.trim();
+    const referral = document.getElementById("signup-referral").value.trim();
 
     if (username.length < 4 || password.length < 6) {
       alert("Username or password too short.");
@@ -33,62 +35,88 @@ if (signupBtn) {
 
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "users", cred.user.uid), {
+      const userRef = ref(db, `users/${cred.user.uid}`);
+      await set(userRef, {
         email,
         username,
-        firstname,
-        lastname,
+        referralCode: referral || null,
         balance: 2,
+        trustScore: 5,
         referralCount: 0,
-        trustScore: 0,
         lastMine: null,
-        createdAt: new Date()
+        createdAt: Date.now()
       });
-      localStorage.setItem("seenWelcome", "true");
-      window.location.href = "dashboard.html";
+      window.location.href = "setup.html";
     } catch (err) {
-      alert("❌ " + err.message);
+      alert("❌ Signup error: " + err.message);
     }
   });
 }
 
-// ✅ LOGIN
+// LOGIN
 if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
     const email = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value.trim();
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      localStorage.setItem("seenWelcome", "true");
       window.location.href = "dashboard.html";
     } catch (err) {
-      alert("❌ " + err.message);
+      alert("❌ Login error: " + err.message);
     }
   });
 }
 
-// ✅ GOOGLE LOGIN
+// GOOGLE SIGN-IN
 if (googleBtn) {
   googleBtn.addEventListener("click", async () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      const userDoc = await getDoc(doc(db, "users", result.user.uid));
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, "users", result.user.uid), {
+      const uid = result.user.uid;
+      const userRef = ref(db, `users/${uid}`);
+      const snap = await get(userRef);
+      if (!snap.exists()) {
+        await set(userRef, {
           email: result.user.email,
           username: result.user.displayName || "eano_user",
           balance: 2,
           referralCount: 0,
-          trustScore: 0,
+          trustScore: 5,
           lastMine: null,
-          createdAt: new Date()
+          createdAt: Date.now()
         });
       }
-      localStorage.setItem("seenWelcome", "true");
-      window.location.href = "dashboard.html";
+      window.location.href = "setup.html";
     } catch (err) {
-      alert("❌ Google login failed: " + err.message);
+      alert("❌ Google login error: " + err.message);
+    }
+  });
+}
+
+// FACEBOOK SIGN-IN
+if (facebookBtn) {
+  facebookBtn.addEventListener("click", async () => {
+    const provider = new FacebookAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const uid = result.user.uid;
+      const userRef = ref(db, `users/${uid}`);
+      const snap = await get(userRef);
+      if (!snap.exists()) {
+        await set(userRef, {
+          email: result.user.email,
+          username: result.user.displayName || "eano_user",
+          balance: 2,
+          referralCount: 0,
+          trustScore: 5,
+          lastMine: null,
+          createdAt: Date.now()
+        });
+      }
+      window.location.href = "setup.html";
+    } catch (err) {
+      alert("❌ Facebook login error: " + err.message);
     }
   });
 }
