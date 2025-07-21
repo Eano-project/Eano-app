@@ -1,72 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>EANO Setup</title>
-  <script type="module" src="./firebase.js"></script>
+  <meta charset="UTF-8">
+  <title>Setup Profile | EANO Coin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon -->
+  <link rel="icon" href="icons/favicon.png" type="image/png">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- SEO + Meta -->
+  <meta name="description" content="Complete your EANO Coin profile to start mining and earning.">
+  <meta name="keywords" content="EANO Coin, crypto profile, mining setup, Igbo cryptocurrency">
+  <meta name="author" content="EANO Team">
+  <meta property="og:title" content="Setup EANO Profile">
+  <meta property="og:description" content="Complete your EANO Coin profile and begin your trust journey.">
+  <meta property="og:image" content="icons/banner.png">
+  <meta property="og:url" content="https://eano.app/setup.html">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Firebase -->
+  <script type="module" src="./firebase.js"></script>
+
   <style>
     body {
       background-color: #111;
       color: white;
-      font-family: Arial;
-      text-align: center;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
+
     .container {
-      max-width: 320px;
+      max-width: 400px;
       margin: auto;
     }
-    input, button {
+
+    h2 {
+      text-align: center;
+      color: #f1c40f;
+    }
+
+    input, select {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      font-size: 16px;
-      border-radius: 6px;
       border: none;
+      border-radius: 5px;
+      font-size: 16px;
     }
+
     button {
+      width: 100%;
       background-color: #f1c40f;
-      color: #000;
+      color: black;
+      padding: 12px;
       font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: auto;
+      background-color: #333;
+      background-size: cover;
+      background-position: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Complete Profile</h2>
-    <input type="text" id="realName" placeholder="Real Name">
-    <input type="text" id="username" placeholder="Username">
-    <input type="text" id="country" placeholder="Country">
-    <input type="text" id="phone" placeholder="Phone Number">
-    <input type="url" id="avatar" placeholder="Avatar Image URL">
-    <button onclick="submitProfile()">Submit</button>
+    <h2>Setup Your Profile</h2>
+    <div class="avatar-preview" id="avatarPreview"></div>
+    <input type="file" id="avatar" accept="image/*" onchange="previewAvatar(this)">
+    <input type="text" id="realName" placeholder="Full Name" required>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="text" id="country" placeholder="Country" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <button onclick="submitProfile()">Save & Continue</button>
   </div>
 
+  <footer>
+    © <script>document.write(new Date().getFullYear())</script> EANO Coin. All rights reserved.
+    <br><a href="https://t.me/eanocoin" style="color: #f1c40f;">Join our Telegram</a>
+  </footer>
+
   <script type="module">
-    const { auth, db, ref, set, update } = window.firebaseApp;
+    import { auth, db, ref, set, update } from "./firebase.js";
 
-    async function submitProfile() {
+    let avatarData = "";
+
+    window.previewAvatar = function (input) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        avatarData = e.target.result;
+        document.getElementById("avatarPreview").style.backgroundImage = `url(${avatarData})`;
+      };
+      reader.readAsDataURL(input.files[0]);
+    };
+
+    window.submitProfile = async function () {
       const user = auth.currentUser;
-      if (!user) return alert("Not logged in");
+      if (!user) {
+        alert("User not logged in");
+        return;
+      }
 
-      const data = {
-        realName: document.getElementById("realName").value,
-        username: document.getElementById("username").value,
-        country: document.getElementById("country").value,
-        phone: document.getElementById("phone").value,
-        avatar: document.getElementById("avatar").value,
-        isVerified: true,
-        createdAt: Date.now()
+      const uid = user.uid;
+      const profile = {
+        realName: document.getElementById("realName").value.trim(),
+        username: document.getElementById("username").value.trim(),
+        country: document.getElementById("country").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        avatar: avatarData || "",
+        trustScore: 5,
+        levelScore: 0,
+        role: "New Miner",
+        isVerified: true
       };
 
       try {
-        await update(ref(db, "users/" + user.uid), data);
-        alert("Profile saved!");
-        location.href = "dashboard.html";
+        await set(ref(db, "users/" + uid), profile);
+        window.location.href = "dashboard.html";
       } catch (error) {
         alert("Error saving profile: " + error.message);
       }
+    };
+
+    // PWA service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('✅ SW registered'))
+        .catch(err => console.error('❌ SW registration failed', err));
     }
   </script>
 </body>
