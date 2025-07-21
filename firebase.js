@@ -1,34 +1,41 @@
 // firebase.js
+
+// ✅ Core Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
-  signInWithPopup,
   GoogleAuthProvider,
   FacebookAuthProvider,
-  onAuthStateChanged,
+  signInWithPopup,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
 import {
   getDatabase,
   ref as dbRef,
   set as dbSet,
   get as dbGet,
   update as dbUpdate,
-  remove as dbRemove,
+  remove as dbRemove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 import {
   getFirestore,
   doc,
   setDoc,
   getDoc,
-  updateDoc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
 import {
   initializeAppCheck,
-  ReCaptchaV3Provider,
+  ReCaptchaV3Provider
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+import {
+  getAnalytics,
+  isSupported as isAnalyticsSupported
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+import {
+  getMessaging,
+  isSupported as isMessagingSupported
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 // ✅ Your Firebase config
 const firebaseConfig = {
@@ -42,16 +49,17 @@ const firebaseConfig = {
   measurementId: "G-GE2V793DCE"
 };
 
-// ✅ Initialize Firebase App
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// ✅ Initialize App Check with reCAPTCHA v3
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'), // Your site key
-  isTokenAutoRefreshEnabled: true,
+// ✅ Initialize App Check (reCAPTCHA v3)
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Optional: For testing
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider("6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"),
+  isTokenAutoRefreshEnabled: true
 });
 
-// ✅ Auth
+// ✅ Auth Providers
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -62,10 +70,31 @@ const realtimeDB = getDatabase(app);
 // ✅ Firestore
 const firestore = getFirestore(app);
 
-// ✅ Export everything for use in other files
+// ✅ Analytics
+let analytics = null;
+isAnalyticsSupported().then((supported) => {
+  if (supported) {
+    analytics = getAnalytics(app);
+    console.log("✅ Analytics enabled");
+  } else {
+    console.warn("⚠️ Analytics not supported on this device");
+  }
+});
+
+// ✅ Messaging
+let messaging = null;
+isMessagingSupported().then((supported) => {
+  if (supported) {
+    messaging = getMessaging(app);
+    console.log("✅ Messaging enabled");
+  } else {
+    console.warn("⚠️ Messaging not supported on this device");
+  }
+});
+
+// ✅ Export all services
 export {
   app,
-  appCheck,
   auth,
   googleProvider,
   facebookProvider,
@@ -82,4 +111,6 @@ export {
   setDoc,
   getDoc,
   updateDoc,
+  analytics,
+  messaging
 };
