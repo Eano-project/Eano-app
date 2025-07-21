@@ -1,123 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Join EANO - a decentralized mobile mining platform for everyone."/>
-  <meta name="theme-color" content="#000000"/>
-  <meta property="og:title" content="EANO Coin"/>
-  <meta property="og:description" content="Start mining EANO tokens from your phone."/>
-  <meta property="og:image" content="assets/logo.png"/>
-  <link rel="icon" href="assets/favicon.ico"/>
-  <link rel="manifest" href="manifest.json"/>
-  <title>EANO | Sign In</title>
-  <link rel="stylesheet" href="style.css"/>
-  <script type="module" src="firebase.js"></script>
+  <title>EANO Login</title>
+  <script type="module" src="./firebase.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 320px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background-color: #f1c40f;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body class="dark">
-  <main class="auth-container">
-    <img src="assets/logo.png" alt="EANO Logo" class="logo"/>
-
-    <div class="form-toggle">
-      <button id="loginTab" class="active">Sign In</button>
-      <button id="registerTab">Sign Up</button>
-    </div>
-
-    <form id="authForm">
-      <input type="email" id="email" placeholder="Email" required/>
-      <input type="password" id="password" placeholder="Password" required/>
-      <input type="text" id="referral" placeholder="Referral Code (optional)" style="display:none"/>
-      <button type="submit" id="authButton">Sign In</button>
-    </form>
-
-    <button id="forgotPasswordBtn" class="link-button">Forgot Password?</button>
-    <p id="authError" class="error-message"></p>
-  </main>
+<body>
+  <div class="container">
+    <h2>Welcome to EANO</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <input type="text" id="referralCode" placeholder="Referral Code (optional)">
+    <button onclick="emailLogin()">Sign In</button>
+    <hr>
+    <button onclick="googleLogin()">Sign in with Google</button>
+    <button onclick="facebookLogin()">Sign in with Facebook</button>
+  </div>
 
   <script type="module">
-    import { auth, rtdb } from './firebase.js';
-    import { ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import {
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    const { auth, db, ref, set, get, signInWithPopup, googleProvider, facebookProvider } = window.firebaseApp;
 
-    const loginTab = document.getElementById("loginTab");
-    const registerTab = document.getElementById("registerTab");
-    const authForm = document.getElementById("authForm");
-    const authButton = document.getElementById("authButton");
-    const referralInput = document.getElementById("referral");
-    const forgotBtn = document.getElementById("forgotPasswordBtn");
-    const authError = document.getElementById("authError");
+    function saveReferral(uid, code) {
+      if (code) {
+        set(ref(db, 'referrals/' + uid), { code: code });
+      }
+    }
 
-    let isLogin = true;
-
-    loginTab.onclick = () => {
-      isLogin = true;
-      loginTab.classList.add("active");
-      registerTab.classList.remove("active");
-      referralInput.style.display = "none";
-      authButton.textContent = "Sign In";
-      authError.textContent = "";
-    };
-
-    registerTab.onclick = () => {
-      isLogin = false;
-      registerTab.classList.add("active");
-      loginTab.classList.remove("active");
-      referralInput.style.display = "block";
-      authButton.textContent = "Sign Up";
-      authError.textContent = "";
-    };
-
-    authForm.onsubmit = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const referral = document.getElementById("referral").value.trim();
+    async function emailLogin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const referral = document.getElementById("referralCode").value;
 
       try {
-        if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, password);
+        const userCred = await auth.signInWithEmailAndPassword(email, password);
+        const uid = userCred.user.uid;
+        saveReferral(uid, referral);
+        const snapshot = await get(ref(db, "users/" + uid));
+        const data = snapshot.val();
+        if (data && data.isVerified) {
+          location.href = "dashboard.html";
         } else {
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
-          const uid = userCred.user.uid;
-          const createdAt = new Date().toISOString();
-
-          await set(ref(rtdb, `users/${uid}`), {
-            email,
-            uid,
-            createdAt,
-            referral: referral || null
-          });
-
-          if (referral) {
-            await set(ref(rtdb, `referrals/${uid}`), {
-              referredBy: referral,
-              createdAt
-            });
-          }
+          location.href = "setup.html";
         }
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        authError.textContent = err.message;
-      }
-    };
-
-    forgotBtn.onclick = async () => {
-      const email = document.getElementById("email").value.trim();
-      if (!email) {
-        authError.textContent = "Enter your email first.";
-        return;
-      }
-      try {
-        await sendPasswordResetEmail(auth, email);
-        authError.textContent = "📧 Password reset link sent!";
       } catch (error) {
-        authError.textContent = error.message;
+        alert(error.message);
       }
-    };
+    }
+
+    async function googleLogin() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const uid = result.user.uid;
+        location.href = "setup.html";
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    async function facebookLogin() {
+      try {
+        const result = await signInWithPopup(auth, facebookProvider);
+        const uid = result.user.uid;
+        location.href = "setup.html";
+      } catch (error) {
+        alert(error.message);
+      }
+    }
   </script>
 </body>
 </html>
