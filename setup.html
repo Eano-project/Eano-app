@@ -1,130 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="EANO Setup – Complete your profile and start mining crypto with friends." />
-  <meta name="keywords" content="EANO, crypto, onboarding, setup, username, profile" />
-  <meta name="author" content="Santorum Chukwuneke" />
-  
-  <!-- SEO / Social -->
-  <meta property="og:title" content="EANO – Setup Your Mining Account" />
-  <meta property="og:description" content="Get started with EANO: add your username and begin mining." />
-  <meta property="og:image" content="https://yourdomain.netlify.app/assets/eano-logo.png" />
-  <meta property="og:url" content="https://yourdomain.netlify.app/setup.html" />
-  <meta property="og:type" content="website" />
-
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="EANO – Setup Your Account" />
-  <meta name="twitter:description" content="Complete your setup and join the EANO mining ecosystem." />
-  <meta name="twitter:image" content="https://yourdomain.netlify.app/assets/eano-logo.png" />
-
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="icon" href="/assets/favicon.ico" />
-  <title>EANO – Setup</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>EANO Setup</title>
+  <script type="module" src="./firebase.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 320px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background-color: #f1c40f;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
-<body class="dark-mode">
+<body>
   <div class="container">
-    <img src="assets/eano-logo.png" alt="EANO Logo" class="logo" />
-    <h2>👋 Welcome to EANO</h2>
-    <p>Let's set up your mining profile</p>
-
-    <form id="setupForm" class="setup-form">
-      <input type="text" id="realName" placeholder="Full Name" required />
-      <input type="text" id="username" placeholder="Choose a Username" required />
-      <button type="submit" class="glow">Finish Setup</button>
-    </form>
+    <h2>Complete Profile</h2>
+    <input type="text" id="realName" placeholder="Real Name">
+    <input type="text" id="username" placeholder="Username">
+    <input type="text" id="country" placeholder="Country">
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="url" id="avatar" placeholder="Avatar Image URL">
+    <button onclick="submitProfile()">Submit</button>
   </div>
 
-  <!-- 🔐 Firebase API key injection from Netlify -->
-  <script>
-    window.FIREBASE_API_KEY = "{{FIREBASE_API_KEY}}"; // Inject securely
-  </script>
-
-  <!-- 🔥 Setup with Realtime DB -->
   <script type="module">
-    import {
-      auth,
-      rtdb,
-    } from './firebase.js';
-    import {
-      ref,
-      set,
-      get,
-      child
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    const { auth, db, ref, set, update } = window.firebaseApp;
 
-    const setupForm = document.getElementById('setupForm');
+    async function submitProfile() {
+      const user = auth.currentUser;
+      if (!user) return alert("Not logged in");
 
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        alert("You must be signed in to complete setup.");
-        window.location.href = "index.html";
-        return;
+      const data = {
+        realName: document.getElementById("realName").value,
+        username: document.getElementById("username").value,
+        country: document.getElementById("country").value,
+        phone: document.getElementById("phone").value,
+        avatar: document.getElementById("avatar").value,
+        isVerified: true,
+        createdAt: Date.now()
+      };
+
+      try {
+        await update(ref(db, "users/" + user.uid), data);
+        alert("Profile saved!");
+        location.href = "dashboard.html";
+      } catch (error) {
+        alert("Error saving profile: " + error.message);
       }
-
-      const userId = user.uid;
-      const dbRef = ref(rtdb);
-
-      // Optional: prevent duplicate setup
-      const snapshot = await get(child(dbRef, `users/${userId}`));
-      if (snapshot.exists() && snapshot.val().username) {
-        window.location.href = "dashboard.html";
-        return;
-      }
-
-      setupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const realName = document.getElementById("realName").value.trim();
-        const username = document.getElementById("username").value.trim().toLowerCase();
-
-        if (!username || !realName) {
-          alert("Please enter all fields.");
-          return;
-        }
-
-        // Check if username already exists
-        const usersSnap = await get(child(dbRef, `usernames/${username}`));
-        if (usersSnap.exists()) {
-          alert("❌ Username already taken. Choose another.");
-          return;
-        }
-
-        // Save to RTDB
-        const userData = {
-          uid: userId,
-          name: realName,
-          username: username,
-          email: user.email || '',
-          balance: 0,
-          trustScore: 0,
-          score: 0,
-          referredBy: null,
-          createdAt: Date.now()
-        };
-
-        try {
-          await set(ref(rtdb, `users/${userId}`), userData);
-          await set(ref(rtdb, `usernames/${username}`), userId);
-          alert("✅ Setup complete!");
-          window.location.href = "dashboard.html";
-        } catch (err) {
-          console.error("❌ Setup error:", err.message);
-          alert("Something went wrong. Try again.");
-        }
-      });
-    });
-  </script>
-
-  <!-- ✅ PWA Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log("✅ Service Worker ready"))
-        .catch(err => console.warn("❌ SW Error:", err));
     }
   </script>
 </body>
