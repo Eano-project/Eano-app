@@ -19,25 +19,16 @@ onAuthStateChanged(auth, async (user) => {
 
   if (userDoc.exists()) {
     const data = userDoc.data();
-    document.getElementById('user-name')?.textContent = data.username || 'N/A';
-    document.getElementById('user-email')?.textContent = data.email || 'N/A';
+    document.getElementById('username').value = data.username || '';
     document.getElementById('email').value = data.email || '';
     document.getElementById('phone').value = data.phone || '';
     document.getElementById('miningLevel').textContent = data.miningLevel || '🐥 Chicken';
     document.getElementById('trustScore').textContent = data.trustScore || 0;
     document.getElementById('balance').textContent = `${data.balance || 0}.000 EANO`;
-    document.getElementById('username').value = data.username || '';
-    document.getElementById('firstName').value = data.firstName || '';
-    document.getElementById('middleName').value = data.middleName || '';
-    document.getElementById('lastName').value = data.lastName || '';
-
-    // Referral Link
-    const referralID = user.uid;
-    const refLink = `https://eano-app.netlify.app/?ref=${referralID}`;
-    document.getElementById('refLink').value = refLink;
+    document.getElementById('refLink').value = `https://eano-app.netlify.app/?ref=${user.uid}`;
     new QRious({
       element: document.getElementById('qrCode'),
-      value: refLink,
+      value: `https://eano-app.netlify.app/?ref=${user.uid}`,
       size: 180,
     });
   }
@@ -68,10 +59,6 @@ document.getElementById('nameSaveBtn')?.addEventListener('click', async () => {
   if (auth.currentUser) {
     const userRef = doc(db, 'users', auth.currentUser.uid);
     await updateDoc(userRef, {
-      username: document.getElementById('username').value,
-      firstName: document.getElementById('firstName').value,
-      middleName: document.getElementById('middleName').value,
-      lastName: document.getElementById('lastName').value,
       phone: document.getElementById('phone').value
     });
     alert('Changes saved!');
@@ -90,8 +77,7 @@ function copyReferral() {
 window.addEventListener('DOMContentLoaded', () => {
   const shareButtons = document.getElementById('shareButtons');
   if (auth.currentUser) {
-    const referralID = auth.currentUser.uid;
-    const refLink = `https://eano-app.netlify.app/?ref=${referralID}`;
+    const refLink = `https://eano-app.netlify.app/?ref=${auth.currentUser.uid}`;
     const socialLinks = {
       whatsapp: `https://wa.me/?text=Join EANO: ${refLink}`,
       telegram: `https://t.me/share/url?url=${refLink}&text=Join EANO!`,
