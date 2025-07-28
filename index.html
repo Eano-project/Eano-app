@@ -176,6 +176,8 @@
         <input type="password" id="login-password" class="form-control" placeholder="Password" required />
         <button type="submit" class="btn btn-success btn-auth">Login</button>
         <button type="button" id="google-signin" class="btn btn-light btn-auth">🔐 Sign in with Google</button>
+        <button type="button" id="facebook-signin" class="btn btn-primary btn-auth">📘 Sign in with Facebook</button>
+        <button type="button" id="github-signin" class="btn btn-dark btn-auth">🐙 Sign in with GitHub</button>
       </div>
     </form>
 
@@ -188,7 +190,7 @@
   <script type="module" src="auth.js"></script>
   <script type="module">
     import { db, doc, getDoc } from './firebase.js';
-    import { auth, onAuthStateChanged, loginWithEmail, signUp, signInWithGoogle } from './auth.js';
+    import { auth, onAuthStateChanged, loginWithEmail, signUp, signInWithGoogle, signInWithFacebook, signInWithGitHub } from './auth.js';
 
     // Capture Referral from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -210,7 +212,13 @@
         await signUp(email, password, username, referral);
         window.location.href = 'welcome.html';
       } catch (e) {
+        console.error("Sign-up error:", e);
         alert('❌ Error: ' + e.message);
+        document.getElementById("signup-firstname").value = firstname;
+        document.getElementById("signup-lastname").value = lastname;
+        document.getElementById("signup-username").value = username;
+        document.getElementById("signup-email").value = email;
+        document.getElementById("signup-password").value = password;
       }
     });
 
@@ -219,33 +227,80 @@
       e.preventDefault();
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
+      localStorage.setItem('login-email', email);
+      localStorage.setItem('login-password', password);
       try {
         await loginWithEmail(email, password);
       } catch (e) {
-        alert(e.message);
+        console.error("Login error:", e);
+        alert('❌ Error: ' + e.message);
+        document.getElementById("login-email").value = email;
+        document.getElementById("login-password").value = password;
       }
     });
 
-    // Google Sign In
+    // Social Sign-In
     document.getElementById("google-signin").addEventListener("click", async () => {
       try {
         await signInWithGoogle();
+        const user = auth.currentUser;
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          window.location.href = userDoc.exists() && userDoc.data().seenWelcome ? 'dashboard.html' : 'welcome.html';
+        }
       } catch (e) {
-        alert(e.message);
+        console.error("Google Sign-In error:", e);
+        alert('❌ Google Sign-In failed: ' + e.message);
+      }
+    });
+
+    document.getElementById("facebook-signin").addEventListener("click", async () => {
+      try {
+        await signInWithFacebook();
+        const user = auth.currentUser;
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          window.location.href = userDoc.exists() && userDoc.data().seenWelcome ? 'dashboard.html' : 'welcome.html';
+        }
+      } catch (e) {
+        console.error("Facebook Sign-In error:", e);
+        alert('❌ Facebook Sign-In failed: ' + e.message);
+      }
+    });
+
+    document.getElementById("github-signin").addEventListener("click", async () => {
+      try {
+        await signInWithGitHub();
+        const user = auth.currentUser;
+        if (user) {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          window.location.href = userDoc.exists() && userDoc.data().seenWelcome ? 'dashboard.html' : 'welcome.html';
+        }
+      } catch (e) {
+        console.error("GitHub Sign-In error:", e);
+        alert('❌ GitHub Sign-In failed: ' + e.message);
       }
     });
 
     // Auto-redirect based on auth and seenWelcome
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const seenWelcome = userDoc.data().seenWelcome || false;
-          window.location.href = seenWelcome ? 'dashboard.html' : 'welcome.html';
-        } else {
-          window.location.href = 'welcome.html';
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          window.location.href = userDoc.exists() && userDoc.data().seenWelcome ? 'dashboard.html' : 'welcome.html';
+        } catch (e) {
+          console.error("Firestore error:", e);
+          window.location.href = 'welcome.html'; // Fallback
         }
       }
+    });
+
+    // Persist login form inputs on page load
+    window.addEventListener('load', () => {
+      const savedEmail = localStorage.getItem('login-email');
+      const savedPassword = localStorage.getItem('login-password');
+      if (savedEmail) document.getElementById('login-email').value = savedEmail;
+      if (savedPassword) document.getElementById('login-password').value = savedPassword;
     });
   </script>
 
