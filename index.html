@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,8 +9,10 @@
   <meta name="theme-color" content="#0b0c2a" />
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <title>EANO PROJECT</title>  <script src="https://www.google.com/recaptcha/api.js?render=6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"></script>  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>  <style>
-    * { box-sizing: border-box; }
+  <title>EANO PROJECT</title>
+  <script src="https://www.google.com/recaptcha/api.js?render=6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"></script>
+  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
+  <style>
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
@@ -34,30 +37,15 @@
       75% { color: #ADFF2F; }
       100% { color: #FF4500; }
     }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      max-width: 320px;
-      margin-top: 20px;
-    }
-    input, button {
-      padding: 12px;
-      border-radius: 6px;
-      border: none;
-      font-size: 1rem;
-    }
     button {
-      background: gold;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
-    }
-    .login-section {
+      background: gold;
+      border: none;
       margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
     }
     .footer {
       margin-top: 40px;
@@ -65,150 +53,95 @@
       opacity: 0.6;
       text-align: center;
     }
-  </style></head>
+  </style>
+</head>
 <body>
-  <h2>EANO PROJECT</h2>  <form id="signup-form">
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Password" required />
-    <input type="text" id="username" placeholder="Username" required />
-    <input type="text" id="referral" placeholder="Referral Code (optional)" />
-    <button type="submit">Log In</button>
-  </form>  <div class="login-section">
-    <button id="google-signin">Sign in with Google</button>
-    <button type="button" class="toggle-link" onclick="toggleMode()">Don't have an account? Sign Up</button>
-  </div>  <div class="footer">
+  <h2>EANO PROJECT</h2>
+  <button id="google-signin">Sign in with Google</button>
+  <div class="footer">
     &copy; 2025 EANO Project – Built for a decentralized digital future 🌐
-  </div>  <script type="module">
+  </div>
+
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import {
-      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-      signInWithPopup, GoogleAuthProvider, onAuthStateChanged
+      getAuth,
+      GoogleAuthProvider,
+      signInWithRedirect,
+      getRedirectResult,
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
     import {
-      getFirestore, doc, setDoc, updateDoc, increment,
-      getDocs, collection, query, where
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc,
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
+    import {
+      initializeAppCheck,
+      ReCaptchaV3Provider
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
-    authDomain: "eano-app-3f678.firebaseapp.com",
-    databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
-    projectId: "eano-app-3f678",
-    storageBucket: "eano-app-3f678.firebasestorage.app",
-    messagingSenderId: "566183355081",
-    appId: "1:566183355081:web:e8d8aa13ba30099392e318",
-    measurementId: "G-GE2V793DCE"
-  };
+      apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
+      authDomain: "eano-app-3f678.firebaseapp.com",
+      databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
+      projectId: "eano-app-3f678",
+      storageBucket: "eano-app-3f678.appspot.com",
+      messagingSenderId: "566183355081",
+      appId: "1:566183355081:web:e8d8aa13ba30099392e318",
+      measurementId: "G-GE2V793DCE"
+    };
 
     const app = initializeApp(firebaseConfig);
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LcD_4orAAAAADsJDEjNkMuzUTC_ouoRcjMfGKTz'),
-      isTokenAutoRefreshEnabled: true
-    });
-
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('6LcD_4orAAAAADsJDEjNkMuzUTC_ouoRcjMfGKTz'),
+      isTokenAutoRefreshEnabled: true,
+    });
+
+    // Generate fingerprint
     let fingerprint = "";
     FingerprintJS.load().then(fp => fp.get()).then(result => {
       fingerprint = result.visitorId;
       sessionStorage.setItem('fingerprint', fingerprint);
     });
 
-    let isLoginMode = true;
+    // Handle redirect result
+    getRedirectResult(auth).then(async (result) => {
+      if (result?.user) {
+        const uid = result.user.uid;
+        const docRef = doc(db, "users", uid);
+        const existingUser = await getDoc(docRef);
 
-    window.toggleMode = function () {
-      isLoginMode = !isLoginMode;
-      const form = document.getElementById("signup-form");
-      const toggleText = document.querySelector(".toggle-link");
-      const usernameField = document.getElementById("username");
-      const referralField = document.getElementById("referral");
-
-      if (isLoginMode) {
-        usernameField.style.display = "none";
-        referralField.style.display = "none";
-        toggleText.textContent = "Don't have an account? Sign Up";
-        form.querySelector("button").textContent = "Log In";
-      } else {
-        usernameField.style.display = "block";
-        referralField.style.display = "block";
-        toggleText.textContent = "Already have an account? Log In";
-        form.querySelector("button").textContent = "Sign Up";
-      }
-    };
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("username").style.display = "none";
-      document.getElementById("referral").style.display = "none";
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const referrerUID = urlParams.get('user');
-      if (referrerUID) {
-        document.getElementById('referral').value = referrerUID;
-      }
-    });
-
-    document.getElementById("signup-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const username = document.getElementById("username").value;
-      const referral = document.getElementById("referral").value;
-
-      const token = await grecaptcha.execute('6LcD_4orAAAAADsJDEjNkMuzUTC_ouoRcjMfGKTz', { action: 'submit' });
-
-      try {
-        if (isLoginMode) {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          const uid = cred.user.uid;
-
-          const userData = {
+        if (!existingUser.exists()) {
+          await setDoc(docRef, {
             uid,
-            email,
-            username,
-            referralCode: uid.slice(0, 6),
-            referredBy: referral || null,
+            email: result.user.email,
             createdAt: new Date(),
+            fingerprint,
             balance: 0,
-            referralCount: 0,
-            fingerprint
-          };
-
-          await setDoc(doc(db, "users", uid), userData);
-
-          if (referral) {
-            const refQuery = query(collection(db, "users"), where("referralCode", "==", referral));
-            const refSnap = await getDocs(refQuery);
-            if (!refSnap.empty) {
-              const refDocId = refSnap.docs[0].id;
-              await updateDoc(doc(db, "users", refDocId), {
-                referralCount: increment(1)
-              });
-            }
-          }
+            referralCode: uid.slice(0, 6),
+          });
         }
+
         window.location.href = "dashboard.html";
-      } catch (err) {
-        alert(err.message);
       }
+    }).catch(error => {
+      console.error("Redirect sign-in failed", error);
+      alert("Authentication failed. Try again.");
     });
 
+    // Trigger Google Sign-in
     document.getElementById("google-signin").addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
       try {
-        import { getRedirectResult } from "firebase/auth";
-
-getRedirectResult(auth)
-  .then((result) => {
-    if (result?.user) {
-      // Optionally process new user info here
-      window.location.href = "dashboard.html";
-    }
-  })
-  .catch((error) => {
-    console.error("Redirect sign-in failed", error);
-  });
-  </script></body>
+        await signInWithRedirect(auth, provider);
+      } catch (err) {
+        alert("Sign-in failed: " + err.message);
+      }
+    });
+  </script>
+</body>
 </html>
