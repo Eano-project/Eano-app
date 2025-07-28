@@ -107,8 +107,7 @@
   </style>
 </head>
 <body>
-
-  <button id="skip-btn" onclick="skipIntro()">Skip</button>
+  <button id="skip-btn">Skip</button>
 
   <h1 class="animated-title">Welcome to <span style="color: gold;">EANO</span></h1>
 
@@ -120,7 +119,10 @@
 
   <audio id="welcome-audio" src="ttsMP3.com_VoiceText_2025-7-24_17-16-8.mp3" autoplay preload="auto"></audio>
 
-  <script>
+  <script type="module">
+    import { auth, onAuthStateChanged } from './auth.js';
+    import { db, doc, updateDoc } from './firebase.js';
+
     const messages = [
       "Welcome to the EANO Project.",
       "This is more than just a crypto platform — it's a movement built on trust, fairness, and digital resilience.",
@@ -141,6 +143,7 @@
     const messageBox = document.getElementById("message");
     const audio = document.getElementById("welcome-audio");
     const progressFill = document.getElementById("progress-bar-fill");
+    const skipBtn = document.getElementById("skip-btn");
 
     // Fallback autoplay for mobile
     window.addEventListener('load', () => {
@@ -156,22 +159,37 @@
         messageBox.classList.remove("show");
         void messageBox.offsetWidth; // reflow for animation
         messageBox.classList.add("show");
-
-        // Update progress bar (approximate)
         progressFill.style.width = `${Math.round((delays[i] / 60) * 100)}%`;
       }, delays[i] * 1000);
+    }
+
+    // Update seenWelcome and redirect
+    async function completeWelcome() {
+      const user = auth.currentUser;
+      if (user) {
+        await updateDoc(doc(db, 'users', user.uid), { seenWelcome: true });
+      }
+      window.location.href = 'dashboard.html';
     }
 
     // Final redirect after narration
     const totalDuration = 60 * 1000;
     setTimeout(() => {
-      window.location.href = "index.html";
+      completeWelcome();
     }, totalDuration + 1000);
 
-    function skipIntro() {
+    // Skip button
+    skipBtn.addEventListener('click', () => {
       audio.pause();
-      window.location.href = "index.html";
-    }
+      completeWelcome();
+    });
+
+    // Redirect if not authenticated
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = 'index.html';
+      }
+    });
   </script>
 </body>
 </html>
