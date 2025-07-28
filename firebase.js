@@ -53,7 +53,7 @@ const analytics = getAnalytics(app);
 
 // ✅ App Check with reCAPTCHA v3
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'),
+  provider: new ReCaptchaV3Provider('6LdmTJIrAAAAAJtp-6RfYjaY89myfDU6tZ7pIA-w'),
   isTokenAutoRefreshEnabled: true
 });
 
