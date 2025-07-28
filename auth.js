@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js';
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, FacebookAuthProvider, GithubAuthProvider } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
-import { auth, db } from './firebase.js';
+import { signInWithPopup, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
+import { auth, db, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from './firebase.js';
 
 export async function signUp(email, password, username, referredBy) {
   const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js');
@@ -106,4 +106,4 @@ export async function isAdmin(user) {
   if (!user) return false;
   const userDoc = await getDoc(doc(db, 'users', user.uid));
   return userDoc.exists() && userDoc.data().isAdmin === true;
-      }
+}
