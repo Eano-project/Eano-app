@@ -1,150 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel - EANO</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>EANO Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: url('eano-bg.png') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
-      padding: 2rem;
-    }
-
-    .admin-panel {
-      max-width: 600px;
-      margin: auto;
-      background: rgba(0, 0, 0, 0.75);
-      padding: 2rem;
+    .admin-container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background: var(--card-bg);
       border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
-
-    h2 {
+    .admin-container h2 {
       text-align: center;
-      color: gold;
       margin-bottom: 20px;
     }
-
-    textarea {
+    .admin-container input,
+    .admin-container textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #888;
+      background: var(--input-bg);
+      color: var(--text-color);
+    }
+    .admin-container button {
       width: 100%;
       padding: 12px;
-      border-radius: 8px;
-      border: none;
-      resize: vertical;
-      font-size: 1rem;
-    }
-
-    .btn {
-      display: block;
-      margin: 1rem 0;
-      background: gold;
-      color: #000;
-      font-weight: bold;
-      padding: 10px;
+      background-color: #007bff;
+      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-
-    #latestAnnouncement {
-      background: #222;
-      padding: 1rem;
-      border-radius: 8px;
-      margin-top: 1rem;
+    .admin-container button:hover {
+      background-color: #0056b3;
     }
-
-    .logout-btn {
-      background: #dc3545;
-      color: #fff;
-      float: right;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    #preview {
+      margin-top: 20px;
+      text-align: center;
     }
-
-    @media screen and (max-width: 600px) {
-      body {
-        padding: 1rem;
-      }
-
-      .admin-panel {
-        padding: 1rem;
-      }
+    #preview img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
+  <div class="admin-container">
+    <h2>🛠 Admin Panel - Announcement</h2>
 
-  <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+    <label for="announcementText">Announcement Message</label>
+    <textarea id="announcementText" rows="3" placeholder="Enter announcement text..."></textarea>
 
-  <div class="admin-panel">
-    <h2>📢 Admin Announcements</h2>
+    <label for="imageUpload">Upload Announcement Image</label>
+    <input type="file" id="imageUpload" accept="image/*" />
 
-    <label for="announcementInput">New Announcement:</label>
-    <textarea id="announcementInput" rows="4" placeholder="Write your message..."></textarea>
-    <button class="btn" id="postBtn">📤 Post Announcement</button>
+    <button id="uploadBtn">Upload & Save</button>
+    <p id="status"></p>
 
-    <h3>📜 Latest Announcement</h3>
-    <div id="latestAnnouncement">Loading...</div>
+    <div id="preview">
+      <h3>🔍 Current Announcement</h3>
+      <p id="currentText"></p>
+      <img id="currentImage" src="" alt="No image yet" />
+    </div>
   </div>
 
   <script type="module">
-    import { auth, db } from './firebase.js';
-    import {
-      doc, getDoc, setDoc, serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import {
-      getDatabase, ref, get
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { db, doc, getDoc, setDoc, onSnapshot } from './firebase.js';
+    import { auth, onAuthStateChanged, isAdmin } from './auth.js';
+    import { storage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js';
 
-    const rtdb = getDatabase();
+    const status = document.getElementById('status');
 
-    auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        alert("You must be logged in.");
-        window.location.href = "index.html";
+    // Load current announcement
+    function loadCurrentAnnouncement() {
+      const announceRef = doc(db, 'announcements', 'latest');
+      onSnapshot(announceRef, (doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          document.getElementById('currentText').textContent = data.message || 'No message set.';
+          if (data.imageUrl) {
+            document.getElementById('currentImage').src = data.imageUrl;
+            document.getElementById('currentImage').style.display = 'block';
+          } else {
+            document.getElementById('currentImage').style.display = 'none';
+          }
+        } else {
+          document.getElementById('currentText').textContent = 'No message set.';
+          document.getElementById('currentImage').style.display = 'none';
+        }
+      });
+    }
+
+    // Upload and save
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
+      const file = document.getElementById('imageUpload').files[0];
+      const message = document.getElementById('announcementText').value;
+
+      if (!file && !message) {
+        alert('Please upload an image or write a message.');
         return;
       }
 
-      const adminRef = ref(rtdb, `users/${user.uid}/isAdmin`);
-      const snapshot = await get(adminRef);
-      if (!snapshot.exists() || snapshot.val() !== true) {
-        alert("Access denied. You are not an admin.");
-        window.location.href = "index.html";
-        return;
-      }
+      try {
+        let imageUrl = document.getElementById('currentImage').src;
+        if (file) {
+          const imgRef = storageRef(storage, 'announcement/latest.png');
+          await uploadBytes(imgRef, file);
+          imageUrl = await getDownloadURL(imgRef);
+        }
 
-      const latestRef = doc(db, "announcements", "latest");
-      const latestSnap = await getDoc(latestRef);
-      if (latestSnap.exists()) {
-        document.getElementById("latestAnnouncement").innerText = latestSnap.data().message;
-      } else {
-        document.getElementById("latestAnnouncement").innerText = "No announcements yet.";
+        await setDoc(doc(db, 'announcements', 'latest'), {
+          message: message || 'No message.',
+          imageUrl: imageUrl || ''
+        });
+
+        status.textContent = '✅ Announcement updated successfully!';
+        loadCurrentAnnouncement();
+      } catch (err) {
+        console.error(err);
+        status.textContent = '❌ Error updating announcement.';
       }
     });
 
-    document.getElementById("postBtn").onclick = async () => {
-      const text = document.getElementById("announcementInput").value.trim();
-      if (!text) return alert("Announcement cannot be empty.");
-
-      const ref = doc(db, "announcements", "latest");
-      await setDoc(ref, {
-        message: text,
-        timestamp: serverTimestamp()
-      });
-
-      alert("✅ Announcement posted!");
-      document.getElementById("latestAnnouncement").innerText = text;
-      document.getElementById("announcementInput").value = "";
-    };
-
-    document.getElementById("logoutBtn").onclick = () => {
-      auth.signOut().then(() => window.location.href = "index.html");
-    };
+    // Auth check
+    onAuthStateChanged(auth, async (user) => {
+      if (user && await isAdmin(user)) {
+        loadCurrentAnnouncement();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
   </script>
 </body>
 </html>
