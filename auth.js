@@ -27,7 +27,7 @@ const db = getFirestore(app);
 
 // Enable App Check
 initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LdmTJIrAAAAAJtp-6RfYjaY89myfDU6tZ7pIA-w'),
+  provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'),
   isTokenAutoRefreshEnabled: true
 });
 
@@ -104,7 +104,7 @@ async function handleSocialLogin(result) {
   if (!snap.exists()) {
     await setDoc(userRef, {
       email,
-      username: '',
+      username: result.user.displayName || userId.slice(0, 8), // Default username from displayName or UID
       referral: '',
       fingerprint,
       createdAt: new Date(),
@@ -116,7 +116,7 @@ async function handleSocialLogin(result) {
       miningLevel: '🐥 Chicken',
       avatar: 'default.png'
     });
-    storeUserInfoLocally(email, '', '', fingerprint);
+    storeUserInfoLocally(email, result.user.displayName || userId.slice(0, 8), '', fingerprint);
     return 'welcome.html';
   } else {
     const data = snap.data();
