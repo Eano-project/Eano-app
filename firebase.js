@@ -2,13 +2,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
-
 import {
   getAuth,
   GoogleAuthProvider,
-  FacebookAuthProvider
+  FacebookAuthProvider,
+  GithubAuthProvider
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
 import {
   getFirestore,
   collection,
@@ -23,7 +22,6 @@ import {
   orderBy,
   limit
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
 import {
   getDatabase,
   ref,
@@ -34,21 +32,20 @@ import {
   push,
   runTransaction
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
 import {
   getStorage
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 // ✅ Firebase config
 const firebaseConfig = {
-    apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
-    authDomain: "eano-app-3f678.firebaseapp.com",
-    databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
-    projectId: "eano-app-3f678",
-    storageBucket: "eano-app-3f678.appspot.com",
-    messagingSenderId: "566183355081",
-    appId: "1:566183355081:web:e8d8aa13ba30099392e318",
-    measurementId: "G-GE2V793DCE"
+  apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
+  authDomain: "eano-app-3f678.firebaseapp.com",
+  databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
+  projectId: "eano-app-3f678",
+  storageBucket: "eano-app-3f678.appspot.com",
+  messagingSenderId: "566183355081",
+  appId: "1:566183355081:web:e8d8aa13ba30099392e318",
+  measurementId: "G-GE2V793DCE"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -62,9 +59,6 @@ const appCheck = initializeAppCheck(app, {
 
 // ✅ Initialize services
 const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
-
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
 const storage = getStorage(app);
@@ -75,8 +69,6 @@ export {
   analytics,
   appCheck,
   auth,
-  googleProvider,
-  facebookProvider,
   db,
   rtdb,
   storage,
@@ -97,5 +89,8 @@ export {
   onValue,
   get,
   push,
-  runTransaction
+  runTransaction,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  GithubAuthProvider
 };
