@@ -323,12 +323,16 @@ document.getElementById("signup-form").addEventListener("submit", async (e) => {
 
     // Auto-redirect if user already logged in (on page load)
 onAuthStateChanged(auth, (user) => {
+  const seenWelcome = localStorage.getItem("seenWelcome");
+  console.log("User:", user);
+  console.log("Seen Welcome:", seenWelcome);
+
   if (user) {
     window.location.href = "dashboard.html";
-  } else if (!localStorage.getItem("seenWelcome")) {
+  } else if (!seenWelcome) {
     window.location.href = "welcome.html";
-      }
-    });
+  }
+});
   </script>
 
   <!-- Toggle Auth -->
