@@ -137,7 +137,6 @@
         form.querySelector("button").textContent = "Sign Up";
       }
     };
-
     window.addEventListener("DOMContentLoaded", () => {
       document.getElementById("username").style.display = "none";
       document.getElementById("referral").style.display = "none";
@@ -199,11 +198,17 @@
     document.getElementById("google-signin").addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
       try {
-        await signInWithPopup(auth, provider);
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        alert(err.message);
-      }
-    });
+        import { getRedirectResult } from "firebase/auth";
+
+getRedirectResult(auth)
+  .then((result) => {
+    if (result?.user) {
+      // Optionally process new user info here
+      window.location.href = "dashboard.html";
+    }
+  })
+  .catch((error) => {
+    console.error("Redirect sign-in failed", error);
+  });
   </script></body>
 </html>
