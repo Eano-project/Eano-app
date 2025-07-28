@@ -58,7 +58,7 @@
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
-      background: linear-gradient(45deg, #4b6cb7, #182848); /* Cool background gradient */
+      background: linear-gradient(45deg, #4b6cb7, #182848);
       color: #fff;
       display: flex;
       justify-content: center;
@@ -140,7 +140,6 @@
 </head>
 
 <body id="auth-body">
-
   <div class="auth-container">
     <h2>🚀 Welcome to EANO</h2>
 
@@ -185,154 +184,30 @@
   </div>
 
   <!-- Scripts -->
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="auth.js"></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+    import { auth, onAuthStateChanged } from './auth.js';
+    import { db, doc, getDoc } from './firebase.js';
 
-    const firebaseConfig = {
-    apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
-    authDomain: "eano-app-3f678.firebaseapp.com",
-    databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
-    projectId: "eano-app-3f678",
-    storageBucket: "eano-app-3f678.firebasestorage.app",
-    messagingSenderId: "566183355081",
-    appId: "1:566183355081:web:e8d8aa13ba30099392e318",
-    measurementId: "G-GE2V793DCE"
-  };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Sign Up
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-const db = getFirestore(app);
-
-// 🔁 Capture Referral from URL
-const urlParams = new URLSearchParams(window.location.search);
-const refCode = urlParams.get("ref");
-if (refCode) {
-  document.getElementById("signup-referral").value = refCode;
-}
-
-// ✅ Sign-Up with Referrals and Firestore User Save
-document.getElementById("signup-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const firstname = document.getElementById("signup-firstname").value.trim();
-  const lastname = document.getElementById("signup-lastname").value.trim();
-  const username = document.getElementById("signup-username").value.trim();
-  const email = document.getElementById("signup-email").value.trim();
-  const password = document.getElementById("signup-password").value;
-  const referredBy = document.getElementById("signup-referral").value || null;
-
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCred.user;
-
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      name: firstname + " " + lastname,
-      firstName: firstname,
-      lastName: lastname,
-      username,
-      email,
-      photoURL: "",
-      balance: 0,
-      score: 0,
-      trustScore: 0,
-      referredBy,
-      miningStart: null,
-      miningEnd: null,
-      lastUpdate: null,
-      joinedAt: new Date().toISOString()
-    });
-
-    // ✅ Save locally
-    localStorage.setItem("username", username);
-
-    window.location.href = "dashboard.html";
-
-  } catch (e) {
-    alert("❌ Error: " + e.message);
-      }
-    });
-
-    // Login
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("login-email").value;
-      const password = document.getElementById("login-password").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "dashboard.html";
-      } catch (e) {
-        alert(e.message);
-      }
-    });
-
-    // Google Sign In
-    document.getElementById("google-signin").addEventListener("click", async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    const userRef = doc(getFirestore(), "users", user.uid);
-    const docSnap = await getDoc(userRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      // ✅ Check if required fields are set
-      if (userData.username && userData.firstName && userData.lastName) {
-        window.location.href = "dashboard.html";
-      } else {
-        window.location.href = "complete-profile.html";
-      }
-    } else {
-      // 🆕 New user — create minimal record first, then redirect to complete it
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email || "",
-        photoURL: user.photoURL || "",
-        createdAt: new Date().toISOString(),
-        // Empty fields to be filled in complete-profile
-        firstName: "",
-        lastName: "",
-        username: "",
-        referredBy: "",
-        balance: 0,
-        score: 0,
-        trustScore: 0,
-        miningStart: null,
-        miningEnd: null
-      });
-
-      window.location.href = "complete-profile.html";
+    // Capture Referral from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get("ref");
+    if (refCode) {
+      document.getElementById("signup-referral").value = refCode;
     }
 
-  } catch (e) {
-    alert(e.message);
+    // Auto-redirect based on auth and seenWelcome
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists() && userDoc.data().seenWelcome) {
+          window.location.href = 'dashboard.html';
+        } else {
+          window.location.href = 'welcome.html';
+        }
       }
     });
-
-    // Auto-redirect if user already logged in (on page load)
-onAuthStateChanged(auth, (user) => {
-  const seenWelcome = localStorage.getItem("seenWelcome");
-  console.log("User:", user);
-  console.log("Seen Welcome:", seenWelcome);
-
-  if (user) {
-    window.location.href = "dashboard.html";
-  } else if (!seenWelcome) {
-    window.location.href = "welcome.html";
-  }
-});
   </script>
 
   <!-- Toggle Auth -->
@@ -370,20 +245,20 @@ onAuthStateChanged(auth, (user) => {
 
   <!-- PWA -->
   <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(registration => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch(error => {
-          console.log('Service Worker registration failed:', error);
-        });
-    });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
     }
   </script>
-<button id="installBtn" class="install-btn" style="display: none;">
-  📲 Install EANO App
-</button>
+  <button id="installBtn" class="install-btn" style="display: none;">
+    📲 Install EANO App
+  </button>
 </body>
 </html>
