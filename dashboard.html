@@ -5,14 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EANO • Dashboard</title>
 
-  <!-- -------------- STYLES -------------- -->
   <style>
     :root {
       --gold: #ffd700;
       --dark: #111;
       --light: #f5f5f5;
       --top-h: 60px;
-      --side-w: 260px;
     }
     * {
       box-sizing: border-box;
@@ -34,7 +32,6 @@
       z-index: -1;
     }
 
-    /* TOP BAR */
     .topbar {
       position: fixed;
       top: 0;
@@ -54,51 +51,6 @@
       color: var(--gold);
     }
 
-    /* MENU BUTTON */
-    #menu-toggle {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      padding: 8px 12px;
-      background: var(--gold);
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      z-index: 950;
-      cursor: pointer;
-    }
-
-    /* SIDE MENU */
-    #side-menu {
-      position: fixed;
-      top: 0;
-      left: -260px;
-      width: var(--side-w);
-      height: 100%;
-      background: #1c1c1c;
-      color: #fff;
-      padding: 75px 18px 18px;
-      transition: left .3s ease;
-      z-index: 940;
-      overflow-y: auto;
-    }
-    #side-menu.open { left: 0; }
-    #side-menu ul { list-style: none; padding: 0; margin: 0; }
-    #side-menu li { margin: 14px 0; }
-    #side-menu a,
-    #side-menu button {
-      color: var(--gold);
-      background: none;
-      border: none;
-      font: inherit;
-      text-decoration: none;
-      cursor: pointer;
-      width: 100%;
-      text-align: left;
-    }
-
-    /* MINE BUTTON & THEME TOGGLE */
     #mine-btn {
       position: fixed;
       top: 45%;
@@ -133,7 +85,6 @@
       cursor: pointer;
     }
 
-    /* MAIN WRAPPER */
     .wrapper {
       padding-top: calc(var(--top-h) + 20px);
       max-width: 600px;
@@ -162,7 +113,7 @@
       font-size: 1rem;
     }
 
-    .scrollable a.feature {
+    .scrollable a.feature, .scrollable button.feature {
       display: block;
       margin: 12px 10px;
       padding: 12px;
@@ -173,14 +124,27 @@
       text-decoration: none;
       text-align: center;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      border: none;
+      font: inherit;
+      cursor: pointer;
     }
 
-    /* DARK/LIGHT THEME */
+    #leaderboard {
+      margin: 20px 10px;
+      display: none;
+    }
+    #leaderboard.active { display: block; }
+    #leaderboard-list li {
+      padding: 8px;
+      background: rgba(255,255,255,0.1);
+      margin: 4px 0;
+      border-radius: 6px;
+    }
+
     .light body,
     .light .wrapper { color: #111; }
     body.light { color: #111; }
-    body.light .topbar,
-    body.light #side-menu {
+    body.light .topbar {
       background: rgba(255,255,255,.9);
       color: #000;
     }
@@ -193,24 +157,6 @@
   </style>
 </head>
 <body>
-
-<button id="menu-toggle">☰ Menu</button>
-
-<!-- SIDE MENU -->
-<nav id="side-menu">
-  <ul>
-    <li><a href="#" data-nav="home">🏡 Home</a></li>
-    <li><a href="#" data-nav="mainnet">🚀 Mainnet (Soon)</a></li>
-    <li><a href="#" data-nav="leaderboard">🏆 Leaderboard</a></li>
-    <li><a href="#" data-nav="team">👥 Team</a></li>
-    <li><a href="#" data-nav="community">💬 Community</a></li>
-    <li><a href="#" data-nav="profile">👤 Profile</a></li>
-    <li><a href="#" data-nav="author">📝 Author</a></li>
-    <li><a href="#" data-nav="whitepaper">📄 WhitePaper</a></li>
-    <li><a href="https://t.me/eanocoin" target="_blank">🛠 Support Portal</a></li>
-    <li><button id="logout-btn">🚪 Logout</button></li>
-  </ul>
-</nav>
 
 <!-- TOPBAR -->
 <header class="topbar">
@@ -228,34 +174,46 @@
 <button id="theme-toggle">🌗</button>
 
 <main class="wrapper">
-
-  <section id="referral-info" style="text-align:center;margin-bottom:20px;">
+  <section id="profile-info" style="text-align:center;margin-bottom:20px;">
+    <p><strong>Username:</strong> <span id="username">Loading...</span></p>
     <p><strong>Referrals:</strong> <span id="referral-count">0</span></p>
     <p><strong>Mining Level:</strong> <span id="level">🥚 Beginner</span></p>
     <p><strong>Trust Score:</strong> <span id="trust-score">0</span></p>
   </section>
 
-  <div class="scrollable">
-    <div class="announcement" id="announcement">
-      <h3>📢 Announcement</h3>
-      <img id="announceImage" src="" alt="Announcement" style="display:none;" />
-      <p id="announceText">Loading announcement...</p>
-    </div>
-
+  <div class="scrollable" id="main-content">
+    <a href="#" class="feature" data-nav="home">🏡 Home</a>
+    <a href="#" class="feature" data-nav="mainnet">🚀 Mainnet (Soon)</a>
+    <a href="#" class="feature" data-nav="leaderboard">🏆 Leaderboard</a>
+    <a href="#" class="feature" data-nav="team">👥 Team</a>
+    <a href="#" class="feature" data-nav="community">💬 Community</a>
+    <a href="#" class="feature" data-nav="profile">👤 Profile</a>
+    <a href="#" class="feature" data-nav="author">📝 Author</a>
+    <a href="#" class="feature" data-nav="whitepaper">📄 WhitePaper</a>
+    <a href="https://t.me/eanocoin" class="feature" target="_blank">🛠 Support Portal</a>
+    <button id="logout-btn" class="feature">🚪 Logout</button>
     <a href="guide.html" class="feature glow">📘 Guide</a>
     <a href="rewards.html" class="feature glow">🎁 Gifts</a>
     <a href="earnings.html" class="feature glow">💼 Earnings</a>
-
     <div class="coming-box">🎮 EANO-Games – Coming Soon•••</div>
     <div class="coming-box">🛍️ EANO-Marketplace – Coming Soon•••</div>
     <div class="coming-box">🎙 EANO-Studio - Coming Soon•••</div>
     <div class="coming-box">⚙️ Extra Utilities – Coming Soon•••</div>
   </div>
+
+  <section id="leaderboard" style="margin: 20px 10px;">
+    <h3>🏆 Leaderboard</h3>
+    <ul id="leaderboard-list" style="list-style: none; padding: 0;">
+      <li>Loading...</li>
+    </ul>
+  </section>
 </main>
 
-<script>
-const SIDEMENU = document.getElementById('side-menu');
-const TOG_BTN = document.getElementById('menu-toggle');
+<script type="module">
+import { rtdb, db, ref, get, set, update, onValue, query, orderByChild, limitToLast } from './firebase.js';
+import { auth, onAuthStateChanged } from './auth.js';
+import { doc, getDoc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js';
+
 const THEME_BTN = document.getElementById('theme-toggle');
 const MINE_BTN = document.getElementById('mine-btn');
 const BAL_EL = document.getElementById('balance');
@@ -263,19 +221,16 @@ const TIMER_EL = document.getElementById('timer');
 const REF_EL = document.getElementById('referral-count');
 const LEVEL_EL = document.getElementById('level');
 const TRUST_EL = document.getElementById('trust-score');
+const USERNAME_EL = document.getElementById('username');
+const LEADERBOARD_LIST = document.getElementById('leaderboard-list');
 const LOGOUT_BTN = document.getElementById('logout-btn');
+const MAIN_CONTENT = document.getElementById('main-content');
+const LEADERBOARD_SECTION = document.getElementById('leaderboard');
 
 const RATE_PER_H = 0.2;
-const MS_24H = 24*60*60*1000;
+const MS_24H = 24 * 60 * 60 * 1000;
 
-TOG_BTN.onclick = () => SIDEMENU.classList.toggle('open');
-SIDEMENU.addEventListener('click', e => {
-  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
-    SIDEMENU.classList.remove('open');
-    if (e.target.id !== 'logout-btn') alert(e.target.textContent.trim() + " coming soon!");
-  }
-});
-
+// Theme handling
 const applyTheme = (mode) => {
   if (mode === 'light') {
     document.body.classList.add('light');
@@ -292,52 +247,103 @@ THEME_BTN.onclick = () => {
   applyTheme(newMode);
 };
 
-let user = JSON.parse(localStorage.getItem('eanoUser')) || {
+// User data
+let userData = {
   balance: 0,
   lastMine: 0,
   referrals: 0,
-  trust: 0
+  trustScore: 0,
+  username: '',
+  avatar: 'default.png',
+  community: { joined: false },
+  hardcodes: { code: '' }
 };
-function saveUser() {
-  localStorage.setItem('eanoUser', JSON.stringify(user));
-}
 
 function fmt(num) { return num.toFixed(3); }
 
 function getLevel(bal) {
-  if (bal >= 10000) return "🐉 Dragon";
-  if (bal >= 5000) return "🐘 Elephant";
-  if (bal >= 2500) return "🦍 Gorilla";
-  if (bal >= 1200) return "🐻 Bear";
-  if (bal >= 600) return "🐯 Lion";
-  if (bal >= 300) return "🐼 Panda";
-  if (bal >= 150) return "🐺 Wolf";
-  if (bal >= 50) return "🐹 Hamster";
-  if (bal >= 1) return "🐥 Chicken";
-  return "🥚 Beginner";
+  if (bal >= 10000) return '🐉 Dragon';
+  if (bal >= 5000) return '🐘 Elephant';
+  if (bal >= 2500) return '🦍 Gorilla';
+  if (bal >= 1200) return '🐻 Bear';
+  if (bal >= 600) return '🐯 Lion';
+  if (bal >= 300) return '🐼 Panda';
+  if (bal >= 150) return '🐺 Wolf';
+  if (bal >= 50) return '🐹 Hamster';
+  if (bal >= 1) return '🐥 Chicken';
+  return '🥚 Beginner';
 }
 
 function getTrustBadge(score) {
-  if (score >= 10000) return "💎 O.G";
-  if (score >= 5000) return "🟢 Trusted Miner";
-  if (score >= 1000) return "🟡 Reliable Miner";
-  if (score >= 500) return "🔵 New Miner";
-  if (score < 100) return "🔴 Low Trust";
-  return "";
+  if (score >= 10000) return '💎 O.G';
+  if (score >= 5000) return '🟢 Trusted Miner';
+  if (score >= 1000) return '🟡 Reliable Miner';
+  if (score >= 500) return '🔵 New Miner';
+  if (score < 100) return '🔴 Low Trust';
+  return '';
 }
 
-function refreshUI() {
-  BAL_EL.textContent = fmt(user.balance);
-  REF_EL.textContent = user.referrals;
-  LEVEL_EL.textContent = getLevel(user.balance);
-  TRUST_EL.textContent = `${getTrustBadge(user.trust)} (${user.trust})`;
+async function refreshUI() {
+  BAL_EL.textContent = fmt(userData.balance);
+  REF_EL.textContent = userData.referrals;
+  LEVEL_EL.textContent = getLevel(userData.balance);
+  TRUST_EL.textContent = `${getTrustBadge(userData.trustScore)} (${userData.trustScore})`;
+  USERNAME_EL.textContent = userData.username || 'Anonymous';
 }
-refreshUI();
 
+// Fetch user data
+async function fetchUserData(uid) {
+  const userRef = ref(rtdb, `users/${uid}`);
+  const userSnap = await get(userRef);
+  if (userSnap.exists()) {
+    userData = { ...userData, ...userSnap.val() };
+  } else {
+    userData = { balance: 2.0, lastMine: 0, referrals: 0, trustScore: 0 };
+    await set(userRef, userData);
+  }
+
+  const userDoc = await getDoc(doc(db, 'users', uid));
+  if (userDoc.exists()) {
+    userData = { ...userData, ...userDoc.data() };
+  } else {
+    const initialData = {
+      username: '',
+      avatar: 'default.png',
+      community: { joined: false },
+      hardcodes: { code: '' },
+      miningLevel: getLevel(userData.balance)
+    };
+    await setDoc(doc(db, 'users', uid), initialData);
+    userData = { ...userData, ...initialData };
+  }
+  refreshUI();
+}
+
+// Leaderboard
+function updateLeaderboard() {
+  const leaderboardQuery = query(ref(rtdb, 'users'), orderByChild('balance'), limitToLast(10));
+  onValue(leaderboardQuery, async (snapshot) => {
+    LEADERBOARD_LIST.innerHTML = '';
+    const users = [];
+    snapshot.forEach((child) => {
+      const user = child.val();
+      users.push({ id: child.key, ...user });
+    });
+    for (const user of users.reverse()) {
+      const userDoc = await getDoc(doc(db, 'users', user.id));
+      const username = userDoc.exists() ? userDoc.data().username || 'Anonymous' : 'Anonymous';
+      const li = document.createElement('li');
+      li.textContent = `${username} - ${fmt(user.balance)} EANO`;
+      LEADERBOARD_LIST.appendChild(li);
+    }
+  });
+}
+
+// Countdown for mining
 let countdownInt = null;
 function startCountdown() {
   clearInterval(countdownInt);
-  const end = user.lastMine + MS_24H;
+  const end = userData.lastMine + MS_24H;
   const tick = () => {
     const rem = Math.max(0, Math.floor((end - Date.now()) / 1000));
     const h = Math.floor(rem / 3600),
@@ -345,9 +351,9 @@ function startCountdown() {
           s = rem % 60;
     TIMER_EL.textContent = `⏳ ${h}h ${m}m ${s}s`;
     if (rem <= 0) {
-      TIMER_EL.textContent = "✅ Ready";
+      TIMER_EL.textContent = '✅ Ready';
       MINE_BTN.disabled = false;
-      MINE_BTN.textContent = "⛏ Mine";
+      MINE_BTN.textContent = '⛏ Mine';
       clearInterval(countdownInt);
     }
   };
@@ -355,28 +361,73 @@ function startCountdown() {
   countdownInt = setInterval(tick, 1000);
 }
 
-if (Date.now() - user.lastMine < MS_24H) {
-  MINE_BTN.disabled = true;
-  MINE_BTN.textContent = "⏳ Wait";
-  startCountdown();
-}
-MINE_BTN.onclick = () => {
-  if (Date.now() - user.lastMine < MS_24H) return;
+// Mining logic
+MINE_BTN.onclick = async () => {
+  if (Date.now() - userData.lastMine < MS_24H) return;
   const earned = RATE_PER_H * 24;
-  user.balance += earned;
-  user.lastMine = Date.now();
-  saveUser();
+  userData.balance += earned;
+  userData.lastMine = Date.now();
+  const uid = auth.currentUser?.uid;
+  if (uid) {
+    await update(ref(rtdb, `users/${uid}`), {
+      balance: userData.balance,
+      lastMine: userData.lastMine,
+      trustScore: userData.trustScore + 1
+    });
+    await updateDoc(doc(db, 'users', uid), {
+      miningLevel: getLevel(userData.balance)
+    });
+  }
   refreshUI();
   MINE_BTN.disabled = true;
-  MINE_BTN.textContent = "⏳ Wait";
+  MINE_BTN.textContent = '⏳ Wait';
   startCountdown();
   alert(`✅ Mined ${earned.toFixed(3)} EANO!`);
 };
 
-LOGOUT_BTN.onclick = () => {
-  localStorage.removeItem('eanoUser');
-  alert("Logged out (localStorage cleared). Reload page to start fresh.");
-};
+// Auth state handling
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await fetchUserData(user.uid);
+    if (Date.now() - userData.lastMine < MS_24H) {
+      MINE_BTN.disabled = true;
+      MINE_BTN.textContent = '⏳ Wait';
+      startCountdown();
+    }
+  } else {
+    window.location.href = 'index.html';
+  }
+});
+
+// Navigation
+MAIN_CONTENT.addEventListener('click', (e) => {
+  if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+    e.preventDefault();
+    if (e.target.id === 'logout-btn') {
+      auth.signOut().then(() => {
+        localStorage.removeItem('email');
+        localStorage.removeItem('username');
+        localStorage.removeItem('referral');
+        localStorage.removeItem('fingerprint');
+        alert('Logged out successfully.');
+        window.location.href = 'index.html';
+      }).catch((e) => alert('Logout failed: ' + e.message));
+    } else if (e.target.dataset.nav === 'leaderboard') {
+      MAIN_CONTENT.style.display = 'none';
+      LEADERBOARD_SECTION.classList.add('active');
+      updateLeaderboard();
+    } else if (e.target.dataset.nav === 'home') {
+      MAIN_CONTENT.style.display = 'block';
+      LEADERBOARD_SECTION.classList.remove('active');
+    } else if (e.target.dataset.nav === 'profile') {
+      document.getElementById('profile-info').scrollIntoView({ behavior: 'smooth' });
+    } else if (e.target.dataset.nav === 'community') {
+      alert(`Community: ${userData.community.joined ? 'Joined' : 'Not joined'}`);
+    } else if (e.target.dataset.nav && e.target.dataset.nav !== 'support') {
+      alert(e.target.textContent.trim() + ' coming soon!');
+    }
+  }
+});
 </script>
 </body>
 </html>
