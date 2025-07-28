@@ -187,8 +187,8 @@
   <script type="module" src="firebase.js"></script>
   <script type="module" src="auth.js"></script>
   <script type="module">
-    import { auth, onAuthStateChanged } from './auth.js';
     import { db, doc, getDoc } from './firebase.js';
+    import { auth, onAuthStateChanged, loginWithEmail, signUp, signInWithGoogle } from './auth.js';
 
     // Capture Referral from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -197,12 +197,51 @@
       document.getElementById("signup-referral").value = refCode;
     }
 
+    // Sign Up
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const firstname = document.getElementById("signup-firstname").value.trim();
+      const lastname = document.getElementById("signup-lastname").value.trim();
+      const username = document.getElementById("signup-username").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      const referral = document.getElementById("signup-referral").value || '';
+      try {
+        await signUp(email, password, username, referral);
+        window.location.href = 'welcome.html';
+      } catch (e) {
+        alert('❌ Error: ' + e.message);
+      }
+    });
+
+    // Login
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value;
+      const password = document.getElementById("login-password").value;
+      try {
+        await loginWithEmail(email, password);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
+    // Google Sign In
+    document.getElementById("google-signin").addEventListener("click", async () => {
+      try {
+        await signInWithGoogle();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
+
     // Auto-redirect based on auth and seenWelcome
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().seenWelcome) {
-          window.location.href = 'dashboard.html';
+        if (userDoc.exists()) {
+          const seenWelcome = userDoc.data().seenWelcome || false;
+          window.location.href = seenWelcome ? 'dashboard.html' : 'welcome.html';
         } else {
           window.location.href = 'welcome.html';
         }
