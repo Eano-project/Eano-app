@@ -1,191 +1,154 @@
-// scripts/ui.js (EANO - Unified Firebase UI Handler with Firestore + RTDB)
-
-// ✅ Firebase Imports
+// auth.js
+import { app } from './firebase.js';
 import {
   getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-  getDatabase,
-  ref as rtdbRef,
-  get as rtdbGet
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup
+} from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
 import {
   getFirestore,
   doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+  getDoc,
+  setDoc,
+  updateDoc
+} from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js';
 
-import {
-  initializeAppCheck,
-  ReCaptchaV3Provider
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
+// Load FingerprintJS
+const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4').then(FingerprintJS => FingerprintJS.load());
 
-import { app } from "./firebase.js";
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// ✅ App Check (ReCaptcha v3)
-initializeAppCheck(app, {"6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"),
+// Enable App Check
+initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'),
   isTokenAutoRefreshEnabled: true
 });
 
-// ✅ Firebase Instances
-const auth = getAuth(app);
-const db = getDatabase(app);
-const firestore = getFirestore(app);
-
-// 🏅 Trust Badge
-function setTrustBadge(score) {
-  const badgeEl = document.getElementById("trust-badge");
-  let badge = "";
-
-  if (score >= 10000) badge = "💎 O.G";
-  else if (score >= 5000) badge = "🟢 Trusted Miner";
-  else if (score >= 1000) badge = "🟡 Reliable Miner";
-  else if (score >= 500) badge = "🔵 New Miner";
-  else if (score < 100) badge = "🔴 Low Trust";
-  else badge = ""; // 100–499 = no badge
-
-  if (badgeEl) {
-    badgeEl.textContent = badge;
-    badgeEl.title = `TrustScore: ${score}`;
-  }
+async function getFingerprint() {
+  const fp = await fpPromise;
+  const result = await fp.get();
+  return result.visitorId;
 }
 
-// 🐾 Mining Badge (based on balance)
-function setMiningBadge(balance) {
-  const badgeEl = document.getElementById("level-badge");
-  let badge = "";
-
-  if (balance >= 10000) badge = "🐉 Dragon";
-  else if (balance >= 5000) badge = "🐘 Elephant";
-  else if (balance >= 2500) badge = "🦍 Gorilla";
-  else if (balance >= 1200) badge = "🐻 Bear";
-  else if (balance >= 600) badge = "🐯 Lion";
-  else if (balance >= 300) badge = "🐼 Panda";
-  else if (balance >= 150) badge = "🐺 Wolf";
-  else if (balance >= 50) badge = "🐹 Hamster";
-  else badge = "🐥 Chicken";
-
-  if (badgeEl) {
-    badgeEl.textContent = badge;
-    badgeEl.title = `Mining Level: ${balance}`;
-  }
+function storeUserInfoLocally(email, username, referral, fingerprint) {
+  if (email) localStorage.setItem('email', email);
+  if (username) localStorage.setItem('username', username);
+  if (referral) localStorage.setItem('referral', referral);
+  if (fingerprint) localStorage.setItem('fingerprint', fingerprint);
 }
 
-// 👤 Load user data from Firebase
-async function loadUserUI(uid) {
+async function loginWithEmail(email, password) {
   try {
-    // Realtime Database
-    const userSnap = await rtdbGet(rtdbRef(db, `users/${uid}`));
-    const userData = userSnap.exists() ? userSnap.val() : {};
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    throw new Error('Login failed: ' + e.message);
+  }
+}
 
-    const balance = parseFloat(userData.balance || 0);
-    const trustScore = parseInt(userData.trustScore || 0);
+async function signUp(email, password, username, referral) {
+  const fingerprint = await getFingerprint();
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    const userId = result.user.uid;
 
-    // Firestore
-    const docRef = doc(firestore, "users", uid);
-    const docSnap = await getDoc(docRef);
-    const profileData = docSnap.exists() ? docSnap.data() : {};
+    await setDoc(doc(db, 'users', userId), {
+      email,
+      username,
+      referral,
+      fingerprint,
+      createdAt: new Date(),
+      verified: false,
+      seenWelcome: false,
+      balance: 2.0,
+      trustScore: 0,
+      referralCount: 0,
+      miningLevel: '🐥 Chicken',
+      avatar: 'default.png'
+    });
 
-    const username = profileData.username || userData.username || "Unknown";
-    const realname = profileData.realName || "";
-    const avatar = profileData.avatar || "assets/avatars/default-avatar.png";
-
-    // 💰 Balance
-    const balEl = document.getElementById("balance");
-    if (balEl) balEl.textContent = balance.toFixed(3);
-
-    // 👤 Username
-    const userEl = document.getElementById("username");
-    if (userEl) userEl.textContent = username;
-
-    // 🧾 Real Name
-    const nameEl = document.getElementById("realname");
-    if (nameEl) nameEl.textContent = realname;
-
-    // 🖼 Avatar
-    const avatarEl = document.getElementById("user-avatar");
-    if (avatarEl) {
-      avatarEl.src = avatar;
-      avatarEl.alt = username;
+    if (referral) {
+      const referrerRef = doc(db, 'users', referral);
+      const referrerSnap = await getDoc(referrerRef);
+      if (referrerSnap.exists()) {
+        const refData = referrerSnap.data();
+        await updateDoc(referrerRef, {
+          balance: (refData.balance || 0) + 2,
+          trustScore: (refData.trustScore || 0) + 5,
+          referralCount: (refData.referralCount || 0) + 1
+        });
+      }
     }
 
-    // 🏅 Badges
-    setTrustBadge(trustScore);
-    setMiningBadge(balance);
-
-  } catch (err) {
-    console.error("❌ Failed to load user data:", err);
+    storeUserInfoLocally(email, username, referral, fingerprint);
+    return userId;
+  } catch (e) {
+    throw new Error('Sign-up failed: ' + e.message);
   }
 }
 
-// 🌐 Language Selector
-function setupLanguageSelector() {
-  const langSelector = document.getElementById("language-selector");
-  if (!langSelector) return;
+async function handleSocialLogin(result) {
+  const userId = result.user.uid;
+  const email = result.user.email;
+  const fingerprint = await getFingerprint();
 
-  const languages = {
-    en: "English",
-    ig: "Igbo",
-    yo: "Yoruba",
-    ha: "Hausa",
-    pg: "Pidgin"
-  };
+  const userRef = doc(db, 'users', userId);
+  const snap = await getDoc(userRef);
 
-  for (const code in languages) {
-    const opt = document.createElement("option");
-    opt.value = code;
-    opt.textContent = languages[code];
-    langSelector.appendChild(opt);
-  }
-
-  langSelector.value = localStorage.getItem("lang") || "en";
-  langSelector.onchange = () => {
-    localStorage.setItem("lang", langSelector.value);
-    location.reload();
-  };
-}
-
-// 🌓 Theme Toggle
-function setupThemeToggle() {
-  const toggle = document.getElementById("toggle-theme");
-  if (!toggle) return;
-
-  toggle.onclick = () => {
-    document.body.classList.toggle("dark");
-    const isDark = document.body.classList.contains("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  };
-
-  // Load saved theme
-  if (localStorage.getItem("theme") === "light") {
-    document.body.classList.remove("dark");
-  }
-}
-
-// 📲 Sidebar Toggle
-function setupSidebarToggle() {
-  const menuBtn = document.getElementById("menu-btn");
-  const sidebar = document.querySelector(".sidebar");
-  if (menuBtn && sidebar) {
-    menuBtn.onclick = () => {
-      sidebar.classList.toggle("open");
-    };
-  }
-}
-
-// ✅ Auth State Listener
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    loadUserUI(user.uid);
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      email,
+      username: '',
+      referral: '',
+      fingerprint,
+      createdAt: new Date(),
+      verified: false,
+      seenWelcome: false,
+      balance: 2.0,
+      trustScore: 0,
+      referralCount: 0,
+      miningLevel: '🐥 Chicken',
+      avatar: 'default.png'
+    });
+    storeUserInfoLocally(email, '', '', fingerprint);
+    return 'welcome.html';
   } else {
-    console.warn("⚠️ User not signed in.");
+    const data = snap.data();
+    storeUserInfoLocally(data.email, data.username || '', data.referral || '', data.fingerprint || '');
+    return data.seenWelcome ? 'dashboard.html' : 'welcome.html';
   }
-});
+}
 
-// 🌟 Init All UI
-setupLanguageSelector();
-setupThemeToggle();
-setupSidebarToggle();
+async function signInWithGoogle() {
+  try {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return await handleSocialLogin(result);
+  } catch (e) {
+    throw new Error('Google Sign-In failed: ' + e.message);
+  }
+}
+
+async function signInWithFacebook() {
+  try {
+    const provider = new FacebookAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return await handleSocialLogin(result);
+  } catch (e) {
+    throw new Error('Facebook Sign-In failed: ' + e.message);
+  }
+}
+
+export {
+  auth,
+  onAuthStateChanged,
+  loginWithEmail,
+  signUp,
+  signInWithGoogle,
+  signInWithFacebook
+};
