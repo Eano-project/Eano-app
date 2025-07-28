@@ -10,8 +10,6 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <title>EANO PROJECT</title>
-  <script src="https://www.google.com/recaptcha/api.js?render=6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"></script>
-  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>
   <style>
     body {
       margin: 0;
@@ -45,7 +43,8 @@
       cursor: pointer;
       background: gold;
       border: none;
-      margin-top: 20px;
+      margin-top: 15px;
+      width: 250px;
     }
     .footer {
       margin-top: 40px;
@@ -57,30 +56,38 @@
 </head>
 <body>
   <h2>EANO PROJECT</h2>
+
   <button id="google-signin">Sign in with Google</button>
+  <button id="facebook-signin">Sign in with Facebook</button>
+  <button id="github-signin">Sign in with GitHub</button>
+
   <div class="footer">
     &copy; 2025 EANO Project – Built for a decentralized digital future 🌐
   </div>
 
   <script type="module">
+    // Firebase SDK imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import {
       getAuth,
       GoogleAuthProvider,
+      FacebookAuthProvider,
+      GithubAuthProvider,
       signInWithRedirect,
-      getRedirectResult,
+      getRedirectResult
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
     import {
       getFirestore,
       doc,
-      setDoc,
       getDoc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
     import {
       initializeAppCheck,
       ReCaptchaV3Provider
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
       authDomain: "eano-app-3f678.firebaseapp.com",
@@ -96,51 +103,76 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Optional: App Check (kept here if you use it elsewhere)
     initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LcD_4orAAAAADsJDEjNkMuzUTC_ouoRcjMfGKTz'),
-      isTokenAutoRefreshEnabled: true,
+      provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'),
+      isTokenAutoRefreshEnabled: true
     });
 
-    // Generate fingerprint
+    // 🔐 FingerprintJS v4
     let fingerprint = "";
-    FingerprintJS.load().then(fp => fp.get()).then(result => {
-      fingerprint = result.visitorId;
-      sessionStorage.setItem('fingerprint', fingerprint);
-    });
+    import('https://openfpcdn.io/fingerprintjs/v4')
+      .then(FingerprintJS => FingerprintJS.load())
+      .then(fp => fp.get())
+      .then(result => {
+        fingerprint = result.visitorId;
+        sessionStorage.setItem('fingerprint', fingerprint);
+      })
+      .catch(err => {
+        console.error("FingerprintJS failed to load:", err);
+      });
 
-    // Handle redirect result
-    getRedirectResult(auth).then(async (result) => {
-      if (result?.user) {
-        const uid = result.user.uid;
-        const docRef = doc(db, "users", uid);
-        const existingUser = await getDoc(docRef);
+    // 🚀 After redirect sign-in
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          const uid = result.user.uid;
+          const email = result.user.email || null;
+          const docRef = doc(db, "users", uid);
+          const existingUser = await getDoc(docRef);
 
-        if (!existingUser.exists()) {
-          await setDoc(docRef, {
-            uid,
-            email: result.user.email,
-            createdAt: new Date(),
-            fingerprint,
-            balance: 0,
-            referralCode: uid.slice(0, 6),
-          });
+          if (!existingUser.exists()) {
+            await setDoc(docRef, {
+              uid,
+              email,
+              createdAt: new Date(),
+              fingerprint,
+              balance: 0,
+              referralCode: uid.slice(0, 6),
+            });
+          }
+
+          window.location.href = "dashboard.html";
         }
+      })
+      .catch(error => {
+        console.error("Redirect sign-in failed", error);
+        alert("Authentication failed: " + error.message);
+      });
 
-        window.location.href = "dashboard.html";
-      }
-    }).catch(error => {
-      console.error("Redirect sign-in failed", error);
-      alert("Authentication failed. Try again.");
-    });
-
-    // Trigger Google Sign-in
-    document.getElementById("google-signin").addEventListener("click", async () => {
-      const provider = new GoogleAuthProvider();
+    // 🚀 Sign-in methods
+    const signIn = async (provider) => {
       try {
         await signInWithRedirect(auth, provider);
       } catch (err) {
-        alert("Sign-in failed: " + err.message);
+        console.error("Sign-in failed:", err);
+        alert("Sign-in error: " + err.message);
       }
+    };
+
+    document.getElementById("google-signin").addEventListener("click", () => {
+      const provider = new GoogleAuthProvider();
+      signIn(provider);
+    });
+
+    document.getElementById("facebook-signin").addEventListener("click", () => {
+      const provider = new FacebookAuthProvider();
+      signIn(provider);
+    });
+
+    document.getElementById("github-signin").addEventListener("click", () => {
+      const provider = new GithubAuthProvider();
+      signIn(provider);
     });
   </script>
 </body>
