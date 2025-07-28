@@ -2,266 +2,174 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EANO Project • Web3 Mining Redefined</title>
-  <meta name="title" content="EANO Project • Web3 Mining Redefined">
-  <meta name="description" content="Start mining EANO like Pi Network. Build your balance and TrustScore with the EANO Project.">
-  <meta name="author" content="Santus Santorum">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to EANO</title>
 
-  <!-- SEO / Social -->
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://eano-coin.netlify.app/welcome.html" />
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="EANO Project • Web3 Mining Redefined">
-  <meta property="og:description" content="Join EANO and mine crypto daily. Trust, community, and growth.">
-  <meta property="og:image" content="https://eano-coin.netlify.app/assets/logo512.png">
-  <meta name="twitter:image" content="https://eano-coin.netlify.app/assets/logo512.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="EANO Project • Web3 Mining Redefined">
-  <meta name="twitter:description" content="Earn EANO daily like Pi Network. Start mining now.">
-  <meta name="twitter:image" content="https://eano-coin.netlify.app/logo512.png">
+  <!-- SEO -->
+  <meta name="description" content="Join the next-generation digital mining platform. Secure, fast, and user-powered." />
+  <meta name="keywords" content="EANO Coin, digital mining, crypto app, mining platform, web3 miner, secure wallet" />
+  <meta name="author" content="EANO Project Team" />
+  <meta name="robots" content="index, follow" />
 
-  <!-- Icons -->
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-icon-180x180.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000" />
+  <!-- Open Graph for Social Media -->
+  <meta property="og:title" content="EANO Coin – Secure Digital Mining" />
+  <meta property="og:description" content="Mine digital coins with EANO. A next-gen platform for global users." />
+  <meta property="og:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+  <meta property="og:url" content="https://eano-app.netlify.app/" />
+  <meta property="og:type" content="website" />
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"/>
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EANO Coin – Secure Digital Mining" />
+  <meta name="twitter:description" content="Start mining securely with EANO. Instant rewards and global network." />
+  <meta name="twitter:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/assets/icon-192x192.png" />
+  <link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
+  <meta name="theme-color" content="#111010" />
 
   <style>
     body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(45deg, #4b6cb7, #182848);
-      color: #fff;
+      background: linear-gradient(135deg, #0b0c2a, #1a0142);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       text-align: center;
-      flex-direction: column;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
     }
 
-    .auth-container {
-      background: rgba(0,0,0,0.75);
-      max-width: 95%;
-      width: 100%;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    h1.animated-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: fadeSlideIn 1.5s ease-out forwards;
+      opacity: 0;
     }
 
-    @media (min-width: 480px) {
-      .auth-container {
-        max-width: 420px;
-      }
+    @keyframes fadeSlideIn {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
-    h2 { color: gold; margin-bottom: 1rem; }
-    .form-control, .btn-auth, select { width: 100%; margin-bottom: 1rem; padding: 0.75rem; border-radius: 10px; border: none; }
+    .message-box {
+      max-width: 600px;
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: opacity 1s ease, transform 1s ease;
+      transform: translateY(20px);
+    }
 
-    .toggle-link { cursor: pointer; color: #ccc; }
-    .toggle-link:hover { color: #fff; }
+    .message-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-    .light-mode { background-color: #f0f0f0; color: #111; }
-    .light-mode .auth-container { background: rgba(255, 255, 255, 0.95); color: #111; }
+    #skip-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: gold;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    #progress-bar {
+      width: 80%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      position: absolute;
+      bottom: 30px;
+    }
+
+    #progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: gold;
+      transition: width 1s linear;
+    }
   </style>
 </head>
+<body>
 
-<body id="auth-body">
-  <div class="auth-container">
-    <h2>🚀 Welcome to EANO</h2>
+  <button id="skip-btn" onclick="skipIntro()">Skip</button>
 
-    <!-- Language Select -->
-    <select id="lang-select" class="form-control">
-      <option value="en">🌍 English</option>
-      <option value="fr">🇫🇷 French</option>
-      <option value="sw">🇰🇪 Swahili</option>
-      <option value="ig">🇳🇬 Igbo</option>
-      <option value="ha">🇳🇬 Hausa</option>
-      <option value="efik">🇳🇬 Efik</option>
-      <option value="pid">🇳🇬 Pidgin</option>
-      <option value="zh">🇨🇳 中文</option>
-    </select>
+  <h1 class="animated-title">Welcome to <span style="color: gold;">EANO</span></h1>
 
-    <!-- Theme -->
-    <button id="theme-toggle" class="btn-auth">🌗 Toggle Light/Dark</button>
+  <div id="message" class="message-box"></div>
 
-    <!-- Signup -->
-    <form id="signup-form">
-      <input type="text" id="signup-firstname" class="form-control" placeholder="First Name" required />
-      <input type="text" id="signup-lastname" class="form-control" placeholder="Last Name" required />
-      <input type="text" id="signup-username" class="form-control" placeholder="Username" required />
-      <input type="hidden" id="signup-referral" />
-      <input type="email" id="signup-email" class="form-control" placeholder="Email" required />
-      <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
-      <button type="submit" class="btn-auth btn-warning">Sign Up</button>
-    </form>
-
-    <!-- Login -->
-    <form id="login-form" style="display: none;">
-      <input type="email" id="login-email" class="form-control" placeholder="Email" required />
-      <input type="password" id="login-password" class="form-control" placeholder="Password" required />
-      <button type="submit" class="btn-auth btn-success">Login</button>
-      <button type="button" id="google-signin" class="btn-auth btn-light">🔐 Sign in with Google</button>
-      <button type="button" id="facebook-signin" class="btn-auth btn-primary">📘 Continue with Facebook</button>
-    </form>
-
-    <!-- Toggle -->
-    <div class="toggle-link" id="toggle-auth">Already have an account? Login</div>
+  <div id="progress-bar">
+    <div id="progress-bar-fill"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import {
-      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-      GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-    import {
-      getFirestore, doc, setDoc, getDoc
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+  <audio id="welcome-audio" src="ttsMP3.com_VoiceText_2025-7-24_17-16-8.mp3" autoplay></audio>
 
-    const firebaseConfig = {
-      apiKey: "Window Netlify API",
-      authDomain: "eano-miner.firebaseapp.com",
-      projectId: "eano-miner",
-      storageBucket: "eano-miner.appspot.com",
-      messagingSenderId: "50186911438",
-      appId: "1:50186911438:web:85410fccc7c5933d761a9f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const refCode = new URLSearchParams(window.location.search).get("ref");
-    if (refCode) document.getElementById("signup-referral").value = refCode;
-
-    // Sign Up
-    document.getElementById("signup-form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const firstname = signup-firstname.value.trim();
-      const lastname = signup-lastname.value.trim();
-      const username = signup-username.value.trim();
-      const email = signup-email.value.trim();
-      const password = signup-password.value;
-      const referredBy = signup-referral.value || null;
-
-      try {
-        const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCred.user;
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid, firstName: firstname, lastName: lastname, username,
-          email, balance: 0, score: 0, trustScore: 0,
-          referredBy, photoURL: "", joinedAt: new Date().toISOString()
-        });
-        localStorage.setItem("username", username);
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        alert("Error: " + err.message);
-      }
-    });
-
-    // Login
-    document.getElementById("login-form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const email = login-email.value;
-      const password = login-password.value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    // Google
-    google-signin.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, new GoogleAuthProvider());
-        const user = result.user;
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-          await setDoc(docRef, {
-            uid: user.uid, email: user.email || "", photoURL: user.photoURL || "",
-            firstName: "", lastName: "", username: "", trustScore: 0, balance: 0
-          });
-          window.location.href = "complete-profile.html";
-        } else {
-          window.location.href = "dashboard.html";
-        }
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    // Facebook
-    facebook-signin.addEventListener("click", async () => {
-      try {
-        const result = await signInWithPopup(auth, new FacebookAuthProvider());
-        const user = result.user;
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-          await setDoc(docRef, {
-            uid: user.uid, email: user.email || "", photoURL: user.photoURL || "",
-            firstName: "", lastName: "", username: "", trustScore: 0, balance: 0
-          });
-          window.location.href = "complete-profile.html";
-        } else {
-          window.location.href = "dashboard.html";
-        }
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    // Auth toggle
-    toggle-auth.addEventListener("click", () => {
-      const signupForm = signup-form;
-      const loginForm = login-form;
-      if (signupForm.style.display === "none") {
-        signupForm.style.display = "block";
-        loginForm.style.display = "none";
-        toggle-auth.textContent = "Already have an account? Login";
-      } else {
-        signupForm.style.display = "none";
-        loginForm.style.display = "block";
-        toggle-auth.textContent = "Don't have an account? Sign up";
-      }
-    });
-
-    // Theme toggle
-    const themeToggle = document.getElementById("theme-toggle");
-    const body = document.getElementById("auth-body");
-
-    if (localStorage.getItem("theme") === "light") body.classList.add("light-mode");
-
-    themeToggle.addEventListener("click", () => {
-      body.classList.toggle("light-mode");
-      localStorage.setItem("theme", body.classList.contains("light-mode") ? "light" : "dark");
-    });
-
-    // Auto redirect
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        window.location.href = "dashboard.html";
-      }
-    });
-  </script>
-
-  <!-- PWA -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log("PWA ready:", reg.scope))
-          .catch(err => console.log("SW error:", err));
+    const messages = [
+      "Welcome to the EANO Project.",
+      "This is more than just a crypto platform — it's a movement built on trust, fairness, and digital resilience.",
+      "Here, every user earns crypto daily through simple mining and genuine engagement, not expensive hardware.",
+      "You are joining a community designed to reward transparency, loyalty, and participation.",
+      "You'll unlock powerful tools — like your Trust Score and Mining Level, which grow with your activity and integrity.",
+      "Explore our Community Hub, invite teammates, and compete on the Leaderboard to increase your impact.",
+      "Coming soon:",
+      "📈 The EANO Studio to build apps.",
+      "🎮 A gaming portal that pays with EANO.",
+      "🛍️ A Marketplace that runs on real crypto.",
+      "And so much more — all decentralized, all user-first.",
+      "EANO is not just a platform. It’s a future we build together.",
+      "Start mining. Grow your influence. Earn your digital freedom."
+    ];
+
+    const delays = [0, 4, 9, 14, 20, 26, 32, 34, 38, 42, 46, 50, 55]; // seconds
+    const messageBox = document.getElementById("message");
+    const audio = document.getElementById("welcome-audio");
+    const progressFill = document.getElementById("progress-bar-fill");
+
+    // Fallback autoplay for mobile
+    window.addEventListener('load', () => {
+      audio.play().catch(() => {
+        console.warn("Autoplay blocked. User interaction required.");
       });
+    });
+
+    // Show messages in sequence
+    for (let i = 0; i < messages.length; i++) {
+      setTimeout(() => {
+        messageBox.textContent = messages[i];
+        messageBox.classList.remove("show");
+        void messageBox.offsetWidth; // force reflow
+        messageBox.classList.add("show");
+
+        // Update progress bar (approximate)
+        progressFill.style.width = `${Math.round((delays[i] / 60) * 100)}%`;
+      }, delays[i] * 1000);
+    }
+
+    // Final redirect after narration
+    const totalDuration = 60 * 1000;
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, totalDuration + 1000);
+
+    function skipIntro() {
+      audio.pause();
+      window.location.href = "index.html";
     }
   </script>
 </body>
