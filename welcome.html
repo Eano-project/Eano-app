@@ -27,57 +27,64 @@
   <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/assets/icon-192x192.png" />
-  <link rel="shortcut icon" href="/assets/icon-192x192.png" />
   <link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
-  <meta name="theme-color" content="#111010" />
+  <meta name="theme-color" content="#1a2a44" />
 
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      margin: 0;
-      background: linear-gradient(135deg, #0b0c2a, #1a0142);
-      color: white;
       font-family: 'Segoe UI', sans-serif;
+      background: url('eano-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: #fff;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      text-align: center;
-      padding: 20px;
       overflow: hidden;
       position: relative;
     }
 
-    h1.glow-title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #ffd700;
-      text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ff0;
-      animation: glow 2s ease-in-out infinite alternate, fadeSlideIn 1.5s ease-out forwards;
-      opacity: 0;
+    .welcome-container {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 2rem;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
     }
 
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ff0;
-      }
-      to {
-        text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff0;
-      }
+    .welcome-container h1 {
+      color: #d4af37; /* Elegant gold */
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+      letter-spacing: 1px;
     }
 
-    @keyframes fadeSlideIn {
-      0% { opacity: 0; transform: translateY(-30px); }
-      100% { opacity: 1; transform: translateY(0); }
+    .welcome-container p {
+      font-size: 1rem;
+      margin-bottom: 2rem;
+      color: #ccc;
+      line-height: 1.6;
+      padding: 0 10px;
     }
 
     .message-box {
-      max-width: 600px;
-      font-size: 1.2rem;
+      max-width: 100%;
+      font-size: 1.1rem;
+      color: #c0c9d9;
       opacity: 0;
       transition: opacity 1s ease, transform 1s ease;
       transform: translateY(20px);
+      margin-bottom: 2rem;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
     }
 
     .message-box.show {
@@ -85,55 +92,118 @@
       transform: translateY(0);
     }
 
+    select,
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 10px;
+      border: none;
+    }
+
+    .btn-start {
+      background: #d4af37;
+      color: #1a2a44;
+      border: none;
+      padding: 0.75rem 2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-start:hover {
+      background: #c19f32;
+    }
+
     #skip-btn {
       position: absolute;
       top: 20px;
       right: 20px;
-      background: gold;
+      background: #d4af37;
       border: none;
-      color: black;
-      font-weight: bold;
-      padding: 10px 15px;
+      color: #1a2a44;
+      font-weight: 600;
+      padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
       z-index: 10;
+      transition: background 0.3s ease;
     }
 
-    #progress-bar {
-      width: 80%;
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-      overflow: hidden;
-      position: absolute;
-      bottom: 30px;
+    #skip-btn:hover {
+      background: #c19f32;
     }
 
-    #progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: gold;
-      transition: width 1s linear;
+    /* Light mode override */
+    .light-mode {
+      background-color: #f0f0f0 !important;
+      color: #111 !important;
+    }
+
+    .light-mode .welcome-container {
+      background: rgba(255, 255, 255, 0.9);
+      color: #111;
+    }
+
+    .light-mode .btn-start,
+    .light-mode #skip-btn {
+      background: #222;
+      color: #fff;
+    }
+
+    .light-mode select {
+      background: #eee;
+      color: #111;
+    }
+
+    .light-mode .message-box {
+      background: rgba(0, 0, 0, 0.05);
+      color: #444;
+    }
+
+    @media (max-width: 500px) {
+      .welcome-container {
+        padding: 1.5rem;
+      }
     }
   </style>
 </head>
-<body>
-  <button id="skip-btn">Skip</button>
+<body id="welcome-body">
+  <div class="welcome-container">
+    <h1>👋 Welcome to EANO</h1>
+    <p>Your mobile-first crypto experience built for everyday users.</p>
 
-  <h1 class="glow-title">WELCOME TO <span>✨️EANO</span></h1>
+    <!-- 🌍 Language Selector -->
+    <select id="lang-select">
+      <option value="en">🌍 English</option>
+      <option value="fr">🇫🇷 French</option>
+      <option value="sw">🇰🇪 Swahili</option>
+      <option value="ig">🇳🇬 Igbo</option>
+      <option value="ha">🇳🇬 Hausa</option>
+      <option value="efik">🇳🇬 Efik</option>
+      <option value="pid">🇳🇬 Pidgin</option>
+      <option value="zh">🇨🇳 中文</option>
+    </select>
 
-  <div id="message" class="message-box" aria-live="polite"></div>
+    <!-- 🌗 Theme Toggle -->
+    <button id="theme-toggle">🌗 Toggle Light/Dark</button>
 
-  <div id="progress-bar">
-    <div id="progress-bar-fill"></div>
+    <!-- 📜 Message Box -->
+    <div id="message" class="message-box"></div>
+
+    <!-- 🚀 Continue Button -->
+    <button class="btn-start" id="get-started">Get Started</button>
   </div>
+
+  <button id="skip-btn" onclick="skipIntro()">Skip Introduction</button>
 
   <audio id="welcome-audio" src="ttsMP3.com_VoiceText_2025-7-24_17-16-8.mp3" autoplay preload="auto"></audio>
 
-  <script type="module">
-    import { auth, onAuthStateChanged } from './auth.js';
-    import { db, doc, updateDoc } from './firebase.js';
+  <script type="module" src="lang.js"></script>
 
+  <script>
     const messages = [
       "Welcome to the EANO Project.",
       "This is more than just a crypto platform — it's a movement built on trust, fairness, and digital resilience.",
@@ -153,8 +223,6 @@
     const delays = [0, 4, 9, 14, 20, 26, 32, 34, 38, 42, 46, 50, 55]; // seconds
     const messageBox = document.getElementById("message");
     const audio = document.getElementById("welcome-audio");
-    const progressFill = document.getElementById("progress-bar-fill");
-    const skipBtn = document.getElementById("skip-btn");
 
     // Fallback autoplay for mobile
     window.addEventListener('load', () => {
@@ -163,44 +231,50 @@
       });
     });
 
-    // Show messages in sequence
+    // Show each message based on delay
     for (let i = 0; i < messages.length; i++) {
       setTimeout(() => {
         messageBox.textContent = messages[i];
         messageBox.classList.remove("show");
-        void messageBox.offsetWidth; // reflow for animation
+        void messageBox.offsetWidth; // force reflow
         messageBox.classList.add("show");
-        progressFill.style.width = `${Math.round((delays[i] / 60) * 100)}%`;
       }, delays[i] * 1000);
     }
 
-    // Update seenWelcome and redirect
-    async function completeWelcome() {
-      const user = auth.currentUser;
-      if (user) {
-        await updateDoc(doc(db, 'users', user.uid), { seenWelcome: true });
-      }
-      window.location.href = 'dashboard.html';
+    // Redirect to index.html after final message
+    const totalDuration = 60 * 1000; // Approx 60 seconds audio
+    setTimeout(() => {
+      localStorage.setItem("seenWelcome", "true");
+      window.location.href = "index.html";
+    }, totalDuration + 1000); // add buffer
+
+    function skipIntro() {
+      audio.pause();
+      localStorage.setItem("seenWelcome", "true");
+      window.location.href = "index.html";
     }
 
-    // Final redirect after narration
-    const totalDuration = 60 * 1000;
-    setTimeout(() => {
-      completeWelcome();
-    }, totalDuration + 1000);
+    // Theme Toggle
+    const themeToggle = document.getElementById("theme-toggle");
+    const body = document.getElementById("welcome-body");
 
-    // Skip button
-    skipBtn.addEventListener('click', () => {
-      audio.pause();
-      completeWelcome();
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      body.classList.add("light-mode");
+    }
+
+    themeToggle.addEventListener("click", () => {
+      body.classList.toggle("light-mode");
+      const mode = body.classList.contains("light-mode") ? "light" : "dark";
+      localStorage.setItem("theme", mode);
     });
 
-    // Redirect if not authenticated
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = 'index.html';
-      }
+    // Get Started Button
+    document.getElementById("get-started").addEventListener("click", () => {
+      localStorage.setItem("seenWelcome", "true");
+      window.location.href = "index.html";
     });
   </script>
 </body>
-  </html>
+</html>
