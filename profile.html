@@ -1,137 +1,219 @@
-// profile.js
-import { auth, onAuthStateChanged } from './auth.js';
-import { db, doc, getDoc, updateDoc } from './firebase.js';
-import { redeemTrustScoreToEANO } from './redeem.js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - EANO</title>
+  <meta name="description" content="EANO Profile Page - Manage your account, referral, avatar, and settings." />
+  <meta name="keywords" content="EANO Coin, digital mining, crypto app, mining platform, web3 miner, secure wallet" />
+  <meta name="author" content="EANO Project Team" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="EANO Coin – Secure Digital Mining" />
+  <meta property="og:description" content="Mine digital coins with EANO. A next-gen platform for global users." />
+  <meta property="og:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+  <meta property="og:url" content="https://eano-app.netlify.app/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EANO Coin – Secure Digital Mining" />
+  <meta name="twitter:description" content="Start mining securely with EANO. Instant rewards and global network." />
+  <meta name="twitter:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+  <link rel="icon" href="/assets/icon-192x192.png" />
+  <link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#111010" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('eano-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      color: #fff;
+    }
 
-// Debug: Confirm imports
-console.log('profile.js loaded with auth:', auth);
+    .profile-container {
+      max-width: 600px;
+      margin: 80px auto;
+      background: rgba(0, 0, 0, 0.75);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      overflow-y: auto;
+      max-height: 80vh;
+    }
 
-// Load user data on auth state change
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = 'index.html';
-    return;
-  }
+    .profile-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: gold;
+    }
 
-  window.currentUser = user;
-  const userRef = doc(db, 'users', user.uid);
-  const userDoc = await getDoc(userRef);
+    .profile-section {
+      margin-bottom: 20px;
+    }
 
-  if (userDoc.exists()) {
-    const data = userDoc.data();
-    document.getElementById('user-name')?.textContent = data.username || 'N/A';
-    document.getElementById('user-email')?.textContent = data.email || 'N/A';
-    document.getElementById('email').value = data.email || '';
-    document.getElementById('phone').value = data.phone || '';
-    document.getElementById('miningLevel').textContent = data.miningLevel || '🐥 Chicken';
-    document.getElementById('trustScore').textContent = data.trustScore || 0;
-    document.getElementById('balance').textContent = `${data.balance || 0}.000 EANO`;
-    document.getElementById('username').value = data.username || '';
-    document.getElementById('firstName').value = data.firstName || '';
-    document.getElementById('middleName').value = data.middleName || '';
-    document.getElementById('lastName').value = data.lastName || '';
+    .profile-section label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 6px;
+    }
 
-    // Referral Link
-    const referralID = user.uid;
-    const refLink = `https://eano-app.netlify.app/?ref=${referralID}`;
-    document.getElementById('refLink').value = refLink;
-    new QRious({
-      element: document.getElementById('qrCode'),
-      value: refLink,
-      size: 180,
-    });
-  }
-});
+    .profile-section input,
+    .profile-section select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+    }
 
-// Avatar Selection
-window.addEventListener('DOMContentLoaded', () => {
-  const gallery = document.getElementById('avatar-gallery');
-  const preview = document.getElementById('avatarPreview');
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: gold;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
 
-  for (let i = 1; i <= 10; i++) {
-    const avatar = document.createElement('img');
-    avatar.src = `/assets/avatars/avatar${i}.png`;
-    avatar.className = 'avatar-img';
-    avatar.alt = `Avatar ${i}`;
-    avatar.onclick = () => {
-      preview.src = avatar.src;
-      if (auth.currentUser) {
-        updateDoc(doc(db, 'users', auth.currentUser.uid), { avatar: `avatar${i}.png` });
+    .btn:hover {
+      background: #ffd700;
+    }
+
+    .btn.logout {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn.logout:hover {
+      background: #c82333;
+    }
+
+    .section-title {
+      color: #ddd;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #555;
+      padding-bottom: 4px;
+    }
+
+    .info-box {
+      background: #111;
+      padding: 12px;
+      border-radius: 8px;
+      word-break: break-word;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .avatar-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .avatar-gallery img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .share-buttons .btn {
+      margin-right: 5px;
+      margin-bottom: 5px;
+      display: inline-block;
+    }
+
+    @media screen and (max-width: 600px) {
+      .profile-container {
+        margin: 40px 1rem;
+        padding: 1rem;
       }
-    };
-    gallery.appendChild(avatar);
-  }
-});
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-container">
+    <h2>👤 Your EANO Profile</h2>
 
-// Save Phone and Name Changes
-document.getElementById('nameSaveBtn')?.addEventListener('click', async () => {
-  if (auth.currentUser) {
-    const userRef = doc(db, 'users', auth.currentUser.uid);
-    await updateDoc(userRef, {
-      username: document.getElementById('username').value,
-      firstName: document.getElementById('firstName').value,
-      middleName: document.getElementById('middleName').value,
-      lastName: document.getElementById('lastName').value,
-      phone: document.getElementById('phone').value
-    });
-    alert('Changes saved!');
-  }
-});
+    <!-- Avatar Section -->
+    <div class="profile-section">
+      <div class="section-title">Choose Your Avatar</div>
+      <img id="avatarPreview" class="avatar-img" src="/assets/avatars/avatar1.png" alt="Avatar Preview" />
+      <div class="avatar-gallery" id="avatar-gallery"></div>
+    </div>
 
-// Copy Referral Code
-function copyReferral() {
-  const refLink = document.getElementById('refLink');
-  refLink.select();
-  document.execCommand('copy');
-  alert('Referral link copied!');
-}
+    <!-- Personal Information -->
+    <div class="profile-section">
+      <div class="section-title">Personal Information</div>
+      <label for="username">Username</label>
+      <input id="username" type="text" placeholder="Enter your username" />
+      <label for="firstName">First Name</label>
+      <input id="firstName" type="text" placeholder="Enter your first name" />
+      <label for="middleName">Middle Name (Optional)</label>
+      <input id="middleName" type="text" placeholder="Enter your middle name" />
+      <label for="lastName">Last Name</label>
+      <input id="lastName" type="text" placeholder="Enter your last name" />
+      <label for="email">Email</label>
+      <input id="email" type="email" disabled placeholder="Your email" />
+      <label for="phone">Phone Number</label>
+      <input id="phone" type="tel" placeholder="Enter phone number" />
+      <button class="btn" id="nameSaveBtn">📂 Save Changes</button>
+    </div>
 
-// Social Media Sharing
-window.addEventListener('DOMContentLoaded', () => {
-  const shareButtons = document.getElementById('shareButtons');
-  if (auth.currentUser) {
-    const referralID = auth.currentUser.uid;
-    const refLink = `https://eano-app.netlify.app/?ref=${referralID}`;
-    const socialLinks = {
-      whatsapp: `https://wa.me/?text=Join EANO: ${refLink}`,
-      telegram: `https://t.me/share/url?url=${refLink}&text=Join EANO!`,
-      discord: `https://discord.com/channels/@me?message=Join EANO: ${refLink}`,
-      snapchat: `https://www.snapchat.com/scan?attachmentUrl=${refLink}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${refLink}`
-    };
+    <!-- Achievements -->
+    <div class="profile-section">
+      <div class="section-title">🚀 Achievements</div>
+      <div class="info-box"><strong>Mining Level:</strong> <span id="miningLevel">🐥 Chicken</span></div>
+      <div class="info-box"><strong>Trust Score:</strong> <span id="trustScore">0</span></div>
+      <div class="info-box"><strong>Balance:</strong> <span id="balance">0.000 EANO</span></div>
+      <button class="btn" id="redeemBtn">🎁 Redeem TrustScore ➜ EANO</button>
+    </div>
 
-    Object.entries(socialLinks).forEach(([platform, url]) => {
-      const button = document.createElement('a');
-      button.href = url;
-      button.target = '_blank';
-      button.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
-      button.className = 'btn';
-      shareButtons.appendChild(button);
-    });
-  }
-});
+    <!-- Referral Section -->
+    <div class="profile-section">
+      <div class="section-title">📢 Invite & Earn</div>
+      <p>Your Referral Link:</p>
+      <input id="refLink" type="text" readonly />
+      <button class="btn" onclick="copyReferral()">📋 Copy</button>
+      <canvas id="qrCode"></canvas>
+    </div>
 
-// Redeem TrustScore
-document.getElementById('redeemBtn')?.addEventListener('click', () => {
-  if (auth.currentUser) {
-    redeemTrustScoreToEANO(auth.currentUser.uid);
-  }
-});
+    <!-- Social Media Sharing -->
+    <div class="profile-section">
+      <div class="section-title">🌐 Share with Friends</div>
+      <div class="share-buttons" id="shareButtons"></div>
+    </div>
 
-// Logout
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
-  auth.signOut().then(() => {
-    window.location.href = 'index.html';
-  }).catch((error) => {
-    console.error('Logout error:', error);
-  });
-});
+    <!-- Whitepaper -->
+    <div class="profile-section">
+      <div class="section-title">📄 Whitepaper</div>
+      <a href="EANO_WhitePaper.pdf" target="_blank" class="btn">📜 View Whitepaper</a>
+    </div>
 
-// Persist scroll position
-window.addEventListener('beforeunload', () => {
-  localStorage.setItem('profileScroll', window.scrollY);
-});
-window.addEventListener('load', () => {
-  const scrollPos = localStorage.getItem('profileScroll');
-  if (scrollPos) window.scrollTo(0, parseInt(scrollPos));
-});
+    <!-- Community -->
+    <div class="profile-section">
+      <div class="section-title">💬 Community</div>
+      <a href="https://t.me/eanocoin" target="_blank" class="btn">🔗 Join Telegram</a>
+    </div>
+
+    <!-- Logout -->
+    <div class="center">
+      <button class="btn logout" id="logoutBtn">🚪 Logout</button>
+    </div>
+  </div>
+
+  <script type="module" src="profile.js"></script>
+</body>
+</html>
