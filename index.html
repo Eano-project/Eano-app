@@ -1,153 +1,209 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EANO – Next-Gen Global Crypto Ecosystem. Secure, scalable, and accessible for everyone worldwide." />
-  <meta name="theme-color" content="#000000" />
-
-  <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="EANO – Next-Gen Global Crypto Ecosystem" />
-  <meta property="og:description" content="Secure, scalable, and accessible for everyone worldwide." />
-  <meta property="og:image" content="/favicon.png" />
-  <meta property="og:type" content="website" />
-
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="EANO – Next-Gen Global Crypto Ecosystem" />
-  <meta name="twitter:description" content="Secure, scalable, and accessible for everyone worldwide." />
-
-  <title>EANO – Next-Gen Global Crypto Ecosystem</title>
-
-  <!-- Manifest & Favicon -->
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
-
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js"></script>
-
-  <!-- Styles -->
-  <style>
+  <meta name="description" content="EANO Project – Decentralized mining, gaming, music and more." />
+  <meta name="keywords" content="EANO, crypto, mining, decentralized, blockchain, music, games" />
+  <meta name="author" content="EANO Team" />
+  <meta name="theme-color" content="#0b0c2a" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <title>EANO PROJECT</title>  <script src="https://www.google.com/recaptcha/api.js?render=6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"></script>  <script src="https://openfpcdn.io/fingerprintjs/v4"></script>  <style>
+    * { box-sizing: border-box; }
     body {
-      background: linear-gradient(to right, #0d0d2a, #1a0033);
-      color: #fff;
-      font-family: "Segoe UI", sans-serif;
       margin: 0;
-      padding: 0;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0b0c2a, #1a0142);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
-
-    h1 {
-      font-size: 3em;
-      margin-top: 1.2em;
-      color: #fff;
+    h2 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      animation: colorChange 6s infinite alternate;
     }
-
-    .glow {
-      color: gold;
-      text-shadow: 0 0 5px #fff, 0 0 10px gold, 0 0 20px gold;
+    @keyframes colorChange {
+      0% { color: #FFD700; }
+      25% { color: #00BFFF; }
+      50% { color: #FF69B4; }
+      75% { color: #ADFF2F; }
+      100% { color: #FF4500; }
     }
-
-    button {
-      padding: 12px 24px;
-      margin: 10px;
-      background-color: gold;
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 320px;
+      margin-top: 20px;
+    }
+    input, button {
+      padding: 12px;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
-      color: #000;
+      font-size: 1rem;
+    }
+    button {
+      background: gold;
       font-weight: bold;
       cursor: pointer;
-      font-size: 16px;
     }
-
-    button:hover {
-      background-color: #ffd700;
+    .login-section {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-
-    footer {
-      margin-top: 4em;
-      padding: 2em;
-      color: #aaa;
-      font-size: 0.9em;
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      opacity: 0.6;
+      text-align: center;
     }
-
-    .login-options {
-      margin-top: 2em;
-    }
-  </style>
-
-  <!-- Firebase App + Modular SDKs -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+  </style></head>
+<body>
+  <h2>EANO PROJECT</h2>  <form id="signup-form">
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="text" id="referral" placeholder="Referral Code (optional)" />
+    <button type="submit">Log In</button>
+  </form>  <div class="login-section">
+    <button id="google-signin">Sign in with Google</button>
+    <button type="button" class="toggle-link" onclick="toggleMode()">Don't have an account? Sign Up</button>
+  </div>  <div class="footer">
+    &copy; 2025 EANO Project – Built for a decentralized digital future 🌐
+  </div>  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      signInWithPopup, GoogleAuthProvider, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import {
+      getFirestore, doc, setDoc, updateDoc, increment,
+      getDocs, collection, query, where
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCzNpblYEjxZvOtuwao3JakP-FaZAT-Upw",
-      authDomain: "eano-app-3f678.firebaseapp.com",
-      databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
-      projectId: "eano-app-3f678",
-      storageBucket: "eano-app-3f678.appspot.com",
-      messagingSenderId: "11508669348",
-      appId: "1:11508669348:web:9f0c57fae779def15b1fa0",
-      measurementId: "G-497420889"
-    };
+    apiKey: "AIzaSyBNgkWFa0HXk2k0qndOWbtddfzFgkTtQCE",
+    authDomain: "eano-app-3f678.firebaseapp.com",
+    databaseURL: "https://eano-app-3f678-default-rtdb.firebaseio.com",
+    projectId: "eano-app-3f678",
+    storageBucket: "eano-app-3f678.firebasestorage.app",
+    messagingSenderId: "566183355081",
+    appId: "1:566183355081:web:e8d8aa13ba30099392e318",
+    measurementId: "G-GE2V793DCE"
+  };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app);
-
-    // App Check with reCAPTCHA v3 (visible on production)
     initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider("6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"),
+      provider: new ReCaptchaV3Provider('6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1'),
       isTokenAutoRefreshEnabled: true
     });
 
-    // Expose login globally
-    window.signInGoogle = () => {
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let fingerprint = "";
+    FingerprintJS.load().then(fp => fp.get()).then(result => {
+      fingerprint = result.visitorId;
+      sessionStorage.setItem('fingerprint', fingerprint);
+    });
+
+    let isLoginMode = true;
+
+    window.toggleMode = function () {
+      isLoginMode = !isLoginMode;
+      const form = document.getElementById("signup-form");
+      const toggleText = document.querySelector(".toggle-link");
+      const usernameField = document.getElementById("username");
+      const referralField = document.getElementById("referral");
+
+      if (isLoginMode) {
+        usernameField.style.display = "none";
+        referralField.style.display = "none";
+        toggleText.textContent = "Don't have an account? Sign Up";
+        form.querySelector("button").textContent = "Log In";
+      } else {
+        usernameField.style.display = "block";
+        referralField.style.display = "block";
+        toggleText.textContent = "Already have an account? Log In";
+        form.querySelector("button").textContent = "Sign Up";
+      }
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("username").style.display = "none";
+      document.getElementById("referral").style.display = "none";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const referrerUID = urlParams.get('user');
+      if (referrerUID) {
+        document.getElementById('referral').value = referrerUID;
+      }
+    });
+
+    document.getElementById("signup-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const username = document.getElementById("username").value;
+      const referral = document.getElementById("referral").value;
+
+      const token = await grecaptcha.execute('6LcD_4orAAAAADsJDEjNkMuzUTC_ouoRcjMfGKTz', { action: 'submit' });
+
+      try {
+        if (isLoginMode) {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          const uid = cred.user.uid;
+
+          const userData = {
+            uid,
+            email,
+            username,
+            referralCode: uid.slice(0, 6),
+            referredBy: referral || null,
+            createdAt: new Date(),
+            balance: 0,
+            referralCount: 0,
+            fingerprint
+          };
+
+          await setDoc(doc(db, "users", uid), userData);
+
+          if (referral) {
+            const refQuery = query(collection(db, "users"), where("referralCode", "==", referral));
+            const refSnap = await getDocs(refQuery);
+            if (!refSnap.empty) {
+              const refDocId = refSnap.docs[0].id;
+              await updateDoc(doc(db, "users", refDocId), {
+                referralCount: increment(1)
+              });
+            }
+          }
+        }
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    document.getElementById("google-signin").addEventListener("click", async () => {
       const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
-        .then(result => {
-          alert(`Welcome, ${result.user.displayName}`);
-          // Redirect or load dashboard here
-        })
-        .catch(error => alert(error.message));
-    };
-
-    window.signInFacebook = () => {
-      const provider = new FacebookAuthProvider();
-      signInWithPopup(auth, provider)
-        .then(result => {
-          alert(`Welcome, ${result.user.displayName}`);
-        })
-        .catch(error => alert(error.message));
-    };
-  </script>
-</head>
-
-<body>
-  <h1><span class="glow">✨️EANO</span> Coin Mining</h1>
-  <p>Login to begin mining and earning real value in a secure ecosystem.</p>
-
-  <div class="login-options">
-    <button onclick="signInGoogle()">Sign in with Google</button>
-    <button onclick="signInFacebook()">Sign in with Facebook</button>
-  </div>
-
-  <footer>
-    &copy; <span id="year"></span> EANO Project – All rights reserved.<br />
-    Built for a decentralized digital future 🌐
-  </footer>
-
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
-</body>
+      try {
+        await signInWithPopup(auth, provider);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script></body>
 </html>
