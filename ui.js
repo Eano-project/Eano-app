@@ -1,112 +1,191 @@
-// ✅ Update the balance on the dashboard
-export function updateBalanceUI(balance) {
-  const el = document.getElementById("balance");
-  if (el) {
-    el.textContent = balance.toFixed(3);
-    el.classList.add("fade-in");
-  }
-}
+// scripts/ui.js (EANO - Unified Firebase UI Handler with Firestore + RTDB)
 
-// ✅ Update the mining countdown timer
-export function updateTimerUI(remainingSeconds) {
-  const timerEl = document.getElementById("timer");
-  if (timerEl) {
-    const h = Math.floor(remainingSeconds / 3600);
-    const m = Math.floor((remainingSeconds % 3600) / 60);
-    const s = remainingSeconds % 60;
-    timerEl.textContent = `⏳ ${h}h ${m}m ${s}s`;
-  }
-}
+// ✅ Firebase Imports
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-// ✅ Update user email on UI
-export function updateUserEmailUI(email) {
-  const el = document.getElementById("user-email");
-  if (el) {
-    el.textContent = email;
-    el.classList.add("fade-in");
-  }
-}
+import {
+  getDatabase,
+  ref as rtdbRef,
+  get as rtdbGet
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-// ✅ Update referral count on UI
-export function updateReferralCountUI(count) {
-  const el = document.getElementById("referral-count");
-  if (el) {
-    el.textContent = count;
-    el.classList.add("fade-in");
-  }
-}
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-// ✅ Determine mining level from balance
-export function getLevelFromBalance(balance) {
-  if (balance >= 10000) return "🐉 Dragon";
-  if (balance >= 5000) return "🐘 Elephant";
-  if (balance >= 2500) return "🦍 Gorilla";
-  if (balance >= 1200) return "🐻 Bear";
-  if (balance >= 600) return "🐯 Lion";
-  if (balance >= 300) return "🐼 Panda";
-  if (balance >= 150) return "🐺 Wolf";
-  if (balance >= 50)  return "🐹 Hamster";
-  return "🐥 Chicken";
-}
+import {
+  initializeAppCheck,
+  ReCaptchaV3Provider
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
-// ✅ Determine trust badge from trust score
-export function getTrustBadge(score) {
-  if (score >= 10000) return "💎 O.G";
-  if (score >= 5000) return "🟢 Trusted Miner";
-  if (score >= 1000) return "🟡 Reliable Miner";
-  if (score >= 500) return "🔵 New Miner";
-  if (score < 100) return "🔴 Low Trust";
-  return ""; // Between 100–499 gets no badge
-}
+import { app } from "./firebase.js";
 
-// ✅ Show announcement message in box
-export function showAnnouncement(message) {
-  const box = document.getElementById("announcement-box");
-  const msg = document.getElementById("latest-announcement");
-
-  if (box && msg && message) {
-    box.style.display = "block";
-    msg.textContent = message;
-    box.classList.add("fade-in");
-  } else if (box) {
-    box.style.display = "none";
-  }
-}
-
-// ✅ Sidebar Menu Toggle
-document.addEventListener("DOMContentLoaded", () => {
-  const toggleBtn = document.getElementById("menu-toggle");
-  const sidebarMenu = document.getElementById("sidebar-menu");
-
-  if (toggleBtn && sidebarMenu) {
-    toggleBtn.addEventListener("click", () => {
-      sidebarMenu.classList.toggle("open");
-    });
-
-    sidebarMenu.querySelectorAll("a, button").forEach((el) => {
-      el.addEventListener("click", () => {
-        sidebarMenu.classList.remove("open");
-      });
-    });
-  }
+// ✅ App Check (ReCaptcha v3)
+initializeAppCheck(app, {"6LdqPYorAAAAACm7Mld-MQn53dL_96tX8qAaE0k1"),
+  isTokenAutoRefreshEnabled: true
 });
 
-// ✅ Dark/Light Mode Toggle
-document.addEventListener("DOMContentLoaded", () => {
-  const toggle = document.getElementById("dark-toggle");
-  if (toggle) {
-    toggle.addEventListener("click", () => {
-      document.body.classList.toggle("light-mode");
-      document.body.classList.toggle("dark-mode");
-      const isDark = document.body.classList.contains("dark-mode");
-      localStorage.setItem("eanoTheme", isDark ? "dark" : "light");
-    });
+// ✅ Firebase Instances
+const auth = getAuth(app);
+const db = getDatabase(app);
+const firestore = getFirestore(app);
 
-    const savedTheme = localStorage.getItem("eanoTheme");
-    if (savedTheme === "dark") {
-      document.body.classList.add("dark-mode");
-    } else if (savedTheme === "light") {
-      document.body.classList.add("light-mode");
+// 🏅 Trust Badge
+function setTrustBadge(score) {
+  const badgeEl = document.getElementById("trust-badge");
+  let badge = "";
+
+  if (score >= 10000) badge = "💎 O.G";
+  else if (score >= 5000) badge = "🟢 Trusted Miner";
+  else if (score >= 1000) badge = "🟡 Reliable Miner";
+  else if (score >= 500) badge = "🔵 New Miner";
+  else if (score < 100) badge = "🔴 Low Trust";
+  else badge = ""; // 100–499 = no badge
+
+  if (badgeEl) {
+    badgeEl.textContent = badge;
+    badgeEl.title = `TrustScore: ${score}`;
+  }
+}
+
+// 🐾 Mining Badge (based on balance)
+function setMiningBadge(balance) {
+  const badgeEl = document.getElementById("level-badge");
+  let badge = "";
+
+  if (balance >= 10000) badge = "🐉 Dragon";
+  else if (balance >= 5000) badge = "🐘 Elephant";
+  else if (balance >= 2500) badge = "🦍 Gorilla";
+  else if (balance >= 1200) badge = "🐻 Bear";
+  else if (balance >= 600) badge = "🐯 Lion";
+  else if (balance >= 300) badge = "🐼 Panda";
+  else if (balance >= 150) badge = "🐺 Wolf";
+  else if (balance >= 50) badge = "🐹 Hamster";
+  else badge = "🐥 Chicken";
+
+  if (badgeEl) {
+    badgeEl.textContent = badge;
+    badgeEl.title = `Mining Level: ${balance}`;
+  }
+}
+
+// 👤 Load user data from Firebase
+async function loadUserUI(uid) {
+  try {
+    // Realtime Database
+    const userSnap = await rtdbGet(rtdbRef(db, `users/${uid}`));
+    const userData = userSnap.exists() ? userSnap.val() : {};
+
+    const balance = parseFloat(userData.balance || 0);
+    const trustScore = parseInt(userData.trustScore || 0);
+
+    // Firestore
+    const docRef = doc(firestore, "users", uid);
+    const docSnap = await getDoc(docRef);
+    const profileData = docSnap.exists() ? docSnap.data() : {};
+
+    const username = profileData.username || userData.username || "Unknown";
+    const realname = profileData.realName || "";
+    const avatar = profileData.avatar || "assets/avatars/default-avatar.png";
+
+    // 💰 Balance
+    const balEl = document.getElementById("balance");
+    if (balEl) balEl.textContent = balance.toFixed(3);
+
+    // 👤 Username
+    const userEl = document.getElementById("username");
+    if (userEl) userEl.textContent = username;
+
+    // 🧾 Real Name
+    const nameEl = document.getElementById("realname");
+    if (nameEl) nameEl.textContent = realname;
+
+    // 🖼 Avatar
+    const avatarEl = document.getElementById("user-avatar");
+    if (avatarEl) {
+      avatarEl.src = avatar;
+      avatarEl.alt = username;
     }
+
+    // 🏅 Badges
+    setTrustBadge(trustScore);
+    setMiningBadge(balance);
+
+  } catch (err) {
+    console.error("❌ Failed to load user data:", err);
+  }
+}
+
+// 🌐 Language Selector
+function setupLanguageSelector() {
+  const langSelector = document.getElementById("language-selector");
+  if (!langSelector) return;
+
+  const languages = {
+    en: "English",
+    ig: "Igbo",
+    yo: "Yoruba",
+    ha: "Hausa",
+    pg: "Pidgin"
+  };
+
+  for (const code in languages) {
+    const opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = languages[code];
+    langSelector.appendChild(opt);
+  }
+
+  langSelector.value = localStorage.getItem("lang") || "en";
+  langSelector.onchange = () => {
+    localStorage.setItem("lang", langSelector.value);
+    location.reload();
+  };
+}
+
+// 🌓 Theme Toggle
+function setupThemeToggle() {
+  const toggle = document.getElementById("toggle-theme");
+  if (!toggle) return;
+
+  toggle.onclick = () => {
+    document.body.classList.toggle("dark");
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  };
+
+  // Load saved theme
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.remove("dark");
+  }
+}
+
+// 📲 Sidebar Toggle
+function setupSidebarToggle() {
+  const menuBtn = document.getElementById("menu-btn");
+  const sidebar = document.querySelector(".sidebar");
+  if (menuBtn && sidebar) {
+    menuBtn.onclick = () => {
+      sidebar.classList.toggle("open");
+    };
+  }
+}
+
+// ✅ Auth State Listener
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    loadUserUI(user.uid);
+  } else {
+    console.warn("⚠️ User not signed in.");
   }
 });
+
+// 🌟 Init All UI
+setupLanguageSelector();
+setupThemeToggle();
+setupSidebarToggle();
