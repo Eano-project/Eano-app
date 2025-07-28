@@ -27,6 +27,7 @@
   <!-- PWA Manifest & Icons -->
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" href="/assets/icon-192x192.png" />
+  <link rel="shortcut icon" href="/assets/icon-192x192.png" />
   <link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
   <meta name="theme-color" content="#111010" />
 
@@ -111,13 +112,13 @@
 
   <h1 class="animated-title">Welcome to <span style="color: gold;">EANO</span></h1>
 
-  <div id="message" class="message-box"></div>
+  <div id="message" class="message-box" aria-live="polite"></div>
 
   <div id="progress-bar">
     <div id="progress-bar-fill"></div>
   </div>
 
-  <audio id="welcome-audio" src="ttsMP3.com_VoiceText_2025-7-24_17-16-8.mp3" autoplay></audio>
+  <audio id="welcome-audio" src="ttsMP3.com_VoiceText_2025-7-24_17-16-8.mp3" autoplay preload="auto"></audio>
 
   <script>
     const messages = [
@@ -153,7 +154,7 @@
       setTimeout(() => {
         messageBox.textContent = messages[i];
         messageBox.classList.remove("show");
-        void messageBox.offsetWidth; // force reflow
+        void messageBox.offsetWidth; // reflow for animation
         messageBox.classList.add("show");
 
         // Update progress bar (approximate)
