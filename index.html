@@ -49,9 +49,30 @@
   <p id="toggle-link" onclick="toggleAuth()">Already have an account? Login</p>
   <p id="error" class="error"></p>
 
-  <script type="module" src="auth.js"></script>
-  <script type="module">
-    import { signUp, login, signInWithGoogle, auth, db, onAuthStateChanged } from './auth.js';
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js"></script>
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB84-ptrf28a2L9B787V7Qhamm7LhgrxVQ",
+      authDomain: "eano-project.firebaseapp.com",
+      projectId: "eano-project",
+      storageBucket: "eano-project.firebasestorage.app",
+      messagingSenderId: "411501268157",
+      appId: "1:411501268157:web:0b28c24497ab2fb750fbd4",
+      measurementId: "G-P339H0ZQQD"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const analytics = firebase.analytics();
+
+    console.log('Firebase initialized:', { auth, db });
 
     // Toggle Sign-Up/Login
     function toggleAuth() {
@@ -76,14 +97,28 @@
       const password = document.getElementById('signup-password').value;
       const referral = document.getElementById('signup-referral').value || null;
 
-      signUp(email, password, username, referral)
+      console.log('Sign-up attempt:', { email, username, referral });
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          console.log('User created:', userCredential.user.uid);
+          return db.collection('users').doc(userCredential.user.uid).set({
+            username: username,
+            email: email,
+            referral: referral,
+            createdAt: new Date().toISOString(),
+            seenWelcome: false
+          });
+        })
         .then(() => {
+          console.log('User data saved to Firestore');
           document.getElementById('error').textContent = 'Sign-up successful! Redirecting...';
+          alert('Sign-up successful! Redirecting...');
           setTimeout(() => window.location.href = 'welcome.html', 1000);
         })
         .catch((error) => {
-          document.getElementById('error').textContent = 'Error: ' + error.message;
           console.error('Sign-up error:', error);
+          document.getElementById('error').textContent = 'Error: ' + error.message;
+          alert('Error: ' + error.message);
         });
     }
 
@@ -92,41 +127,70 @@
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
 
-      login(email, password)
+      console.log('Login attempt:', { email });
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          console.log('User logged in:', userCredential.user.uid);
+          return db.collection('users').doc(userCredential.user.uid).get();
+        })
         .then((docSnap) => {
           if (docSnap.exists()) {
+            console.log('User data found:', docSnap.data());
             document.getElementById('error').textContent = 'Login successful! Redirecting...';
+            alert('Login successful! Redirecting...');
             setTimeout(() => window.location.href = docSnap.data().seenWelcome ? 'dashboard.html' : 'welcome.html', 1000);
           } else {
+            console.log('No user data found');
             document.getElementById('error').textContent = 'User data not found!';
+            alert('User data not found!');
           }
         })
         .catch((error) => {
-          document.getElementById('error').textContent = 'Error: ' + error.message;
           console.error('Login error:', error);
+          document.getElementById('error').textContent = 'Error: ' + error.message;
+          alert('Error: ' + error.message);
         });
     }
 
     // Google Sign-In
     function signInWithGoogle() {
-      signInWithGoogle()
+      console.log('Google sign-in attempt');
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          console.log('Google user:', result.user.uid);
+          return db.collection('users').doc(result.user.uid).set({
+            username: result.user.displayName || 'GoogleUser',
+            email: result.user.email,
+            referral: null,
+            createdAt: new Date().toISOString(),
+            seenWelcome: false
+          }, { merge: true });
+        })
         .then(() => {
+          console.log('Google user data saved');
           document.getElementById('error').textContent = 'Google sign-in successful! Redirecting...';
+          alert('Google sign-in successful! Redirecting...');
           setTimeout(() => window.location.href = 'welcome.html', 1000);
         })
         .catch((error) => {
-          document.getElementById('error').textContent = 'Error: ' + error.message;
           console.error('Google sign-in error:', error);
+          document.getElementById('error').textContent = 'Error: ' + error.message;
+          alert('Error: ' + error.message);
         });
     }
 
     // Update seenWelcome on auth state change
-    onAuthStateChanged(auth, (user) => {
+    auth.onAuthStateChanged((user) => {
       if (user) {
-        setDoc(doc(db, 'users', user.uid), { seenWelcome: true }, { merge: true })
-          .catch((error) => {
-            console.error('Error updating seenWelcome:', error);
-          });
+        console.log('User state changed:', user.uid);
+        db.collection('users').doc(user.uid).update({
+          seenWelcome: true
+        }).catch((error) => {
+          console.error('Error updating seenWelcome:', error);
+        });
+      } else {
+        console.log('No user logged in');
       }
     });
   </script>
