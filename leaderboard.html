@@ -2,76 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EANO • Leaderboard</title>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#000000" />
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="style.css?v=3" />
-</head>
-<body class="dashboard">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <title>🏆 Leaderboard - EANO</title>
+      <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Join the next-generation digital mining platform. Secure, fast, and user-powered." />
+<meta name="keywords" content="EANO Coin, digital mining, crypto app, mining platform, web3 miner, secure wallet" />
+<meta name="author" content="EANO Project Team" />
+<meta name="robots" content="index, follow" />
 
-  <!-- 🔝 Topbar -->
-  <div class="topbar">
-    <div class="d-flex align-items-center">
-      <strong class="brand">EANO</strong>
-    </div>
-    <div>
-      <span id="balance">0.000</span> EANO
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <select id="lang-select">
-        <option value="en">🌍 English</option>
-        <option value="fr">🇫🇷 French</option>
-        <option value="sw">🇰🇪 Swahili</option>
-        <option value="ig">🇳🇬 Igbo</option>
-        <option value="ha">🇳🇬 Hausa</option>
-        <option value="efik">🇳🇬 Efik</option>
-        <option value="pid">🇳🇬 Pidgin</option>
-        <option value="zh">🇨🇳 中文</option>
-      </select>
-      <button id="dark-toggle">🌗</button>
-      <a href="dashboard.html" class="btn btn-sm btn-secondary">🏠 Back</a>
-    </div>
-  </div>
+<!-- Open Graph -->
+<meta property="og:title" content="EANO Coin – Secure Digital Mining" />
+<meta property="og:description" content="Mine digital coins with EANO. A next-gen platform for global users." />
+<meta property="og:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+<meta property="og:url" content="https://eano-app.netlify.app/" />
+<meta property="og:type" content="website" />
 
-  <!-- ⬅️ Sidebar -->
-  <div class="sidebar">
-    <img src="logo.png" alt="Logo" class="sidebar-logo" />
-    <a href="dashboard.html" class="btn btn-secondary mt-3">Mine</a>
-    <a href="invite.html" class="btn btn-outline-light mt-2">Invite</a>
-    <a href="leaderboard.html" class="btn btn-outline-light mt-2">Leaderboard</a>
-    <a href="settings.html" class="btn btn-outline-light mt-2">Settings</a>
-    <a href="profile.html" class="btn btn-outline-light mt-2">Profile</a>
-  </div>
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="EANO Coin – Secure Digital Mining" />
+<meta name="twitter:description" content="Start mining securely with EANO. Instant rewards and global network." />
+<meta name="twitter:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
 
-  <!-- ➡️ Right Menu -->
-  <div class="menu">
-    <div class="text-center text-white small">
-      <strong>📋 Menu</strong>
-      <hr style="border-color: white;">
-      <p><a href="leaderboard.html" class="text-white text-decoration-none">Leaderboard</a></p>
-      <p><a href="invite.html" class="text-white text-decoration-none">Referrals</a></p>
-      <p><a href="settings.html" class="text-white text-decoration-none">Settings</a></p>
-      <p><a href="profile.html" class="text-white text-decoration-none">Profile</a></p>
-    </div>
-  </div>
+<!-- Icons & Manifest -->
+<link rel="icon" href="/assets/icon-192x192.png" />
+<link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#111010" />
+        <link rel="stylesheet" href="style.css" />
+        </head>
+        <body class="dark-mode">
+          <header class="header">
+              <h1 class="glow">🏆 EANO Leaderboard</h1>
+                </header>
 
-  <!-- 📊 Leaderboard Section -->
-  <div class="main-content fade-in text-dark bg-white rounded">
-    <h3 class="text-center">🏆 EANO Leaderboard</h3>
-    <p class="text-center text-muted small">Top users ranked by referrals, trust, and mining level</p>
-    <ul id="referral-leaderboard" class="list-group mt-4 shadow-sm">
-      <li class="list-group-item text-center text-muted">Loading leaderboard...</li>
-    </ul>
-  </div>
+                  <main class="leaderboard-container">
+                      <section class="leaderboard-list" id="leaderboardList">
+                            <p>Loading top miners...</p>
+                                </section>
+                                  </main>
 
-  <!-- Scripts -->
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="leaderboard.js?v=3"></script>
-  <script type="module" src="lang.js?v=3"></script>
-  <script type="module" src="ui.js?v=3"></script>
-</body>
+                                    <script type="module" src="leaderboard.js"></script>
+                                    </body>
 </html>
