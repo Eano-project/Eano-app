@@ -28,7 +28,7 @@ const fpPromise = import('https://openfpcdn.io/fingerprintjs/v4').then(Fingerpri
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Enable App Check
+// Enable App Check (already initialized in firebase.js, but included for completeness)
 initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider('6LdmTJIrAAAAAJtp-6RfYjaY89myfDU6tZ7pIA-w'),
   isTokenAutoRefreshEnabled: true
@@ -118,7 +118,7 @@ async function handleSocialLogin(result) {
   if (!snap.exists()) {
     await setDoc(userRef, {
       email,
-      username: result.user.displayName || userId.slice(0, 8), // Default username from displayName or UID
+      username: result.user.displayName || userId.slice(0, 8),
       referral: '',
       fingerprint,
       createdAt: new Date(),
@@ -172,44 +172,18 @@ async function signInWithGitHub() {
   }
 }
 
-// Phone Sign-Up (Placeholder - Adjust for OTP flow)
-async function signUpWithPhone(phoneNumber, password, username, referral) {
+// Phone Sign-Up with OTP
+async function signUpWithPhone(phoneNumber, username, referral) {
   const fingerprint = await getFingerprint();
+  setupRecaptcha();
   try {
-    // Note: Firebase phone auth uses OTP; this is a placeholder. Replace with proper flow.
-    const result = await createUserWithEmailAndPassword(auth, phoneNumber, password); // Adjust for phone auth
-    const userId = result.user.uid;
-
-    await setDoc(doc(db, 'users', userId), {
-      phone: phoneNumber,
-      username,
-      referral,
-      fingerprint,
-      createdAt: new Date(),
-      verified: false,
-      seenWelcome: false,
-      balance: 2.0,
-      trustScore: 0,
-      referralCount: 0,
-      miningLevel: '🐥 Chicken',
-      avatar: 'default.png'
-    });
-
-    if (referral) {
-      const referrerRef = doc(db, 'users', referral);
-      const referrerSnap = await getDoc(referrerRef);
-      if (referrerSnap.exists()) {
-        const refData = referrerSnap.data();
-        await updateDoc(referrerRef, {
-          balance: (refData.balance || 0) + 2,
-          trustScore: (refData.trustScore || 0) + 5,
-          referralCount: (refData.referralCount || 0) + 1
-        });
-      }
-    }
-
-    storeUserInfoLocally(null, username, referral, fingerprint);
-    return userId;
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+    verificationId = confirmationResult.verificationId;
+    // OTP verification will be handled separately via verifyPhoneOTP
+    // For now, store temporary data
+    localStorage.setItem('tempSignupData', JSON.stringify({ username, referral, fingerprint, phoneNumber }));
+    alert('OTP sent to ' + phoneNumber + '. Please verify to complete sign-up.');
+    return verificationId;
   } catch (e) {
     throw new Error('Phone sign-up failed: ' + e.message);
   }
@@ -231,12 +205,55 @@ async function loginWithPhone(phoneNumber) {
   }
 }
 
+// Verify OTP for both Sign-Up and Login
 async function verifyPhoneOTP(otp) {
   try {
     const credential = await signInWithCredential(auth.PhoneAuthProvider.credential(verificationId, otp));
-    alert('Phone login successful! Redirecting...');
-    window.location.href = 'dashboard.html';
-    return credential.user.uid;
+    const userId = credential.user.uid;
+
+    // Handle sign-up completion if temp data exists
+    const tempSignupData = JSON.parse(localStorage.getItem('tempSignupData'));
+    if (tempSignupData) {
+      const { username, referral, fingerprint, phoneNumber } = tempSignupData;
+      await setDoc(doc(db, 'users', userId), {
+        phone: phoneNumber,
+        username,
+        referral,
+        fingerprint,
+        createdAt: new Date(),
+        verified: false,
+        seenWelcome: false,
+        balance: 2.0,
+        trustScore: 0,
+        referralCount: 0,
+        miningLevel: '🐥 Chicken',
+        avatar: 'default.png'
+      });
+
+      if (referral) {
+        const referrerRef = doc(db, 'users', referral);
+        const referrerSnap = await getDoc(referrerRef);
+        if (referrerSnap.exists()) {
+          const refData = referrerSnap.data();
+          await updateDoc(referrerRef, {
+            balance: (refData.balance || 0) + 2,
+            trustScore: (refData.trustScore || 0) + 5,
+            referralCount: (refData.referralCount || 0) + 1
+          });
+        }
+      }
+
+      storeUserInfoLocally(null, username, referral, fingerprint);
+      localStorage.removeItem('tempSignupData');
+      alert('Sign-up successful! Redirecting...');
+      window.location.href = 'welcome.html';
+    } else {
+      // Handle login
+      alert('Phone login successful! Redirecting...');
+      window.location.href = 'dashboard.html';
+    }
+
+    return userId;
   } catch (error) {
     throw new Error('OTP verification failed: ' + error.message);
   }
