@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EANO Community</title>
+
+  <!-- Meta & SEO -->
+  <meta name="description" content="Join the next-generation digital mining platform. Secure, fast, and user-powered." />
+  <meta name="keywords" content="EANO Coin, digital mining, crypto app, mining platform, web3 miner, secure wallet" />
+  <meta name="author" content="EANO Project Team" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="EANO Coin – Secure Digital Mining" />
+  <meta property="og:description" content="Mine digital coins with EANO. A next-gen platform for global users." />
+  <meta property="og:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+  <meta property="og:url" content="https://eano-app.netlify.app/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EANO Coin – Secure Digital Mining" />
+  <meta name="twitter:description" content="Start mining securely with EANO. Instant rewards and global network." />
+  <meta name="twitter:image" content="https://eano-app.netlify.app/assets/icon-512x512.png" />
+
+  <!-- App & Assets -->
+  <link rel="icon" href="/assets/icon-192x192.png" />
+  <link rel="apple-touch-icon" href="/assets/icon-512x512.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#111010" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="community.js"></script>
+</head>
+
+<body>
+  <main class="community-container">
+    <h1 class="section-title">🌐 EANO Community</h1>
+    <div class="balance-info">💰 Balance: <span id="userBalance">0 EANO</span></div>
+
+    <!-- POST INPUT -->
+    <section id="postInput" class="card">
+      <h2 class="subsection-title">📝 Share an Update</h2>
+      <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+      <input type="file" id="imageUpload" accept="image/*" multiple />
+      <input type="file" id="videoUpload" accept="video/*" />
+      <button id="submitPost">Post</button>
+    </section>
+
+    <!-- LIVE STREAM PLACEHOLDER -->
+    <section class="card">
+      <h2 class="subsection-title">🎥 EANO Broadcast (Coming Soon)</h2>
+      <div class="video-wrapper" style="text-align: center;">
+        <img src="/assets/live-coming-soon.png" alt="Live Stream Coming Soon" style="max-width: 100%; border-radius: 10px;" />
+        <p class="center-text" style="margin-top: 10px;">
+          Livestreaming will be available soon. Meanwhile, <a href="https://www.youtube.com/@eano-project" target="_blank">subscribe to our YouTube</a> for updates.
+        </p>
+      </div>
+    </section>
+
+    <!-- TELEGRAM FOLLOW SECTION -->
+    <section class="card">
+      <h2 class="subsection-title">📢 Join Our Telegram Channel</h2>
+      <p class="center-text">Follow EANO on Telegram for updates, announcements, and exclusive community events.</p>
+      <div style="text-align: center; margin-top: 10px;">
+        <a href="https://t.me/EANOProject" target="_blank" class="btn-glow">🔗 Join @EANOProject</a>
+      </div>
+    </section>
+
+    <!-- TRENDING POSTS -->
+    <section class="card">
+      <h2 class="subsection-title">🔥 Trending Posts</h2>
+      <div id="postsContainer"></div>
+    </section>
+
+    <!-- TOP ENGAGERS -->
+    <section class="card">
+      <h2 class="subsection-title">🏆 Top Engagers</h2>
+      <ul id="topEngagersList"></ul>
+    </section>
+
+    <!-- REWARDS -->
+    <section class="card">
+      <h2 class="subsection-title">🏱 Rewards</h1>
+      <p class="center-text">Active users are rewarded automatically based on posts and engagement.</p>
+      <button id="runRewardBtn">Run Reward Logic</button>
+    </section>
+  </main>
+</body>
+</html>
