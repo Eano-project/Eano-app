@@ -8,7 +8,10 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   GithubAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  signInWithCredential
 } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js';
 import {
   getFirestore,
@@ -30,6 +33,17 @@ initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider('6LdmTJIrAAAAAJtp-6RfYjaY89myfDU6tZ7pIA-w'),
   isTokenAutoRefreshEnabled: true
 });
+
+let verificationId = null;
+
+function setupRecaptcha() {
+  window.recaptchaVerifier = new RecaptchaVerifier('phone-section', {
+    'size': 'invisible',
+    'callback': (response) => {
+      console.log("reCAPTCHA verified");
+    }
+  }, auth);
+}
 
 async function getFingerprint() {
   const fp = await fpPromise;
@@ -158,11 +172,85 @@ async function signInWithGitHub() {
   }
 }
 
+// Phone Sign-Up (Placeholder - Adjust for OTP flow)
+async function signUpWithPhone(phoneNumber, password, username, referral) {
+  const fingerprint = await getFingerprint();
+  try {
+    // Note: Firebase phone auth uses OTP; this is a placeholder. Replace with proper flow.
+    const result = await createUserWithEmailAndPassword(auth, phoneNumber, password); // Adjust for phone auth
+    const userId = result.user.uid;
+
+    await setDoc(doc(db, 'users', userId), {
+      phone: phoneNumber,
+      username,
+      referral,
+      fingerprint,
+      createdAt: new Date(),
+      verified: false,
+      seenWelcome: false,
+      balance: 2.0,
+      trustScore: 0,
+      referralCount: 0,
+      miningLevel: '🐥 Chicken',
+      avatar: 'default.png'
+    });
+
+    if (referral) {
+      const referrerRef = doc(db, 'users', referral);
+      const referrerSnap = await getDoc(referrerRef);
+      if (referrerSnap.exists()) {
+        const refData = referrerSnap.data();
+        await updateDoc(referrerRef, {
+          balance: (refData.balance || 0) + 2,
+          trustScore: (refData.trustScore || 0) + 5,
+          referralCount: (refData.referralCount || 0) + 1
+        });
+      }
+    }
+
+    storeUserInfoLocally(null, username, referral, fingerprint);
+    return userId;
+  } catch (e) {
+    throw new Error('Phone sign-up failed: ' + e.message);
+  }
+}
+
+// Phone Login
+async function loginWithPhone(phoneNumber) {
+  setupRecaptcha();
+  try {
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier);
+    verificationId = confirmationResult.verificationId;
+    document.getElementById('send-otp').style.display = 'none';
+    document.getElementById('otp').style.display = 'block';
+    document.getElementById('verify-otp').style.display = 'block';
+    alert('OTP sent to ' + phoneNumber);
+    return verificationId;
+  } catch (error) {
+    throw new Error('Failed to send OTP: ' + error.message);
+  }
+}
+
+async function verifyPhoneOTP(otp) {
+  try {
+    const credential = await signInWithCredential(auth.PhoneAuthProvider.credential(verificationId, otp));
+    alert('Phone login successful! Redirecting...');
+    window.location.href = 'dashboard.html';
+    return credential.user.uid;
+  } catch (error) {
+    throw new Error('OTP verification failed: ' + error.message);
+  }
+}
+
+// Export all functions
 export {
   auth,
   onAuthStateChanged,
   loginWithEmail,
   signUp,
+  signUpWithPhone,
+  loginWithPhone,
+  verifyPhoneOTP,
   signInWithGoogle,
   signInWithFacebook,
   signInWithGitHub
