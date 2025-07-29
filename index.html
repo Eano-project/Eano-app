@@ -40,12 +40,11 @@
   <meta property="og:title" content="EANO Project • Web3 Mining Redefined">
   <meta property="og:description" content="Join the EANO Project and mine crypto daily. Built on trust, growth, and decentralization.">
   <meta property="og:image" content="https://eano-coin.netlify.app/logo512.png">
-
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="EANO Project • Web3 Mining Redefined">
   <meta name="twitter:description" content="Join the EANO Project and start earning daily. Just like Pi Network, but better.">
   <meta name="twitter:image" content="https://eano-coin.netlify.app/logo512.png">
-    
+  
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <meta name="theme-color" content="#000000" />
@@ -137,13 +136,22 @@
       color: #111;
     }
 
-    #phone-section {
+    #signup-section, #login-section {
       display: none;
     }
 
-    #fingerprint-section {
-      display: none;
-      margin-top: 1rem;
+    #signup-section.active, #login-section.active {
+      display: block;
+    }
+
+    .auth-method-toggle {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .auth-method-toggle button {
+      flex: 1;
     }
 
     .country-code {
@@ -158,6 +166,10 @@
 
     .country-code datalist {
       width: 100%;
+    }
+
+    #otp, #verify-otp {
+      display: none;
     }
   </style>
 </head>
@@ -180,299 +192,67 @@
     <button id="theme-toggle" class="btn btn-outline-light mt-2">🌗 Toggle Light/Dark</button>
 
     <!-- 📝 Sign-Up Section -->
-    <form id="signup-form">
-      <div id="signup-section" style="display: block;">
-        <input type="text" id="signup-username" class="form-control" placeholder="Username" required />
-        <input type="hidden" id="signup-referral" />
-        <input type="email" id="signup-email" class="form-control" placeholder="Email" />
-        <div class="country-code">
-          <input type="text" id="signup-country-code" class="country-select" list="countries" placeholder="Search Country (e.g., Nigeria +234)" required />
-          <datalist id="countries">
-            <option value="🇦🇫 Afghanistan +93">
-            <option value="🇦🇱 Albania +355">
-            <option value="🇩🇿 Algeria +213">
-            <option value="🇦🇸 American Samoa +1-684">
-            <option value="🇦🇩 Andorra +376">
-            <option value="🇦🇴 Angola +244">
-            <option value="🇦🇮 Anguilla +1-264">
-            <option value="🇦🇶 Antarctica +672">
-            <option value="🇦🇬 Antigua and Barbuda +1-268">
-            <option value="🇦🇷 Argentina +54">
-            <option value="🇦🇲 Armenia +374">
-            <option value="🇦🇼 Aruba +297">
-            <option value="🇦🇺 Australia +61">
-            <option value="🇦🇹 Austria +43">
-            <option value="🇦🇿 Azerbaijan +994">
-            <option value="🇧🇸 Bahamas +1-242">
-            <option value="🇧🇭 Bahrain +973">
-            <option value="🇧🇩 Bangladesh +880">
-            <option value="🇧🇧 Barbados +1-246">
-            <option value="🇧🇾 Belarus +375">
-            <option value="🇧🇪 Belgium +32">
-            <option value="🇧🇿 Belize +501">
-            <option value="🇧🇯 Benin +229">
-            <option value="🇧🇲 Bermuda +1-441">
-            <option value="🇧🇹 Bhutan +975">
-            <option value="🇧🇴 Bolivia +591">
-            <option value="🇧🇦 Bosnia and Herzegovina +387">
-            <option value="🇧🇼 Botswana +267">
-            <option value="🇧🇷 Brazil +55">
-            <option value="🇮🇴 British Indian Ocean Territory +246">
-            <option value="🇻🇬 British Virgin Islands +1-284">
-            <option value="🇧🇳 Brunei +673">
-            <option value="🇧🇬 Bulgaria +359">
-            <option value="🇧🇫 Burkina Faso +226">
-            <option value="🇧🇮 Burundi +257">
-            <option value="🇰🇭 Cambodia +855">
-            <option value="🇨🇲 Cameroon +237">
-            <option value="🇨🇦 Canada +1">
-            <option value="🇨🇻 Cape Verde +238">
-            <option value="🇰🇾 Cayman Islands +1-345">
-            <option value="🇨🇫 Central African Republic +236">
-            <option value="🇹🇩 Chad +235">
-            <option value="🇨🇱 Chile +56">
-            <option value="🇨🇳 China +86">
-            <option value="🇨🇽 Christmas Island +61">
-            <option value="🇨🇨 Cocos Islands +61">
-            <option value="🇨🇴 Colombia +57">
-            <option value="🇰🇲 Comoros +269">
-            <option value="🇨🇬 Congo - Brazzaville +242">
-            <option value="🇨🇩 Congo - Kinshasa +243">
-            <option value="🇨🇰 Cook Islands +682">
-            <option value="🇨🇷 Costa Rica +506">
-            <option value="🇭🇷 Croatia +385">
-            <option value="🇨🇺 Cuba +53">
-            <option value="🇨🇼 Curaçao +599">
-            <option value="🇨🇾 Cyprus +357">
-            <option value="🇨🇿 Czechia +420">
-            <option value="🇩🇰 Denmark +45">
-            <option value="🇩🇯 Djibouti +253">
-            <option value="🇩🇲 Dominica +1-767">
-            <option value="🇩🇴 Dominican Republic +1-809">
-            <option value="🇪🇨 Ecuador +593">
-            <option value="🇪🇬 Egypt +20">
-            <option value="🇸🇻 El Salvador +503">
-            <option value="🇬🇶 Equatorial Guinea +240">
-            <option value="🇪🇷 Eritrea +291">
-            <option value="🇪🇪 Estonia +372">
-            <option value="🇸🇿 Eswatini +268">
-            <option value="🇪🇹 Ethiopia +251">
-            <option value="🇫🇰 Falkland Islands +500">
-            <option value="🇫🇴 Faroe Islands +298">
-            <option value="🇫🇯 Fiji +679">
-            <option value="🇫🇮 Finland +358">
-            <option value="🇫🇷 France +33">
-            <option value="🇬🇫 French Guiana +594">
-            <option value="🇵🇫 French Polynesia +689">
-            <option value="🇬🇦 Gabon +241">
-            <option value="🇬🇲 Gambia +220">
-            <option value="🇬🇪 Georgia +995">
-            <option value="🇩🇪 Germany +49">
-            <option value="🇬🇭 Ghana +233">
-            <option value="🇬🇮 Gibraltar +350">
-            <option value="🇬🇷 Greece +30">
-            <option value="🇬🇱 Greenland +299">
-            <option value="🇬🇩 Grenada +1-473">
-            <option value="🇬🇵 Guadeloupe +590">
-            <option value="🇬🇺 Guam +1-671">
-            <option value="🇬🇹 Guatemala +502">
-            <option value="🇬🇬 Guernsey +44-1481">
-            <option value="🇬🇳 Guinea +224">
-            <option value="🇬🇼 Guinea-Bissau +245">
-            <option value="🇬🇾 Guyana +592">
-            <option value="🇭🇹 Haiti +509">
-            <option value="🇭🇳 Honduras +504">
-            <option value="🇭🇰 Hong Kong +852">
-            <option value="🇭🇺 Hungary +36">
-            <option value="🇮🇸 Iceland +354">
-            <option value="🇮🇳 India +91">
-            <option value="🇮🇩 Indonesia +62">
-            <option value="🇮🇷 Iran +98">
-            <option value="🇮🇶 Iraq +964">
-            <option value="🇮🇪 Ireland +353">
-            <option value="🇮🇲 Isle of Man +44-1624">
-            <option value="🇮🇱 Israel +972">
-            <option value="🇮🇹 Italy +39">
-            <option value="🇯🇲 Jamaica +1-876">
-            <option value="🇯🇵 Japan +81">
-            <option value="🇯🇪 Jersey +44-1534">
-            <option value="🇯🇴 Jordan +962">
-            <option value="🇰🇿 Kazakhstan +7">
-            <option value="🇰🇪 Kenya +254">
-            <option value="🇰🇮 Kiribati +686">
-            <option value="🇽🇰 Kosovo +383">
-            <option value="🇰🇼 Kuwait +965">
-            <option value="🇰🇬 Kyrgyzstan +996">
-            <option value="🇱🇦 Laos +856">
-            <option value="🇱🇻 Latvia +371">
-            <option value="🇱🇧 Lebanon +961">
-            <option value="🇱🇸 Lesotho +266">
-            <option value="🇱🇷 Liberia +231">
-            <option value="🇱🇾 Libya +218">
-            <option value="🇱🇮 Liechtenstein +423">
-            <option value="🇱🇹 Lithuania +370">
-            <option value="🇱🇺 Luxembourg +352">
-            <option value="🇲🇴 Macao +853">
-            <option value="🇲🇰 Macedonia +389">
-            <option value="🇲🇬 Madagascar +261">
-            <option value="🇲🇼 Malawi +265">
-            <option value="🇲🇾 Malaysia +60">
-            <option value="🇲🇻 Maldives +960">
-            <option value="🇲🇱 Mali +223">
-            <option value="🇲🇹 Malta +356">
-            <option value="🇲🇭 Marshall Islands +692">
-            <option value="🇲🇶 Martinique +596">
-            <option value="🇲🇷 Mauritania +222">
-            <option value="🇲🇺 Mauritius +230">
-            <option value="🇾🇹 Mayotte +262">
-            <option value="🇲🇽 Mexico +52">
-            <option value="🇫🇲 Micronesia +691">
-            <option value="🇲🇩 Moldova +373">
-            <option value="🇲🇨 Monaco +377">
-            <option value="🇲🇳 Mongolia +976">
-            <option value="🇲🇪 Montenegro +382">
-            <option value="🇲🇸 Montserrat +1-664">
-            <option value="🇲🇦 Morocco +212">
-            <option value="🇲🇿 Mozambique +258">
-            <option value="🇲🇲 Myanmar +95">
-            <option value="🇳🇦 Namibia +264">
-            <option value="🇳🇷 Nauru +674">
-            <option value="🇳🇵 Nepal +977">
-            <option value="🇳🇱 Netherlands +31">
-            <option value="🇳🇨 New Caledonia +687">
-            <option value="🇳🇿 New Zealand +64">
-            <option value="🇳🇮 Nicaragua +505">
-            <option value="🇳🇪 Niger +227">
-            <option value="🇳🇬 Nigeria +234">
-            <option value="🇳🇺 Niue +683">
-            <option value="🇳🇫 Norfolk Island +672">
-            <option value="🇲🇵 Northern Mariana Islands +1-670">
-            <option value="🇰🇵 North Korea +850">
-            <option value="🇲🇰 North Macedonia +389">
-            <option value="🇳🇴 Norway +47">
-            <option value="🇴🇲 Oman +968">
-            <option value="🇵🇰 Pakistan +92">
-            <option value="🇵🇼 Palau +680">
-            <option value="🇵🇸 Palestine +970">
-            <option value="🇵🇦 Panama +507">
-            <option value="🇵🇬 Papua New Guinea +675">
-            <option value="🇵🇾 Paraguay +595">
-            <option value="🇵🇪 Peru +51">
-            <option value="🇵🇭 Philippines +63">
-            <option value="🇵🇳 Pitcairn +64">
-            <option value="🇵🇱 Poland +48">
-            <option value="🇵🇹 Portugal +351">
-            <option value="🇵🇷 Puerto Rico +1-787">
-            <option value="🇶🇦 Qatar +974">
-            <option value="🇷🇪 Réunion +262">
-            <option value="🇷🇴 Romania +40">
-            <option value="🇷🇺 Russia +7">
-            <option value="🇷🇼 Rwanda +250">
-            <option value="🇸🇭 Saint Helena +290">
-            <option value="🇰🇳 Saint Kitts and Nevis +1-869">
-            <option value="🇱🇨 Saint Lucia +1-758">
-            <option value="🇵🇲 Saint Pierre and Miquelon +508">
-            <option value="🇻🇨 Saint Vincent and the Grenadines +1-784">
-            <option value="🇼🇸 Samoa +685">
-            <option value="🇸🇲 San Marino +378">
-            <option value="🇸🇹 São Tomé and Príncipe +239">
-            <option value="🇸🇦 Saudi Arabia +966">
-            <option value="🇸🇳 Senegal +221">
-            <option value="🇷🇸 Serbia +381">
-            <option value="🇸🇨 Seychelles +248">
-            <option value="🇸🇱 Sierra Leone +232">
-            <option value="🇸🇬 Singapore +65">
-            <option value="🇸🇽 Sint Maarten +1-721">
-            <option value="🇸🇰 Slovakia +421">
-            <option value="🇸🇮 Slovenia +386">
-            <option value="🇸🇧 Solomon Islands +677">
-            <option value="🇸🇴 Somalia +252">
-            <option value="🇿🇦 South Africa +27">
-            <option value="🇬🇸 South Georgia +500">
-            <option value="🇰🇷 South Korea +82">
-            <option value="🇸🇸 South Sudan +211">
-            <option value="🇪🇸 Spain +34">
-            <option value="🇱🇰 Sri Lanka +94">
-            <option value="🇸🇩 Sudan +249">
-            <option value="🇸🇷 Suriname +597">
-            <option value="🇸🇯 Svalbard and Jan Mayen +47">
-            <option value="🇸🇪 Sweden +46">
-            <option value="🇨🇭 Switzerland +41">
-            <option value="🇸🇾 Syria +963">
-            <option value="🇹🇼 Taiwan +886">
-            <option value="🇹🇯 Tajikistan +992">
-            <option value="🇹🇿 Tanzania +255">
-            <option value="🇹🇭 Thailand +66">
-            <option value="🇹🇱 Timor-Leste +670">
-            <option value="🇹🇬 Togo +228">
-            <option value="🇹🇰 Tokelau +690">
-            <option value="🇹🇴 Tonga +676">
-            <option value="🇹🇹 Trinidad and Tobago +1-868">
-            <option value="🇹🇳 Tunisia +216">
-            <option value="🇹🇷 Turkey +90">
-            <option value="🇹🇲 Turkmenistan +993">
-            <option value="🇹🇨 Turks and Caicos Islands +1-649">
-            <option value="🇹🇻 Tuvalu +688">
-            <option value="🇺🇬 Uganda +256">
-            <option value="🇺🇦 Ukraine +380">
-            <option value="🇦🇪 United Arab Emirates +971">
-            <option value="🇬🇧 United Kingdom +44">
-            <option value="🇺🇸 United States +1">
-            <option value="🇺🇾 Uruguay +598">
-            <option value="🇺🇿 Uzbekistan +998">
-            <option value="🇻🇺 Vanuatu +678">
-            <option value="🇻🇦 Vatican City +39-06">
-            <option value="🇻🇪 Venezuela +58">
-            <option value="🇻🇳 Vietnam +84">
-            <option value="🇻🇬 Virgin Islands (British) +1-284">
-            <option value="🇻🇮 Virgin Islands (U.S.) +1-340">
-            <option value="🇼🇫 Wallis and Futuna +681">
-            <option value="🇪🇭 Western Sahara +212">
-            <option value="🇾🇪 Yemen +967">
-            <option value="🇿🇲 Zambia +260">
-            <option value="🇿🇼 Zimbabwe +263">
-          </datalist>
-          <input type="tel" id="signup-phone" class="form-control" placeholder="Phone Number" required />
-        </div>
-        <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
-        <button type="submit" class="btn btn-warning btn-auth">Sign Up</button>
+    <div id="signup-section">
+      <div class="auth-method-toggle">
+        <button type="button" id="signup-email-toggle" class="btn btn-secondary btn-auth">Sign Up with Email</button>
+        <button type="button" id="signup-phone-toggle" class="btn btn-info btn-auth">Sign Up with Phone</button>
       </div>
-    </form>
+      <form id="signup-form">
+        <div id="signup-email" style="display: block;">
+          <input type="text" id="signup-username" class="form-control" placeholder="Username" required />
+          <input type="hidden" id="signup-referral" />
+          <input type="email" id="signup-email-input" class="form-control" placeholder="Email" required />
+          <input type="password" id="signup-password" class="form-control" placeholder="Password" required />
+          <button type="submit" class="btn btn-warning btn-auth">Sign Up</button>
+        </div>
+        <div id="signup-phone" style="display: none;">
+          <input type="text" id="signup-username" class="form-control" placeholder="Username" required />
+          <input type="hidden" id="signup-referral" />
+          <div class="country-code">
+            <input type="text" id="signup-country-code" class="country-select" list="countries" placeholder="Search Country (e.g., Nigeria +234)" required />
+            <input type="tel" id="signup-phone-input" class="form-control" placeholder="Phone Number" required />
+          </div>
+          <button type="button" id="signup-send-otp" class="btn btn-primary btn-auth mt-2">Send OTP</button>
+          <input type="text" id="signup-otp" class="form-control" placeholder="Enter OTP" style="display: none;" required />
+          <button type="button" id="signup-verify-otp" class="btn btn-success btn-auth mt-2" style="display: none;">Verify OTP</button>
+        </div>
+      </form>
+    </div>
 
     <!-- 🔐 Login Section -->
-    <form id="login-form" style="display: none;">
-      <div id="login-section">
-        <div id="login-method-toggle">
-          <button type="button" id="email-login-toggle" class="btn btn-secondary btn-auth mt-2">Email Login</button>
-          <button type="button" id="phone-login-toggle" class="btn btn-info btn-auth mt-2">Phone Login</button>
-          <button type="button" id="google-login-toggle" class="btn btn-light btn-auth mt-2">Google Login</button>
-        </div>
-        <div id="email-login" style="display: none;">
-          <input type="email" id="login-email" class="form-control" placeholder="Email" required />
+    <div id="login-section">
+      <div class="auth-method-toggle">
+        <button type="button" id="login-email-toggle" class="btn btn-secondary btn-auth">Login with Email</button>
+        <button type="button" id="login-phone-toggle" class="btn btn-info btn-auth">Login with Phone</button>
+      </div>
+      <form id="login-form">
+        <div id="login-email" style="display: block;">
+          <input type="email" id="login-email-input" class="form-control" placeholder="Email" required />
           <input type="password" id="login-password" class="form-control" placeholder="Password" required />
           <button type="submit" class="btn btn-success btn-auth">Login</button>
         </div>
-        <div id="phone-section">
+        <div id="login-phone" style="display: none;">
           <div class="country-code">
             <input type="text" id="login-country-code" class="country-select" list="countries" placeholder="Search Country (e.g., Nigeria +234)" required />
-            <input type="tel" id="login-phone" class="form-control" placeholder="Phone Number" required />
+            <input type="tel" id="login-phone-input" class="form-control" placeholder="Phone Number" required />
           </div>
-          <button type="button" id="send-otp" class="btn btn-primary btn-auth mt-2">Send OTP</button>
-          <input type="text" id="otp" class="form-control" placeholder="Enter OTP" style="display: none;" required />
-          <button type="button" id="verify-otp" class="btn btn-success btn-auth mt-2" style="display: none;">Verify OTP</button>
+          <button type="button" id="login-send-otp" class="btn btn-primary btn-auth mt-2">Send OTP</button>
+          <input type="text" id="login-otp" class="form-control" placeholder="Enter OTP" style="display: none;" required />
+          <button type="button" id="login-verify-otp" class="btn btn-success btn-auth mt-2" style="display: none;">Verify OTP</button>
         </div>
-        <div id="google-login" style="display: none;">
-          <button type="button" id="google-signin" class="btn btn-light btn-auth mt-2">🔐 Sign in with Google</button>
-        </div>
-        <div id="fingerprint-section">
-          <button type="button" id="fingerprint-login" class="btn btn-dark btn-auth mt-2">Login with Fingerprint</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
 
     <!-- Toggle -->
     <div class="toggle-link" id="toggle-auth">Already have an account? Login</div>
   </div>
+
+  <!-- Include Countries Datalist -->
+  <template id="countries-template">
+    <datalist id="countries">
+      <!-- Countries will be injected here -->
+    </datalist>
+  </template>
 
   <!-- Scripts -->
   <script type="module" src="firebase.js"></script>
@@ -484,4 +264,4 @@
     📲 Install EANO App
   </button>
 </body>
-  </html>
+</html>
