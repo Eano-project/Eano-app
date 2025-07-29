@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EANO Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: auto;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: sans-serif;
+      overflow-x: hidden;
+    }
+
+    .guide-section {
+      background-color: var(--card-bg);
+      padding: 20px;
+      margin: 12px;
+      border-radius: 16px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+    }
+
+    .guide-section h2 {
+      color: var(--accent);
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .guide-section p {
+      line-height: 1.7;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      background: var(--accent);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-decoration: none;
+      z-index: 10;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .glow {
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 5px var(--accent); }
+      to { box-shadow: 0 0 20px var(--accent); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+  </style>
+</head>
+<body>
+
+<a href="dashboard.html" class="back-btn glow">← Back</a>
+
+<div class="main" style="padding: 20px; max-width: 800px; margin: auto;">
+
+  <div class="guide-section">
+    <h2>🌟 Welcome to EANO</h2>
+    <p>
+      EANO is a decentralized token ecosystem built for mobile-first users. Our mission is to create a fair, accessible, and community-powered environment where users can mine, earn, and grow together using the EANO token as the central asset.
+      <br><br>
+      Mining in EANO is simple, energy-efficient, and community-based — designed to reward real human engagement and activity rather than computing power. Every participant plays a role in the success of the network.
+    </p>
+  </div>
+
+  <div class="guide-section">
+    <h2>⚙️ How EANO Mining Works</h2>
+    <p>
+      • Mining starts when you tap the <strong>Mine 🔵</strong> button — once every 24 hours<br>
+      • Your mining session lasts 24 hours (auto-continues after tapping)<br>
+      • You earn <strong>tokens hourly at a fixed rate while mining</strong><br>
+      • Your balance is synced and secured using Firebase<br>
+      • Mining does not use your device CPU or battery<br>
+      • You cannot stop the mining manually once started
+      <br><br>
+      Make sure to return daily to keep mining consistently. The longer you're active, the more your rewards and TrustScore grow.
+    </p>
+  </div>
+
+  <div class="guide-section">
+    <h2>🎯 TrustScore: Building Reputation</h2>
+    <p>
+      TrustScore is the heart of your credibility in the EANO network. It reflects how active, trustworthy, and supportive you are in the ecosystem. It also determines your eligibility for future features like games, payouts, and even governance.
+      <br><br>
+      <strong>How to increase your TrustScore:</strong><br>
+      • +5 for each referred miner<br>
+      • +2 to +5 for posting or receiving reactions in the community<br>
+      • +10 for verified email and phone (KYC-related)<br>
+      • +10 if you appear in the top leaderboard
+      <br><br>
+      <strong>TrustScore Badge Levels:</strong><br>
+      🔴 <strong>Low Trust</strong>: 300<br>
+      🔵 <strong>New Miner</strong>: 500<br>
+      🟡 <strong>Reliable Miner</strong>: 1000<br>
+      🟢 <strong>Trusted Miner</strong>: 5000<br>
+      💎 <strong>O.G</strong>: 10000+
+      <br><br>
+      The higher your TrustScore, the more priority you’ll have in upcoming features like withdrawals, team rewards, game access, and advanced community roles.
+    </p>
+  </div>
+
+  <div class="guide-section">
+    <h2>💬 Community Engagement</h2>
+    <p>
+      Our community is the engine of EANO. It’s where you can post ideas, share feedback, connect with others, and grow your network. Every comment, reply, or like has value.
+      <br><br>
+      <strong>Community Guidelines:</strong><br>
+      • Be respectful — no hate, spam, or illegal content<br>
+      • Stay on-topic and support newcomers<br>
+      • Post meaningful content (you may get bonus TrustScore)<br>
+      • Accounts with repeated violations may be banned or penalized
+      <br><br>
+      Coming updates will bring comment replies, topic filters, badges, and mod roles — all linked to TrustScore.
+    </p>
+  </div>
+
+  <div class="guide-section">
+    <h2>🎙️ Studio: Future of Creation</h2>
+    <p>
+      One of EANO’s long-term goals is to empower creators through the <strong>Studio</strong> — a space where verified users can upload and earn from voice, audio, or video content using EANO tokens.
+      <br><br>
+      Planned features for Studio:<br>
+      • Submit spoken thoughts, tutorials, or music<br>
+      • Community vote + trust-based earnings<br>
+      • Token tipping and monetization<br>
+      • Podcast-style discovery system<br>
+      • NFT audio ownership (future upgrade)
+      <br><br>
+      This will help creators build visibility, reputation, and earnings — powered by community trust, not algorithms.
+    </p>
+  </div>
+
+  <div class="guide-section">
+    <h2>🚀 What’s Coming Soon</h2>
+    <p>
+      The EANO roadmap includes powerful upgrades:<br><br>
+      • 🏆 <strong>Leaderboard</strong>: Track the top miners and badges<br>
+      • 🎮 <strong>Games</strong>: Earn tokens by playing and competing<br>
+      • 🛍️ <strong>Marketplace</strong>: Buy and sell goods using EANO<br>
+      • 📋 <strong>Daily Tasks</strong>: Complete for bonus EANO<br>
+      • 🤝 <strong>KYC System</strong>: Ensure fairness and prevent abuse<br>
+      • 📱 <strong>Mobile App</strong>: Coming to Android/iOS
+      <br><br>
+      These updates are planned in phases to ensure the system is fair, secure, and scalable.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 EANO • A Decentralized Community-Powered Crypto Network
+</footer>
+
+</body>
+</html>
