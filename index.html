@@ -49,30 +49,9 @@
   <p id="toggle-link" onclick="toggleAuth()">Already have an account? Login</p>
   <p id="error" class="error"></p>
 
-  <!-- Firebase SDKs -->
+  <script type="module" src="auth.js"></script>
   <script type="module">
-    // Import the functions you need from the SDKs
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyB84-ptrf28a2L9B787V7Qhamm7LhgrxVQ",
-      authDomain: "eano-project.firebaseapp.com",
-      projectId: "eano-project",
-      storageBucket: "eano-project.firebasestorage.app",
-      messagingSenderId: "411501268157",
-      appId: "1:411501268157:web:0b28c24497ab2fb750fbd4",
-      measurementId: "G-P339H0ZQQD"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const analytics = getAnalytics(app);
+    import { signUp, login, signInWithGoogle, auth, db, onAuthStateChanged } from './auth.js';
 
     // Toggle Sign-Up/Login
     function toggleAuth() {
@@ -97,23 +76,14 @@
       const password = document.getElementById('signup-password').value;
       const referral = document.getElementById('signup-referral').value || null;
 
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          return setDoc(doc(db, 'users', user.uid), {
-            username: username,
-            email: email,
-            referral: referral,
-            createdAt: new Date().toISOString(),
-            seenWelcome: false
-          });
-        })
+      signUp(email, password, username, referral)
         .then(() => {
           document.getElementById('error').textContent = 'Sign-up successful! Redirecting...';
           setTimeout(() => window.location.href = 'welcome.html', 1000);
         })
         .catch((error) => {
           document.getElementById('error').textContent = 'Error: ' + error.message;
+          console.error('Sign-up error:', error);
         });
     }
 
@@ -122,46 +92,36 @@
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          return getDoc(doc(db, 'users', userCredential.user.uid));
-        })
+      login(email, password)
         .then((docSnap) => {
           if (docSnap.exists()) {
             document.getElementById('error').textContent = 'Login successful! Redirecting...';
             setTimeout(() => window.location.href = docSnap.data().seenWelcome ? 'dashboard.html' : 'welcome.html', 1000);
+          } else {
+            document.getElementById('error').textContent = 'User data not found!';
           }
         })
         .catch((error) => {
           document.getElementById('error').textContent = 'Error: ' + error.message;
+          console.error('Login error:', error);
         });
     }
 
     // Google Sign-In
     function signInWithGoogle() {
-      const provider = new GoogleAuthProvider();
-      signInWithPopup(auth, provider)
-        .then((result) => {
-          const user = result.user;
-          return setDoc(doc(db, 'users', user.uid), {
-            username: user.displayName || 'GoogleUser',
-            email: user.email,
-            referral: null,
-            createdAt: new Date().toISOString(),
-            seenWelcome: false
-          }, { merge: true });
-        })
+      signInWithGoogle()
         .then(() => {
           document.getElementById('error').textContent = 'Google sign-in successful! Redirecting...';
           setTimeout(() => window.location.href = 'welcome.html', 1000);
         })
         .catch((error) => {
           document.getElementById('error').textContent = 'Error: ' + error.message;
+          console.error('Google sign-in error:', error);
         });
     }
 
     // Update seenWelcome on auth state change
-    auth.onAuthStateChanged((user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         setDoc(doc(db, 'users', user.uid), { seenWelcome: true }, { merge: true })
           .catch((error) => {
