@@ -1,21 +1,27 @@
 // ui.js
 import { setLanguage } from './lang.js';
-import {
-  loginWithEmail,
-  signUp,
-  signUpWithPhone,
-  loginWithPhone,
-  verifyPhoneOTP,
-  signInWithGoogle,
-  signInWithFacebook,
-  signInWithGitHub,
-  auth,
-  onAuthStateChanged
-} from './auth.js';
-import { db, doc, getDoc } from './firebase.js';
 
-// Debug: Confirm imports
-console.log('UI.js loaded with functions:', { signInWithGoogle, signInWithFacebook, signInWithGitHub });
+// Initialize Countries in Local Storage (if not already present)
+const countries = [
+  { code: '+234', name: 'Nigeria 🇳🇬' },
+  { code: '+1', name: 'United States 🇺🇸' },
+  { code: '+44', name: 'United Kingdom 🇬🇧' },
+  { code: '+33', name: 'France 🇫🇷' },
+  { code: '+49', name: 'Germany 🇩🇪' },
+  // Add more countries as needed
+];
+if (!localStorage.getItem('countries')) {
+  localStorage.setItem('countries', JSON.stringify(countries));
+}
+
+// Populate Countries Datalist
+const countriesList = JSON.parse(localStorage.getItem('countries') || '[]');
+const datalist = document.getElementById('countries');
+countriesList.forEach(country => {
+  const option = document.createElement('option');
+  option.value = `${country.name} ${country.code}`;
+  datalist.appendChild(option);
+});
 
 // Capture Referral from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -24,17 +30,8 @@ if (refCode) {
   document.getElementById('signup-referral').value = refCode;
 }
 
-// Inject Countries Datalist
-const template = document.getElementById('countries-template');
-fetch('countries.html')
-  .then(response => response.text())
-  .then(html => {
-    template.innerHTML = html;
-  })
-  .catch(error => console.error('Failed to load countries:', error));
-
 // Sign-Up Form
-document.getElementById('signup-form').addEventListener('submit', async (e) => {
+document.getElementById('signup-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const username = document.getElementById('signup-username').value.trim();
   const referral = document.getElementById('signup-referral').value || '';
@@ -42,17 +39,16 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 
   if (document.getElementById('signup-email').style.display === 'block') {
     const email = document.getElementById('signup-email-input').value.trim();
-    try {
-      await signUp(email, password, username, referral);
-      alert('✅ Sign-up successful! Redirecting...');
-      window.location.href = 'welcome.html';
-    } catch (e) {
-      console.error('Sign-up error:', e);
-      alert('❌ Sign-up failed: ' + e.message);
-      document.getElementById('signup-username').value = username;
-      document.getElementById('signup-email-input').value = email;
-      document.getElementById('signup-password').value = password;
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    if (users[email]) {
+      alert('❌ Email already registered!');
+      return;
     }
+    users[email] = { username, password, seenWelcome: false };
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('currentUser', email);
+    alert('✅ Sign-up successful! Redirecting...');
+    window.location.href = 'welcome.html';
   }
 });
 
@@ -61,51 +57,57 @@ const signupOtp = document.getElementById('signup-otp');
 const signupVerifyOtp = document.getElementById('signup-verify-otp');
 
 if (signupSendOtp) {
-  signupSendOtp.addEventListener('click', async () => {
+  signupSendOtp.addEventListener('click', () => {
     const countryCode = document.getElementById('signup-country-code').value.split(' ')[1];
     const phoneNumber = countryCode + document.getElementById('signup-phone-input').value;
     const username = document.getElementById('signup-username').value.trim();
     const referral = document.getElementById('signup-referral').value || '';
-    try {
-      await signUpWithPhone(phoneNumber, username, referral);
-      signupSendOtp.style.display = 'none';
-      signupOtp.style.display = 'block';
-      signupVerifyOtp.style.display = 'block';
-      alert('✅ OTP sent to ' + phoneNumber);
-    } catch (e) {
-      console.error('Phone sign-up error:', e);
-      alert('❌ Failed to send OTP: ' + e.message);
-    }
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Simulate OTP
+    localStorage.setItem('tempSignupData', JSON.stringify({ phoneNumber, username, referral, otp }));
+    signupSendOtp.style.display = 'none';
+    signupOtp.style.display = 'block';
+    signupVerifyOtp.style.display = 'block';
+    alert(`✅ OTP ${otp} sent to ${phoneNumber} (simulated)`);
   });
 }
 
 if (signupVerifyOtp) {
-  signupVerifyOtp.addEventListener('click', async () => {
+  signupVerifyOtp.addEventListener('click', () => {
     const otp = document.getElementById('signup-otp').value;
-    try {
-      await verifyPhoneOTP(otp, true);
-    } catch (e) {
-      console.error('OTP verification error:', e);
-      alert('❌ OTP verification failed: ' + e.message);
+    const tempData = JSON.parse(localStorage.getItem('tempSignupData') || '{}');
+    if (tempData.otp === otp) {
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      const { phoneNumber, username, referral } = tempData;
+      if (!users[phoneNumber]) {
+        users[phoneNumber] = { username, password: 'simulated', seenWelcome: false };
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem('currentUser', phoneNumber);
+        localStorage.removeItem('tempSignupData');
+        alert('✅ Sign-up successful! Redirecting...');
+        window.location.href = 'welcome.html';
+      } else {
+        alert('❌ Phone number already registered!');
+      }
+    } else {
+      alert('❌ Invalid OTP!');
     }
   });
 }
 
 // Login Form
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('login-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email-input').value;
   const password = document.getElementById('login-password').value;
-  localStorage.setItem('login-email', email);
-  localStorage.setItem('login-password', password);
-  try {
-    await loginWithEmail(email, password);
-    // Redirect handled by onAuthStateChanged
-  } catch (e) {
-    console.error('Login error:', e);
-    alert('❌ Login failed: ' + e.message);
-    document.getElementById('login-email-input').value = email;
-    document.getElementById('login-password').value = password;
+  const users = JSON.parse(localStorage.getItem('users') || '{}');
+  if (users[email] && users[email].password === password) {
+    localStorage.setItem('currentUser', email);
+    localStorage.setItem('login-email', email);
+    localStorage.setItem('login-password', password);
+    alert('✅ Login successful! Redirecting...');
+    window.location.href = users[email].seenWelcome ? 'dashboard.html' : 'welcome.html';
+  } else {
+    alert('❌ Invalid email or password!');
   }
 });
 
@@ -114,95 +116,43 @@ const loginOtp = document.getElementById('login-otp');
 const loginVerifyOtp = document.getElementById('login-verify-otp');
 
 if (loginSendOtp) {
-  loginSendOtp.addEventListener('click', async () => {
+  loginSendOtp.addEventListener('click', () => {
     const countryCode = document.getElementById('login-country-code').value.split(' ')[1];
     const phoneNumber = countryCode + document.getElementById('login-phone-input').value;
-    try {
-      await loginWithPhone(phoneNumber);
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+    if (users[phoneNumber]) {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // Simulate OTP
+      localStorage.setItem('tempLoginData', JSON.stringify({ phoneNumber, otp }));
       loginSendOtp.style.display = 'none';
       loginOtp.style.display = 'block';
       loginVerifyOtp.style.display = 'block';
-      alert('✅ OTP sent to ' + phoneNumber);
-    } catch (e) {
-      console.error('Phone login error:', e);
-      alert('❌ Failed to send OTP: ' + e.message);
+      alert(`✅ OTP ${otp} sent to ${phoneNumber} (simulated)`);
+    } else {
+      alert('❌ Phone number not registered!');
     }
   });
 }
 
 if (loginVerifyOtp) {
-  loginVerifyOtp.addEventListener('click', async () => {
+  loginVerifyOtp.addEventListener('click', () => {
     const otp = document.getElementById('login-otp').value;
-    try {
-      await verifyPhoneOTP(otp, false);
-    } catch (e) {
-      console.error('OTP verification error:', e);
-      alert('❌ OTP verification failed: ' + e.message);
+    const tempData = JSON.parse(localStorage.getItem('tempLoginData') || '{}');
+    if (tempData.otp === otp) {
+      const users = JSON.parse(localStorage.getItem('users') || '{}');
+      const { phoneNumber } = tempData;
+      if (users[phoneNumber]) {
+        localStorage.setItem('currentUser', phoneNumber);
+        localStorage.setItem('login-email', phoneNumber); // Use phone as key
+        localStorage.setItem('login-password', users[phoneNumber].password);
+        localStorage.removeItem('tempLoginData');
+        alert('✅ Login successful! Redirecting...');
+        window.location.href = users[phoneNumber].seenWelcome ? 'dashboard.html' : 'welcome.html';
+      }
+    } else {
+      alert('❌ Invalid OTP!');
     }
   });
 }
-
-// Social Sign-In
-document.getElementById('google-signin')?.addEventListener('click', async () => {
-  console.log('Google Sign-In clicked');
-  try {
-    const redirectUrl = await signInWithGoogle();
-    window.location.href = redirectUrl;
-  } catch (e) {
-    console.error('Google Sign-In error:', e);
-    alert('❌ Google Sign-In failed: ' + e.message);
-  }
-});
-
-document.getElementById('facebook-signin')?.addEventListener('click', async () => {
-  console.log('Facebook Sign-In clicked');
-  try {
-    const redirectUrl = await signInWithFacebook();
-    window.location.href = redirectUrl;
-  } catch (e) {
-    console.error('Facebook Sign-In error:', e);
-    alert('❌ Facebook Sign-In failed: ' + e.message);
-  }
-});
-
-document.getElementById('github-signin')?.addEventListener('click', async () => {
-  console.log('GitHub Sign-In clicked');
-  try {
-    const redirectUrl = await signInWithGitHub();
-    window.location.href = redirectUrl;
-  } catch (e) {
-    console.error('GitHub Sign-In error:', e);
-    alert('❌ GitHub Sign-In failed: ' + e.message);
-  }
-});
-
-// Auto-redirect based on auth and seenWelcome
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        if (data.seenWelcome) {
-          window.location.href = 'dashboard.html';
-        } else {
-          window.location.href = 'welcome.html';
-        }
-      }
-    } catch (e) {
-      console.error('Firestore error:', e);
-      window.location.href = 'welcome.html'; // Fallback
-    }
-  }
-});
-
-// Persist login form inputs on page load
-window.addEventListener('load', () => {
-  const savedEmail = localStorage.getItem('login-email');
-  const savedPassword = localStorage.getItem('login-password');
-  if (savedEmail) document.getElementById('login-email-input').value = savedEmail;
-  if (savedPassword) document.getElementById('login-password').value = savedPassword;
-});
 
 // Toggle Auth
 const toggleLink = document.getElementById('toggle-auth');
@@ -210,7 +160,7 @@ const signupSection = document.getElementById('signup-section');
 const loginSection = document.getElementById('login-section');
 
 if (toggleLink) {
-  signupSection.classList.add('active'); // Show sign-up by default
+  signupSection.classList.add('active');
   toggleLink.addEventListener('click', () => {
     if (signupSection.classList.contains('active')) {
       signupSection.classList.remove('active');
@@ -271,7 +221,7 @@ const signupEmail = document.getElementById('signup-email');
 const signupPhone = document.getElementById('signup-phone');
 
 if (signupEmailToggle && signupPhoneToggle) {
-  signupEmail.style.display = 'block'; // Default to email
+  signupEmail.style.display = 'block';
   signupEmailToggle.addEventListener('click', () => {
     signupEmail.style.display = 'block';
     signupPhone.style.display = 'none';
@@ -289,7 +239,7 @@ const loginEmail = document.getElementById('login-email');
 const loginPhone = document.getElementById('login-phone');
 
 if (loginEmailToggle && loginPhoneToggle) {
-  loginEmail.style.display = 'block'; // Default to email
+  loginEmail.style.display = 'block';
   loginEmailToggle.addEventListener('click', () => {
     loginEmail.style.display = 'block';
     loginPhone.style.display = 'none';
@@ -298,4 +248,4 @@ if (loginEmailToggle && loginPhoneToggle) {
     loginEmail.style.display = 'none';
     loginPhone.style.display = 'block';
   });
-                                    }
+}
