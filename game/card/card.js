@@ -33,6 +33,19 @@ function shuffle(arr) {
   return arr;
 }
 
+function renderCard(card, container, isHidden = false) {
+  const cardDiv = document.createElement("div");
+  cardDiv.classList.add("card");
+
+  if (isHidden) {
+    cardDiv.innerHTML = `<img src="game/assets/eano-card-back.png" alt="Hidden Card" width="60">`;
+  } else {
+    cardDiv.innerHTML = `<img src="game/assets/eano-card-img.png" alt="${card}" width="60">`;
+  }
+
+  container.appendChild(cardDiv);
+}
+
 function renderHand(handEl, cards, hide = false) {
   handEl.innerHTML = "";
   cards.forEach((card, index) => {
