@@ -1,26 +1,94 @@
 /* card.css - EANO Cards Game Styling */
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
 
-body { margin: 0; font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle, #111 40%, #000); color: #fff; overflow-x: hidden; }
+#start-screen {
+  text-align: center;
+}
 
-header { text-align: center; padding: 1rem; background: #111; font-size: 1.4rem; font-weight: bold; color: #fbd206; border-bottom: 1px solid #333; }
+#start-screen button {
+  padding: 12px 24px;
+  background: #00ffcc;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-#game-area { display: flex; flex-direction: column; align-items: center; padding: 1rem; }
+#game-area {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px;
+  background: #111;
+  border-radius: 10px;
+  box-shadow: 0 0 15px #00ffcc;
+}
 
-.card-deck, .player-hand, .status-display { margin: 1rem 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+.hand {
+  margin: 10px 0;
+  text-align: center;
+}
 
-.card { width: 70px; height: 100px; background: url('eano-card-back.png') no-repeat center/cover; border-radius: 10px; box-shadow: 0 0 10px #fbd20666; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; color: #fff; cursor: pointer; position: relative; transition: transform 0.2s; }
+.card-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
 
-.card:hover { transform: scale(1.1); }
+.card {
+  width: 60px;
+  height: 90px;
+  background: white;
+  color: black;
+  border-radius: 5px;
+  text-align: center;
+  line-height: 90px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-.card[data-type="network-drain"]::after { content: "Network Drain"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #fbd206; }
+.card-back {
+  width: 60px;
+  height: 90px;
+  background: url("assets/eano-card-back.png") no-repeat center;
+  background-size: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px auto;
+}
 
-.card[data-type="trust-pause"]::after { content: "Trust Pause"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #fbd206; }
+.center-area {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 20px 0;
+}
 
-.card.core::before { content: "Core"; position: absolute; top: 4px; left: 4px; font-size: 0.8rem; color: #00bfff; }
+.card-slot {
+  width: 60px;
+  height: 90px;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+}
 
-.card.block::before { content: "Block"; position: absolute; top: 4px; left: 4px; font-size: 0.8rem; color: #00ff88; }
-
-.status-display { font-size: 1rem; color: #ccc; min-height: 40px; margin-top: 2rem; }
-
-footer { text-align: center; padding: 1rem; font-size: 0.8rem; color: #666; border-top: 1px solid #333; margin-top: 2rem; }
-
+#log {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #ff0;
+}
