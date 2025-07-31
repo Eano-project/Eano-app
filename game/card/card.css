@@ -1,0 +1,26 @@
+/* card.css - EANO Cards Game Styling */
+
+body { margin: 0; font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle, #111 40%, #000); color: #fff; overflow-x: hidden; }
+
+header { text-align: center; padding: 1rem; background: #111; font-size: 1.4rem; font-weight: bold; color: #fbd206; border-bottom: 1px solid #333; }
+
+#game-area { display: flex; flex-direction: column; align-items: center; padding: 1rem; }
+
+.card-deck, .player-hand, .status-display { margin: 1rem 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+
+.card { width: 70px; height: 100px; background: url('eano-card-back.png') no-repeat center/cover; border-radius: 10px; box-shadow: 0 0 10px #fbd20666; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; color: #fff; cursor: pointer; position: relative; transition: transform 0.2s; }
+
+.card:hover { transform: scale(1.1); }
+
+.card[data-type="network-drain"]::after { content: "Network Drain"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #fbd206; }
+
+.card[data-type="trust-pause"]::after { content: "Trust Pause"; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: #fbd206; }
+
+.card.core::before { content: "Core"; position: absolute; top: 4px; left: 4px; font-size: 0.8rem; color: #00bfff; }
+
+.card.block::before { content: "Block"; position: absolute; top: 4px; left: 4px; font-size: 0.8rem; color: #00ff88; }
+
+.status-display { font-size: 1rem; color: #ccc; min-height: 40px; margin-top: 2rem; }
+
+footer { text-align: center; padding: 1rem; font-size: 0.8rem; color: #666; border-top: 1px solid #333; margin-top: 2rem; }
+
