@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerHand = document.getElementById('player-hand');
   const cpuHand = document.getElementById('cpu-hand');
   const statusText = document.getElementById('status');
+  const cardEl = document.createElement('img');
+  cardEl.src = 'assets/eano-card-img.png'; // or dynamically per card
 
   // Simulated card data
   const deck = [
