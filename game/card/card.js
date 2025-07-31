@@ -1,64 +1,109 @@
-// card.js
-document.addEventListener('DOMContentLoaded', () => {
-  const playBtn = document.querySelector('.play-btn');
-  const gameContainer = document.querySelector('.game-container');
-  const drawDeck = document.getElementById('draw-deck');
-  const playPile = document.getElementById('play-pile');
-  const playerHand = document.getElementById('player-hand');
-  const cpuHand = document.getElementById('cpu-hand');
-  const statusText = document.getElementById('status');
-  const cardEl = document.createElement('img');
-  cardEl.src = 'assets/eano-card-img.png'; // or dynamically per card
+const startBtn = document.getElementById("startGameBtn");
+const startScreen = document.getElementById("start-screen");
+const gameWrapper = document.getElementById("game-wrapper");
+const drawPile = document.getElementById("draw-pile");
+const discardPile = document.getElementById("discard-pile");
+const playerHand = document.getElementById("player-hand");
+const cpuHand = document.getElementById("cpu-hand");
+const log = document.getElementById("log");
 
-  // Simulated card data
-  const deck = [
-    '🂡', '🂢', '🂣', '🂤', '🂥', '🂦', '🂧', '🂨', '🂩', '🂪'
-  ];
+let deck = [];
+let player = [];
+let cpu = [];
+let discard = [];
+let currentPlayer = "player";
 
-  let playerCards = [];
-  let cpuCards = [];
-
-  // Start the game when play button is clicked
-  if (playBtn) {
-    playBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      initializeGame();
-    });
+function createDeck() {
+  const suits = ["♠", "♥", "♦", "♣"];
+  const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+  let d = [];
+  for (let s of suits) {
+    for (let v of values) {
+      d.push({ suit: s, value: v });
+    }
   }
+  return shuffle(d);
+}
 
-  function initializeGame() {
-    // Shuffle deck
-    const shuffled = [...deck].sort(() => Math.random() - 0.5);
-    playerCards = shuffled.slice(0, 3);
-    cpuCards = shuffled.slice(3, 6);
-
-    // Display cards
-    displayHand(playerHand, playerCards);
-    displayHand(cpuHand, cpuCards, true); // hide CPU cards
-    statusText.textContent = 'Your turn: Draw or Play a card.';
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr;
+}
 
-  function displayHand(container, cards, hidden = false) {
-    container.innerHTML = '';
-    cards.forEach(card => {
-      const cardEl = document.createElement('div');
-      cardEl.textContent = hidden ? '🂠' : card;
-      cardEl.style.display = 'inline-block';
-      cardEl.style.margin = '5px';
-      cardEl.style.fontSize = '2rem';
-      container.appendChild(cardEl);
-    });
-  }
+function renderHand(handEl, cards, hide = false) {
+  handEl.innerHTML = "";
+  cards.forEach((card, index) => {
+    let div = document.createElement("div");
+    div.className = "card";
+    div.textContent = hide ? "🂠" : card.value + card.suit;
+    if (!hide) {
+      div.onclick = () => {
+        if (currentPlayer === "player" && canPlay(card)) {
+          discard.push(player.splice(index, 1)[0]);
+          updateGame();
+          currentPlayer = "cpu";
+          log.textContent = "CPU's turn...";
+          setTimeout(cpuTurn, 1000);
+        }
+      };
+    }
+    handEl.appendChild(div);
+  });
+}
 
-  // Optional: Handle click on draw deck
-  drawDeck.addEventListener('click', () => {
-    if (deck.length === 0) {
-      statusText.textContent = 'No more cards to draw.';
+function canPlay(card) {
+  if (discard.length === 0) return true;
+  let top = discard[discard.length - 1];
+  return card.suit === top.suit || card.value === top.value;
+}
+
+function cpuTurn() {
+  for (let i = 0; i < cpu.length; i++) {
+    if (canPlay(cpu[i])) {
+      discard.push(cpu.splice(i, 1)[0]);
+      log.textContent = "CPU played a card.";
+      updateGame();
+      currentPlayer = "player";
+      log.textContent = "Your turn. Draw or play a card.";
       return;
     }
-    const drawnCard = deck.pop();
-    playerCards.push(drawnCard);
-    displayHand(playerHand, playerCards);
-    statusText.textContent = `You drew a card: ${drawnCard}`;
-  });
-});
+  }
+  if (deck.length > 0) {
+    cpu.push(deck.pop());
+    log.textContent = "CPU drew a card.";
+  }
+  updateGame();
+  currentPlayer = "player";
+  log.textContent = "Your turn. Draw or play a card.";
+}
+
+function updateGame() {
+  renderHand(playerHand, player);
+  renderHand(cpuHand, cpu, true);
+  discardPile.textContent = discard.length > 0 ? discard[discard.length - 1].value + discard[discard.length - 1].suit : "🃏";
+}
+
+drawPile.onclick = () => {
+  if (currentPlayer !== "player") return;
+  if (deck.length === 0) {
+    log.textContent = "Deck is empty!";
+    return;
+  }
+  player.push(deck.pop());
+  log.textContent = "You drew a card.";
+  updateGame();
+};
+
+startBtn.onclick = () => {
+  deck = createDeck();
+  player = deck.splice(0, 5);
+  cpu = deck.splice(0, 5);
+  discard = [];
+  currentPlayer = "player";
+  startScreen.style.display = "none";
+  gameWrapper.style.display = "block";
+  updateGame();
+};
