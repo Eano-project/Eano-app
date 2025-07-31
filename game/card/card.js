@@ -33,37 +33,27 @@ function shuffle(arr) {
   return arr;
 }
 
-function renderCard(card, container, isHidden = false) {
-  const cardDiv = document.createElement("div");
-  cardDiv.classList.add("card");
-
-  if (isHidden) {
-    cardDiv.innerHTML = `<img src="game/assets/eano-card-back.png" alt="Hidden Card" width="60">`;
-  } else {
-    cardDiv.innerHTML = `<img src="game/assets/eano-card-img.png" alt="${card}" width="60">`;
-  }
-
-  container.appendChild(cardDiv);
-}
-
-function renderHand(handEl, cards, hide = false) {
+function renderHand(handEl, cards, isCpu = false) {
   handEl.innerHTML = "";
-  cards.forEach((card, index) => {
-    let div = document.createElement("div");
-    div.className = "card";
-    div.textContent = hide ? "🂠" : card.value + card.suit;
-    if (!hide) {
-      div.onclick = () => {
+  cards.forEach((card, i) => {
+    const cardDiv = document.createElement("div");
+    cardDiv.className = "card";
+    if (isCpu) {
+      cardDiv.innerHTML = `<img src="game/assets/eano-card-img.png" alt="Card Back" width="60">`;
+    } else {
+      cardDiv.textContent = `${card.value}${card.suit}`;
+      cardDiv.onclick = () => {
         if (currentPlayer === "player" && canPlay(card)) {
-          discard.push(player.splice(index, 1)[0]);
+          discard.push(player.splice(i, 1)[0]);
           updateGame();
+          checkWin();
           currentPlayer = "cpu";
           log.textContent = "CPU's turn...";
-          setTimeout(cpuTurn, 1000);
+          setTimeout(cpuTurn, 800);
         }
       };
     }
-    handEl.appendChild(div);
+    handEl.appendChild(cardDiv);
   });
 }
 
@@ -73,19 +63,40 @@ function canPlay(card) {
   return card.suit === top.suit || card.value === top.value;
 }
 
+function updateGame() {
+  renderHand(playerHand, player, false);
+  renderHand(cpuHand, cpu, true);
+  if (discard.length > 0) {
+    let top = discard[discard.length - 1];
+    discardPile.textContent = `${top.value}${top.suit}`;
+  } else {
+    discardPile.textContent = "🃏";
+  }
+}
+
+function drawCard(hand) {
+  if (deck.length > 0) {
+    hand.push(deck.pop());
+    return true;
+  } else {
+    log.textContent = "Deck is empty!";
+    return false;
+  }
+}
+
 function cpuTurn() {
   for (let i = 0; i < cpu.length; i++) {
     if (canPlay(cpu[i])) {
       discard.push(cpu.splice(i, 1)[0]);
       log.textContent = "CPU played a card.";
       updateGame();
+      checkWin();
       currentPlayer = "player";
       log.textContent = "Your turn. Draw or play a card.";
       return;
     }
   }
-  if (deck.length > 0) {
-    cpu.push(deck.pop());
+  if (drawCard(cpu)) {
     log.textContent = "CPU drew a card.";
   }
   updateGame();
@@ -93,21 +104,25 @@ function cpuTurn() {
   log.textContent = "Your turn. Draw or play a card.";
 }
 
-function updateGame() {
-  renderHand(playerHand, player);
-  renderHand(cpuHand, cpu, true);
-  discardPile.textContent = discard.length > 0 ? discard[discard.length - 1].value + discard[discard.length - 1].suit : "🃏";
+function checkWin() {
+  if (player.length === 0) {
+    log.textContent = "🎉 You win!";
+    drawPile.onclick = null;
+  } else if (cpu.length === 0) {
+    log.textContent = "💻 CPU wins!";
+    drawPile.onclick = null;
+  }
 }
 
 drawPile.onclick = () => {
   if (currentPlayer !== "player") return;
-  if (deck.length === 0) {
-    log.textContent = "Deck is empty!";
-    return;
+  if (drawCard(player)) {
+    log.textContent = "You drew a card.";
+    updateGame();
+    currentPlayer = "cpu";
+    log.textContent = "CPU's turn...";
+    setTimeout(cpuTurn, 800);
   }
-  player.push(deck.pop());
-  log.textContent = "You drew a card.";
-  updateGame();
 };
 
 startBtn.onclick = () => {
@@ -118,5 +133,6 @@ startBtn.onclick = () => {
   currentPlayer = "player";
   startScreen.style.display = "none";
   gameWrapper.style.display = "block";
+  log.textContent = "Your turn. Draw or play a card.";
   updateGame();
 };
