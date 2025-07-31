@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EANO Cards</title>
+  <link rel="stylesheet" href="card.css" />
+</head>
+<body>
+  <div id="loading-screen">
+    <img src="assets/eano-card-back.png" alt="EANO Loading" />
+    <p>Loading EANO Cards...</p>
+  </div>
+
+  <div id="start-screen">
+    <h1>🃏 Welcome to EANO Cards</h1>
+    <p class="subtitle">Network. Strategy. Trust.</p>
+    <button id="startGameBtn">Start Game</button>
+  </div>
+
+  <div id="game-wrapper" style="display: none;">
+    <header>
+      <h1>🃏 EANO Cards</h1>
+    </header>
+
+    <section id="game-area">
+      <div id="ai-hand" class="hand hidden">
+        <h2>EANO AI</h2>
+        <div class="cards" id="aiCards">[Hidden]</div>
+      </div>
+
+      <div id="middle-area">
+        <div class="pile">
+          <h3>Draw</h3>
+          <div id="draw-pile" class="card-back"></div>
+        </div>
+        <div class="pile">
+          <h3>Discard</h3>
+          <div id="discard-pile">🃏</div>
+        </div>
+      </div>
+
+      <div id="player-hand" class="hand">
+        <h2>You</h2>
+        <div class="cards" id="playerCards"></div>
+      </div>
+    </section>
+
+    <section id="log">
+      <p id="game-log">Your turn. Draw or play a card.</p>
+    </section>
+
+    <footer>
+      <p>© 2025 EANO Project – All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script type="module" src="card.js"></script>
+</body>
+</html>
