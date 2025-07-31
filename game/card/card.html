@@ -7,12 +7,15 @@
   <link rel="stylesheet" href="card.css" />
 </head>
 <body>
+  <!-- Start Screen -->
   <div id="start-screen">
     <h1>🃏 EANO Cards</h1>
     <p class="subtitle">Network. Strategy. Trust.</p>
+    <img src="game/assets/eano-card-img.png" alt="EANO Card" style="width:150px; margin: 20px auto; display: block;" />
     <button id="startGameBtn">Start Game</button>
   </div>
 
+  <!-- Game Wrapper -->
   <div id="game-wrapper" style="display:none;">
     <header>
       <h1>🃏 EANO Cards</h1>
@@ -25,7 +28,7 @@
       </div>
 
       <div class="center-area">
-        <div id="draw-pile" class="card-back" title="Draw Pile"></div>
+        <div id="draw-pile" class="card-back" title="Draw Pile">🂠</div>
         <div id="discard-pile" class="card-slot">🃏</div>
       </div>
 
@@ -37,15 +40,7 @@
 
     <div id="log">Your turn. Draw or play a card.</div>
   </div>
-<div id="start-screen">
-  <h1>🃏 Welcome to EANO Cards</h1>
-  <p class="subtitle">Network. Strategy. Trust.</p>
-  
-  <!-- Card preview image -->
-  <img src="game/assets/eano-card-img.png" alt="EANO Card" style="width:150px; margin: 20px auto; display: block;" />
 
-  <button id="startGameBtn">Start Game</button>
-</div>
   <script type="module" src="card.js"></script>
 </body>
 </html>
