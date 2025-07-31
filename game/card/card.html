@@ -3,58 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EANO Cards</title>
+  <title>EANO Card Game</title>
   <link rel="stylesheet" href="card.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    #game-wrapper {
+      max-width: 700px;
+      width: 90%;
+      padding: 20px;
+      background: rgba(0,0,0,0.85);
+      border-radius: 15px;
+      box-shadow: 0 0 12px #00ffcc;
+      text-align: center;
+    }
+
+    header h1 {
+      color: #00ffcc;
+    }
+
+    .hand {
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+
+    .pile {
+      margin: 20px 10px;
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      display: inline-block;
+      min-width: 100px;
+    }
+
+    #game-log {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #ccc;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00e6b3;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: #00ffcc;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-  <div id="loading-screen">
-    <img src="assets/eano-card-back.png" alt="EANO Loading" />
-    <p>Loading EANO Cards...</p>
-  </div>
 
-  <div id="start-screen">
-    <h1>🃏 Welcome to EANO Cards</h1>
-    <p class="subtitle">Network. Strategy. Trust.</p>
-    <button id="startGameBtn">Start Game</button>
-  </div>
+  <div id="game-wrapper">
+    <a href="../dashboard.html" class="back-btn">← Back to Hub</a>
 
-  <div id="game-wrapper" style="display: none;">
     <header>
-      <h1>🃏 EANO Cards</h1>
+      <h1>EANO Card Game</h1>
     </header>
 
+    <div class="card-preview">
+      <img src="../../assets/eano-card-img.png" alt="EANO Card Preview" style="width:150px; border-radius:10px; box-shadow:0 0 10px #00ffcc;">
+    </div>
+
     <section id="game-area">
-      <div id="ai-hand" class="hand hidden">
+      <div class="hand" id="ai-hand">
         <h2>EANO AI</h2>
-        <div class="cards" id="aiCards">[Hidden]</div>
+        <div id="aiCards">[Hidden]</div>
       </div>
 
-      <div id="middle-area">
-        <div class="pile">
-          <h3>Draw</h3>
-          <div id="draw-pile" class="card-back"></div>
-        </div>
-        <div class="pile">
-          <h3>Discard</h3>
-          <div id="discard-pile">🃏</div>
-        </div>
+      <div>
+        <div class="pile" id="draw-pile">Draw</div>
+        <div class="pile" id="discard-pile">Pile</div>
       </div>
 
-      <div id="player-hand" class="hand">
+      <div class="hand" id="player-hand">
         <h2>You</h2>
-        <div class="cards" id="playerCards"></div>
+        <div id="playerCards"></div>
       </div>
     </section>
 
-    <section id="log">
-      <p id="game-log">Your turn. Draw or play a card.</p>
-    </section>
-
-    <footer>
-      <p>© 2025 EANO Project – All rights reserved.</p>
-    </footer>
+    <p id="game-log">Your turn. Draw or play a card.</p>
+    <button id="startGameBtn">Start Game</button>
   </div>
 
   <script type="module" src="card.js"></script>
 </body>
-</html>
+    </html>
