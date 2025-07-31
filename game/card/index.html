@@ -9,144 +9,68 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: url('../../assets/eano-bg.png') no-repeat center center fixed;
-      background-size: cover;
+      background: #000;
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      overflow: hidden;
     }
 
     .game-container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 25px;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 30px;
       border-radius: 15px;
       text-align: center;
       max-width: 600px;
       width: 90%;
-      box-shadow: 0 0 10px #00ffcc;
+      box-shadow: 0 0 15px #00ffcc;
     }
 
     .game-container h1 {
       margin-top: 0;
-      font-size: 1.8rem;
+      font-size: 2rem;
       color: #00ffcc;
     }
 
-    .game-info {
-      margin-bottom: 20px;
-      font-size: 0.95rem;
-      color: #ccc;
+    .card-preview img {
+      width: 160px;
+      border-radius: 12px;
+      margin: 20px 0;
+      box-shadow: 0 0 10px #00ffcc;
     }
 
-    .back-btn {
+    .play-btn {
       display: inline-block;
-      margin-bottom: 20px;
-      padding: 10px 16px;
+      margin-top: 20px;
+      padding: 12px 24px;
       background: #00ffcc;
       color: #000;
       text-decoration: none;
       border-radius: 10px;
       font-weight: bold;
+      font-size: 1rem;
+      transition: background 0.3s ease;
     }
 
-    .card-preview {
-      margin-bottom: 20px;
-    }
-
-    .card-preview img {
-      width: 150px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #00ffcc;
-    }
-
-    .play-area {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0;
-    }
-
-    .deck, .pile {
-      background: #333;
-      padding: 20px;
-      border-radius: 10px;
-      width: 45%;
-    }
-
-    .hands {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0;
-    }
-
-    .hand {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      border-radius: 10px;
-      min-height: 60px;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #00ffcc;
-      color: #000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover {
+    .play-btn:hover {
       background: #00e6b3;
-    }
-
-    #status {
-      margin: 10px 0;
-      font-size: 0.95rem;
-      color: #ff0;
     }
   </style>
 </head>
 <body>
 
   <div class="game-container">
-    <a href="../dashboard.html" class="back-btn">← Back to Game Hub</a>
-    <h1>🎮 EANO CARDS</h1>
+    <h1>Welcome to EANO Cards</h1>
 
     <div class="card-preview">
-      <img src="../../assets/eano-card-img.png" alt="EANO Card Preview">
+      <img src="../../assets/eano-card-img.png" alt="EANO Card Preview" />
     </div>
 
-    <div class="game-info">
-      <p><strong>TrustScore:</strong> ⭐⭐⭐</p>
-      <p><strong>Balance:</strong> 0.000 EANO</p>
-    </div>
+    <p>Network. Strategy. Trust.</p>
 
-    <a href="card.html" class="play-btn">▶️ Play EANO Cards</a>
-
-    <div class="play-area">
-      <div class="deck" id="draw-deck">Draw</div>
-      <div class="pile" id="play-pile">Pile</div>
-    </div>
-
-    <div class="hands">
-      <div>
-        <h2>You</h2>
-        <div class="hand" id="player-hand"></div>
-      </div>
-      <div>
-        <h2>CPU</h2>
-        <div class="hand" id="cpu-hand"></div>
-      </div>
-    </div>
-
-    <div id="status"></div>
-    <button onclick="startGame()">Start Game</button>
+    <a href="card.html" class="play-btn">▶️ Play Now</a>
   </div>
 
-  <script type="module" src="card.js"></script>
 </body>
 </html>
