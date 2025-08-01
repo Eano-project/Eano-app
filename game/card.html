@@ -4,11 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EANO Card Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/card.css">
 </head>
 <body>
+  <header>
+    <div class="brand">
+      <img src="assets/images/eano-logo.png" alt="EANO Games Logo" class="logo">
+    </div>
+    <div class="metrics">
+      <div>TrustScore: ⭐⭐⭐</div>
+      <div>Balance: <span id="balance">0.000 EANO</span></div>
+    </div>
+  </header>
   <div class="game-table">
-    <img src="assets/images/logo.png" alt="EANO Card Logo" class="logo">
     <div id="draw-pile" class="draw-pile">Draw Pile</div>
     <div id="play-pile" class="play-pile">Play Pile</div>
     <div id="player-hand" class="player-hand"></div>
@@ -21,6 +30,9 @@
       <div class="speech-bubble"></div>
     </div>
   </div>
+  <footer>
+    &copy; 2025 EANO Project – All rights reserved.
+  </footer>
   <audio id="marketplace-sound" src="assets/sounds/marketplace-sound.mp3"></audio>
   <audio id="pick-two-sound" src="assets/sounds/pick-two-sound.mp3"></audio>
   <audio id="suspension-sound" src="assets/sounds/suspension-sound.mp3"></audio>
