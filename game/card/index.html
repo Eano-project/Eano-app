@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EANO Card Game</title>
+  <title>EANO Card</title>
   <link rel="stylesheet" href="card.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
@@ -11,19 +11,11 @@
   <div class="game-wrapper">
     <header>
       <button class="back-button" onclick="window.location.href='./../dashboard.html'" aria-label="Back to Dashboard">⬅ Back</button>
-      <span class="logo">EANO Card</span>
+      <span class="logo" style="margin: 0 auto;">EANO Card</span>
     </header>
     <main class="game-table">
       <div class="market-pile" id="draw-pile" aria-label="Draw Pile"></div>
       <div class="discard-pile" id="play-pile" aria-label="Play Pile"></div>
-      <div class="player-area">
-        <div class="avatar player-avatar">
-          <img src="../assets/player-avatar.png" alt="Player Avatar">
-          <div class="speech-bubble"></div>
-        </div>
-        <div class="hand" id="player-hand"></div>
-        <h2>You</h2>
-      </div>
       <div class="ai-area">
         <div class="avatar ai-avatar">
           <img src="../assets/ai-avatar.png" alt="EANO AI Avatar">
@@ -31,6 +23,14 @@
         </div>
         <div class="hand" id="ai-hand"></div>
         <h2>EANO AI</h2>
+      </div>
+      <div class="player-area">
+        <div class="avatar player-avatar">
+          <img src="../assets/player-avatar.png" alt="Player Avatar">
+          <div class="speech-bubble"></div>
+        </div>
+        <div class="hand" id="player-hand"></div>
+        <h2>You</h2>
       </div>
       <div class="status-box">
         <p id="status">Your turn. Draw or play a card.</p>
