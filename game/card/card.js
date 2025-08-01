@@ -46,13 +46,18 @@ function renderHand(hand, element, isAi = false) {
   element.innerHTML = '';
   if (!hand || hand.length === 0) {
     console.warn('Hand is empty or undefined, attempting to start game:', hand);
-    startGame(); // Retry if hand is empty
+    startGame();
     return;
   }
   hand.forEach((card, index) => {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
-    cardDiv.style.backgroundImage = isAi ? `url(../assets/back-card.png)` : 'none';
+    if (isAi && !document.querySelector('../assets/back-card.png')) {
+      console.error('Back card image not found at ../assets/back-card.png');
+      cardDiv.style.backgroundColor = '#ccc'; // Fallback color
+    } else {
+      cardDiv.style.backgroundImage = isAi ? `url(../assets/back-card.png)` : 'none';
+    }
     cardDiv.textContent = isAi ? '' : `${card.shape || card.number} ${card.suit || ''}`;
     if (!isAi) {
       cardDiv.addEventListener('click', () => playCard(index));
@@ -62,7 +67,7 @@ function renderHand(hand, element, isAi = false) {
 }
 
 function renderPile() {
-  const topCard = pile[pile.length - 1] || { number: 0, suit: '' }; // Default to avoid undefined
+  const topCard = pile[pile.length - 1] || { number: 0, suit: '' };
   playPileEl.textContent = `${topCard.shape || topCard.number} ${topCard.suit || ''}`;
   drawPileEl.textContent = `${deck.length} left`;
 }
@@ -79,7 +84,7 @@ function startGame() {
   playerTurn = true;
   updateGame();
   statusEl.textContent = 'Your turn. Draw or play a card.';
-  console.log('Game started. Player hand:', playerHand, 'AI hand:', aiHand, 'Deck left:', deck.length);
+  console.log('Game started. Player hand:', playerHand, 'AI hand:', aiHand, 'Deck left:', deck.length, 'Elements:', { drawPileEl, playPileEl, playerHandEl, aiHandEl, statusEl });
 }
 
 function updateGame() {
