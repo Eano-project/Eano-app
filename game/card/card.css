@@ -52,7 +52,6 @@ header {
   text-shadow: 0 0 5px #00cc99;
   text-align: center;
   flex-grow: 1;
-  
 }
 
 .game-table {
@@ -62,14 +61,14 @@ header {
   height: 80vw;
   max-width: 600px;
   max-height: 600px;
-  margin: 110px auto 0; /* Adjusted top spacing */
+  margin: 70px auto 0; /* Reduced from 110px to avoid cutting off */
   padding: 20px;
   position: relative;
   box-shadow: 0 0 10px #00cc99;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+  align-items: center;
 }
 
 .market-pile, .discard-pile {
@@ -85,29 +84,32 @@ header {
   font-size: 0.8rem;
   cursor: pointer;
   color: #d1d1d1;
+  z-index: 1; /* Ensure above table background */
 }
 
 .market-pile { top: 30%; left: 30%; }
 .discard-pile { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-/* Fix layout */
 .player-area, .ai-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  position: absolute;
+  width: 100%;
 }
+
+.player-area { bottom: 10px; }
+.ai-area { top: 10px; }
 
 .hand {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.3rem;
-  min-height: 80px; /* Ensures card space shows */
+  min-height: 80px;
 }
 
-/* Fix avatar cut-off on mobile */
 .avatar {
   position: relative;
   width: 80px;
@@ -126,14 +128,26 @@ header {
   object-fit: cover;
 }
 
-/* Make the glowing table responsive */
-.game-table {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.2rem;
-  padding: 1rem;
+.speech-bubble {
+  display: none;
+  position: absolute;
+  background: #fff;
+  color: #000;
+  padding: 5px;
+  border-radius: 5px;
+  width: 120px;
+  text-align: center;
+  top: -60px; /* Adjusted for larger avatar */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
+
+.speech-bubble.happy { background: #00cc99; }
+.speech-bubble.sad { background: #ff6666; }
+.speech-bubble.angry { background: #ff9933; }
+.speech-bubble.neutral { background: #ccc; }
 
 .status-box {
   background-color: rgba(0, 0, 0, 0.7);
@@ -143,6 +157,11 @@ header {
   font-size: 0.9rem;
   max-width: 300px;
   text-align: center;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
 }
 
 .card {
@@ -163,40 +182,6 @@ header {
 .card:hover {
   transform: scale(1.05);
 }
-
-.avatar {
-  position: relative;
-  z-index: 2; /* Ensure avatars are visible */
-}
-
-.avatar img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid #00cc99;
-}
-
-.speech-bubble {
-  display: none;
-  position: absolute;
-  background: #fff;
-  color: #000;
-  padding: 5px;
-  border-radius: 5px;
-  width: 120px;
-  text-align: center;
-  top: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-}
-
-.speech-bubble.happy { background: #00cc99; }
-.speech-bubble.sad { background: #ff6666; }
-.speech-bubble.angry { background: #ff9933; }
-.speech-bubble.neutral { background: #ccc; }
-
 
 @keyframes happy {
   0% { transform: scale(1); }
