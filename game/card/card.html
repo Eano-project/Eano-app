@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -7,40 +6,36 @@
   <link rel="stylesheet" href="card.css" />
 </head>
 <body>
-  <!-- Start Screen -->
   <div id="start-screen">
-    <h1>🃏 EANO Cards</h1>
+    <h1><img src="game/assets/eano-logo.png" alt="EANO Logo" class="logo" /></h1>
     <p class="subtitle">Network. Strategy. Trust.</p>
-    <img src="game/assets/eano-card-img.png" alt="EANO Card" style="width:150px; margin: 20px auto; display: block;" />
+    <img src="game/assets/eano-card-img.png" alt="EANO Card Preview" class="card-preview" />
     <button id="startGameBtn">Start Game</button>
-  </div>
-
-  <!-- Game Wrapper -->
-  <div id="game-wrapper" style="display:none;">
+  </div>  <div id="game-wrapper" style="display:none;">
     <header>
-      <h1>🃏 EANO Cards</h1>
-    </header>
-
-    <div id="game-area">
-      <div class="hand">
-        <h2>CPU</h2>
-        <div id="cpu-hand" class="card-row"></div>
-      </div>
-
-      <div class="center-area">
-        <div id="draw-pile" class="card-back" title="Draw Pile">🂠</div>
-        <div id="discard-pile" class="card-slot">🃏</div>
-      </div>
-
-      <div class="hand">
-        <h2>You</h2>
-        <div id="player-hand" class="card-row"></div>
-      </div>
-    </div>
-
-    <div id="log">Your turn. Draw or play a card.</div>
+      <img src="game/assets/eano-logo.png" alt="EANO Logo" class="logo small" />
+      <h1>EANO Card Battle</h1>
+    </header><div id="game-area">
+  <div class="hand">
+    <h2>CPU</h2>
+    <div id="cpu-hand" class="card-row scrollable"></div>
   </div>
 
-  <script type="module" src="card.js"></script>
-</body>
+  <div class="center-area">
+    <div id="draw-pile" class="card-back" title="Draw Pile"></div>
+    <div id="discard-pile" class="card-slot">🃏</div>
+  </div>
+
+  <div class="hand">
+    <h2>You</h2>
+    <div id="player-hand" class="card-row scrollable"></div>
+  </div>
+</div>
+
+<div id="log">Your turn. Draw or play a card.</div>
+<div id="game-end" style="display:none;"></div>
+
+  </div><audio id="draw-sound" src="game/assets/draw.mp3"></audio> <audio id="play-sound" src="game/assets/play.mp3"></audio> <audio id="win-sound" src="game/assets/win.mp3"></audio> <audio id="lose-sound" src="game/assets/lose.mp3"></audio>
+
+  <script type="module" src="card.js"></script></body>
 </html>
