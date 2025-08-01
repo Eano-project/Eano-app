@@ -45,7 +45,8 @@ function shuffle(array) {
 function renderHand(hand, element, isAi = false) {
   element.innerHTML = '';
   if (!hand || hand.length === 0) {
-    console.error('Hand is empty or undefined:', hand);
+    console.warn('Hand is empty or undefined, attempting to start game:', hand);
+    startGame(); // Retry if hand is empty
     return;
   }
   hand.forEach((card, index) => {
@@ -61,20 +62,24 @@ function renderHand(hand, element, isAi = false) {
 }
 
 function renderPile() {
-  const topCard = pile[pile.length - 1];
-  playPileEl.textContent = topCard ? `${topCard.shape || topCard.number} ${topCard.suit || ''}` : '';
+  const topCard = pile[pile.length - 1] || { number: 0, suit: '' }; // Default to avoid undefined
+  playPileEl.textContent = `${topCard.shape || topCard.number} ${topCard.suit || ''}`;
   drawPileEl.textContent = `${deck.length} left`;
 }
 
 function startGame() {
   deck = createDeck();
+  if (deck.length < 14) {
+    console.error('Deck creation failed, length:', deck.length);
+    return;
+  }
   playerHand = deck.splice(0, 7);
   aiHand = deck.splice(0, 7);
   pile = [deck.pop()];
   playerTurn = true;
   updateGame();
   statusEl.textContent = 'Your turn. Draw or play a card.';
-  console.log('Game started. Player hand:', playerHand, 'AI hand:', aiHand); // Debug
+  console.log('Game started. Player hand:', playerHand, 'AI hand:', aiHand, 'Deck left:', deck.length);
 }
 
 function updateGame() {
