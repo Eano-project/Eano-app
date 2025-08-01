@@ -4,33 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EANO Game Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body>
-  <header>
-    <div class="brand">
-      <img src="assets/images/eano-logo.png" alt="EANO Games Logo" class="logo">
-    </div>
-    <div class="metrics">
-      <div>TrustScore: ⭐⭐⭐</div>
-      <div>Balance: <span id="balance">0.000 EANO</span></div>
-    </div>
+<body class="eano-theme">
+  <header class="header">
+    <img src="assets/logo.png" alt="EANO Logo" class="logo">
+    <h1>🎮 EANO Game Hub</h1>
   </header>
 
-  <main class="container">
-    <div class="game-card" id="eano-card-game">
-      <img src="assets/images/eano-card-img.png" alt="EANO Card Game">
-      <h2>EANO Card Game</h2>
-      <button onclick="window.location.href='card.html'">Play Now</button>
+  <main class="game-list">
+    <div class="game-card">
+      <h2>🎴 EANO Card</h2>
+      <p>Crypto-inspired card battle game against AI or real players.</p>
+      <a href="index.html" class="play-button">▶️ Play EANO Card</a>
     </div>
-    <!-- Additional game cards can be added dynamically -->
+
+    <div class="game-card coming-soon">
+      <h2>🟠 EANO Conquest</h2>
+      <p>A strategic Ludo-like game built with crypto-level twists.</p>
+      <button disabled>Coming Soon</button>
+    </div>
+
+    <div class="game-card coming-soon">
+      <h2>🟢 EANO Path</h2>
+      <p>Snake-and-ladder journey powered by EANO levels & boosts.</p>
+      <button disabled>Coming Soon</button>
+    </div>
   </main>
-
-  <footer>
-    &copy; 2025 EANO Project – All rights reserved.
-  </footer>
-
-  <script src="js/dashboard.js"></script>
 </body>
 </html>
