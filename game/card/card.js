@@ -1,44 +1,42 @@
-// === EANO Cards Gameplay Script ===
+// card.js (FULL GAME LOGIC)
 
-const startBtn = document.getElementById("startGameBtn"); const startScreen = document.getElementById("start-screen"); const gameWrapper = document.getElementById("game-wrapper"); const drawPile = document.getElementById("draw-pile"); const discardPile = document.getElementById("discard-pile"); const playerHand = document.getElementById("player-hand"); const cpuHand = document.getElementById("cpu-hand"); const log = document.getElementById("log"); const audioDraw = new Audio("game/assets/snd-draw.mp3"); const audioPlay = new Audio("game/assets/snd-play.mp3"); const audioWin = new Audio("game/assets/snd-win.mp3"); const audioLose = new Audio("game/assets/snd-lose.mp3");
+const playerCardsEl = document.getElementById('playerCards'); const cpuCardsEl = document.getElementById('cpuCards'); const drawDeck = document.getElementById('draw-deck'); const playPile = document.getElementById('play-pile'); const turnInfo = document.getElementById('turn-info'); const gameScreen = document.getElementById('game-screen'); const messageLog = document.getElementById('message-log');
 
-let deck = []; let player = []; let cpu = []; let discard = []; let currentPlayer = "player";
+let deck = []; let playerHand = []; let cpuHand = []; let currentCard = null; let playerTurn = true;
 
-const cardTypes = ["Trust", "Marketplace", "Block", "Square"]; const suits = ["♠", "♥", "♦", "♣"]; const values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+const suits = ['Trust', 'Block', 'Circle', 'Triangle', 'Square']; const specialCards = ['Pick 2', 'Pick 3', 'Block', 'Trust']; const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-function createDeck() { let d = []; for (let s of suits) { for (let v of values) { const type = cardTypes[Math.floor(Math.random() * cardTypes.length)]; d.push({ suit: s, value: v, type }); } } return shuffle(d); }
+function createDeck() { const fullDeck = []; for (let suit of suits) { for (let num of numbers) { fullDeck.push({ suit, num }); } for (let spec of specialCards) { fullDeck.push({ suit, special: spec }); } } return shuffle(fullDeck); }
 
-function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-function cardPower(value) { const powers = { A: 14, J: 11, Q: 12, K: 13 }; return powers[value] || parseInt(value); }
+function startGame() { document.querySelector('.preview').classList.add('hidden'); gameScreen.classList.remove('hidden');
 
-function renderHand(handEl, cards, hide = false) { handEl.innerHTML = ""; cards.forEach((card, index) => { const cardDiv = document.createElement("div"); cardDiv.className = "card"; if (hide) { cardDiv.innerHTML = <img src="game/assets/eano-card-back.png" alt="Hidden Card" width="60" />; } else { cardDiv.innerHTML = <img src="game/assets/eano-card-img.png" alt="${card.value}${card.suit}" width="60" />; cardDiv.title = ${card.value}${card.suit} - ${card.type}; cardDiv.onclick = () => { if (currentPlayer === "player" && canPlay(card)) { audioPlay.play(); discard.push(player.splice(index, 1)[0]); updateGame(); checkWin(); currentPlayer = "cpu"; log.textContent = "CPU's turn..."; setTimeout(cpuTurn, 1000); } }; } handEl.appendChild(cardDiv); }); }
+deck = createDeck(); playerHand = deck.splice(0, 6); cpuHand = deck.splice(0, 6); currentCard = deck.pop();
 
-function canPlay(card) { if (discard.length === 0) return true; const top = discard[discard.length - 1]; return card.suit === top.suit || card.value === top.value || card.type === top.type; }
+updateBoard(); log(Game started! You go first.); }
 
-function cpuTurn() { for (let i = 0; i < cpu.length; i++) { if (canPlay(cpu[i])) { audioPlay.play(); discard.push(cpu.splice(i, 1)[0]); log.textContent = "CPU played a card."; updateGame(); checkWin(); currentPlayer = "player"; log.textContent = "Your turn. Draw or play a card."; return; } } if (deck.length > 0) { audioDraw.play(); cpu.push(deck.pop()); log.textContent = "CPU drew a card."; } updateGame(); currentPlayer = "player"; log.textContent = "Your turn. Draw or play a card."; }
+function updateBoard() { playerCardsEl.innerHTML = ''; cpuCardsEl.innerHTML = '';
 
-function updateGame() { renderHand(playerHand, player); renderHand(cpuHand, cpu, true); if (discard.length > 0) { const top = discard[discard.length - 1]; discardPile.innerHTML = ${top.value}${top.suit}<br><small>${top.type}</small>; } else { discardPile.innerHTML = "🃏"; } }
+for (let card of playerHand) { const div = createCardElement(card); div.onclick = () => playCard(card); playerCardsEl.appendChild(div); }
 
-drawPile.onclick = () => { if (currentPlayer !== "player") return; if (deck.length === 0) { log.textContent = "Deck is empty!"; return; } audioDraw.play(); player.push(deck.pop()); log.textContent = "You drew a card."; updateGame(); };
+for (let card of cpuHand) { const div = createCardElement({ suit: '?', num: '?' }); cpuCardsEl.appendChild(div); }
 
-function checkWin() { if (player.length === 0 || cpu.length === 0 || (deck.length === 0 && player.length === cpu.length)) { let playerScore = player.reduce((acc, c) => acc + cardPower(c.value), 0); let cpuScore = cpu.reduce((acc, c) => acc + cardPower(c.value), 0);
+playPile.innerText = renderCard(currentCard); turnInfo.innerText = playerTurn ? "Your turn" : "EANO AI's turn..."; }
 
-let msg = "";
-if (playerScore > cpuScore) {
-  msg = `🎉 You win! Score: ${playerScore} vs ${cpuScore}`;
-  audioWin.play();
-} else if (cpuScore > playerScore) {
-  msg = `😢 CPU wins! Score: ${cpuScore} vs ${playerScore}`;
-  audioLose.play();
-} else {
-  msg = `🤝 It's a tie! Score: ${playerScore} vs ${cpuScore}`;
-}
+function drawCard() { if (!playerTurn) return; const card = deck.pop(); if (card) playerHand.push(card); log(You drew a card.); playerTurn = false; updateBoard(); setTimeout(cpuMove, 1000); }
 
-log.innerHTML = msg;
-currentPlayer = "none";
+function playCard(card) { if (!playerTurn) return; if (!isValidPlay(card)) { log('Invalid move. Must match number or suit.'); return; } playerHand = playerHand.filter(c => c !== card); currentCard = card; log(You played ${renderCard(card)}); checkWin(); playerTurn = false; updateBoard(); setTimeout(cpuMove, 1000); }
 
-} }
+function cpuMove() { const playable = cpuHand.find(card => isValidPlay(card)); if (playable) { cpuHand = cpuHand.filter(c => c !== playable); currentCard = playable; log(EANO played ${renderCard(playable)}); } else { const card = deck.pop(); if (card) { cpuHand.push(card); log(EANO drew a card.); } } checkWin(); playerTurn = true; updateBoard(); }
 
-startBtn.onclick = () => { deck = createDeck(); player = deck.splice(0, 5); cpu = deck.splice(0, 5); discard = []; currentPlayer = "player"; startScreen.style.display = "none"; gameWrapper.style.display = "block"; log.textContent = "Your turn. Draw or play a card."; updateGame(); };
+function isValidPlay(card) { if (card.num && currentCard.num && card.num === currentCard.num) return true; if (card.suit === currentCard.suit) return true; if (card.special && currentCard.special && card.special === currentCard.special) return true; return false; }
+
+function createCardElement(card) { const div = document.createElement('div'); div.className = 'card'; div.innerText = renderCard(card); return div; }
+
+function renderCard(card) { return card.special ? ${card.suit}\n(${card.special}) : ${card.suit}\n${card.num}; }
+
+function checkWin() { if (playerHand.length === 0 || cpuHand.length === 0) { const winner = playerHand.length < cpuHand.length ? 'You Win! 🎉' : 'EANO Wins! 💪'; alert(winner); window.location.reload(); } }
+
+function log(msg) { const p = document.createElement('p'); p.innerText = msg; messageLog.prepend(p); }
 
