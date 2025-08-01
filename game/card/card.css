@@ -2,10 +2,8 @@ body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #1a1a2e;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  color: #e0e0e0; /* Softer text color */
+  overflow: hidden; /* Fixed viewport */
   min-height: 100vh;
 }
 
@@ -13,6 +11,7 @@ body {
   width: 100%;
   max-width: 1200px;
   padding: 20px;
+  margin: 0 auto;
 }
 
 header {
@@ -46,34 +45,32 @@ header {
 .game-table {
   background: rgba(0, 0, 0, 0.85);
   border-radius: 50%;
-  width: 80vw;
-  height: 80vw;
-  max-width: 800px;
-  max-height: 800px;
-  margin: 0 auto;
+  width: 90vw;
+  height: 90vw;
+  max-width: 1000px;
+  max-height: 1000px;
+  margin: 20px auto;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   box-shadow: 0 0 15px #00ffcc;
 }
 
 .market-pile, .discard-pile {
   position: absolute;
-  width: 80px;
-  height: 120px;
+  width: 100px;
+  height: 140px;
   background: url('../assets/back-card.png') no-repeat center/cover;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
+  color: #e0e0e0;
 }
 
-.market-pile { top: 30%; left: 40%; }
-.discard-pile { top: 50%; left: 50%; }
+.market-pile { top: 35%; left: 35%; }
+.discard-pile { top: 55%; left: 55%; }
 
 .player-area, .ai-area {
   position: absolute;
@@ -81,19 +78,24 @@ header {
   width: 100%;
 }
 
-.player-area { bottom: -100px; }
-.ai-area { top: -100px; }
+.player-area { bottom: -120px; }
+.ai-area { top: -120px; }
 
 .hand {
   display: flex;
-  justify-content: center;
   gap: 10px;
   margin: 10px 0;
+  overflow-x: auto; /* Scrollable hands */
+  white-space: nowrap;
+  padding: 10px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .card {
-  width: 80px;
-  height: 120px;
+  width: 100px; /* Fixed size */
+  height: 140px;
   background: #fff;
   color: #000;
   border-radius: 8px;
@@ -103,6 +105,7 @@ header {
   font-size: 1rem;
   cursor: pointer;
   transition: transform 0.3s;
+  flex-shrink: 0; /* Prevent resizing */
 }
 
 .card:hover {
@@ -114,8 +117,8 @@ header {
 }
 
 .avatar img {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: 2px solid #00ffcc;
 }
