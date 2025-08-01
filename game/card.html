@@ -1,35 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EANO Card - Play</title>
-  <link rel="stylesheet" href="css/card.css"/>
-</head>
 <body>
-  <div class="game-container">
-    <!-- AI Opponent -->
-    <div class="avatar ai-avatar">
-      <img src="assets/avatars/ai-default.png" id="ai-avatar" alt="Eano AI"/>
-      <div class="expression-text" id="ai-talk">Your move!</div>
+  <header>
+    <h1>EANO Card (Single Player)</h1>
+  </header>
+
+  <main class="game-board">
+    <div class="ai-avatar">
+      <img src="assets/avatars/ai-default.png" id="ai-avatar" />
+      <div class="speech-bubble"></div>
     </div>
 
-    <!-- Card Table -->
-    <div class="card-table">
-      <img src="assets/eano-card-img.png" alt="Card Table" class="table-image"/>
-      <div class="cards-area">
-        <div class="card back" id="card1"></div>
-        <div class="card back" id="card2"></div>
-      </div>
+    <div class="play-area">
+      <div id="draw-pile" class="pile">Draw</div>
+      <div id="play-pile" class="pile">Play</div>
+      <div id="status">Loading...</div>
     </div>
 
-    <!-- Player -->
-    <div class="avatar player-avatar">
-      <img src="assets/avatars/player-default.png" id="player-avatar" alt="You"/>
-      <div class="expression-text" id="player-talk">Ready to win!</div>
+    <div class="player-avatar">
+      <img src="assets/avatars/player-default.png" id="player-avatar" />
+      <div class="speech-bubble"></div>
     </div>
-  </div>
+
+    <div id="ai-hand" class="card-row ai-cards"></div>
+    <div id="player-hand" class="card-row player-cards"></div>
+  </main>
+
+  <!-- Sounds -->
+  <audio id="pick-two-sound" src="assets/sounds/pick-two.mp3"></audio>
+  <audio id="suspension-sound" src="assets/sounds/suspension.mp3"></audio>
+  <audio id="game-up-sound" src="assets/sounds/game-win.mp3"></audio>
+  <!-- etc -->
 
   <script src="js/card.js"></script>
 </body>
-</html>
