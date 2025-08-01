@@ -3,7 +3,7 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: url('../assets/eano-bg.png') no-repeat center center fixed;
   background-size: cover;
-  color: #fff;
+  color: #d1d1d1; /* Soft gray text */
   overflow-x: hidden;
 }
 
@@ -17,12 +17,10 @@ header {
 }
 
 .brand {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  height: 40px; /* Adjust based on your logo */
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc;
 }
 
 .metrics {
