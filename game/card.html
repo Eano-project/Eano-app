@@ -9,30 +9,46 @@
   <div class="game-container">
     <header>
       <h1>EANO 20</h1>
-      <button id="start-game">Start New Game</button>
-    </header><div class="table">
-  <div class="avatar-section">
-    <div id="ai-avatar" class="avatar"></div>
-    <div id="ai-speech" class="speech-bubble"></div>
+    </header><div class="round-table">
+  <!-- AI Area -->
+  <div class="ai-section">
+    <div class="avatar ai-avatar">
+      <img src="assets/avatar-ai.png" alt="EANO AI" />
+      <div class="speech-bubble" id="ai-speech"></div>
+    </div>
+    <div id="ai-hand" class="card-row ai-hand"></div>
   </div>
 
-  <div class="play-area">
-    <div id="draw-pile" class="draw-pile">Draw</div>
-    <div id="pile" class="play-pile">Pile</div>
+  <!-- Center piles -->
+  <div class="center-pile">
+    <div id="draw-pile" class="pile draw-pile" title="Tap to draw a card"></div>
+    <div id="play-pile" class="pile play-pile" title="Last played card"></div>
   </div>
 
-  <div class="avatar-section">
-    <div id="user-avatar" class="avatar"></div>
-    <div id="player-speech" class="speech-bubble"></div>
+  <!-- Player Area -->
+  <div class="player-section">
+    <div id="player-hand" class="card-row player-hand"></div>
+    <div class="avatar player-avatar">
+      <img src="assets/avatar-user.png" alt="You" />
+      <div class="speech-bubble" id="player-speech"></div>
+    </div>
   </div>
 </div>
 
-<div class="hand" id="player-cards"></div>
-<div class="hand" id="ai-cards"></div>
-
 <footer>
-  <button id="draw-btn">Draw Card</button>
+  <button id="draw-btn">Draw</button>
 </footer>
 
-  </div>  <script src="card.js"></script></body>
+<!-- Sound effects -->
+<audio id="game-up-sound" src="assets/sounds/win.mp3"></audio>
+<audio id="pick-two-sound" src="assets/sounds/pick2.mp3"></audio>
+<audio id="suspension-sound" src="assets/sounds/freeze.mp3"></audio>
+<audio id="marketplace-sound" src="assets/sounds/wild.mp3"></audio>
+<audio id="hold-on-sound" src="assets/sounds/holdon.mp3"></audio>
+<audio id="last-card-sound" src="assets/sounds/lastcard.mp3"></audio>
+
+<script src="card.js"></script>
+
+  </div>
+</body>
 </html>
