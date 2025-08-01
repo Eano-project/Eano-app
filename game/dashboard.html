@@ -1,93 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EANO Game Hub</title>
-  <link rel="stylesheet" href="dashboard.css" />
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: url('../assets/eano-bg.png') no-repeat center center fixed;
-      background-size: cover;
-      color: #fff;
-      overflow-x: hidden;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(0,0,0,0.6);
-      padding: 15px 20px;
-      backdrop-filter: blur(8px);
-    }
-
-    .brand {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #00ffcc;
-    }
-
-    .metrics {
-      display: flex;
-      gap: 15px;
-      font-size: 0.9rem;
-    }
-
-    .container {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 20px;
-    }
-
-    .game-card {
-      background: rgba(0,0,0,0.5);
-      border-radius: 15px;
-      padding: 15px;
-      text-align: center;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-
-    .game-card:hover {
-      background: rgba(0,0,0,0.7);
-      transform: scale(1.03);
-    }
-
-    .game-card img {
-      width: 60px;
-      margin-bottom: 10px;
-    }
-
-    .game-card h3 {
-      margin: 0;
-      font-size: 1rem;
-      color: #00ffcc;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      font-size: 0.8rem;
-      color: #aaa;
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    @media (max-width: 600px) {
-      .metrics {
-        flex-direction: column;
-        align-items: flex-end;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-
   <header>
-    <div class="brand">🎮 EANO GAMES</div>
+    <div class="brand">
+      <img src="assets/eano-logo.png" alt="EANO Games Logo" class="logo">
+    </div>
     <div class="metrics">
       <div>TrustScore: ⭐⭐⭐</div>
       <div>Balance: 0.000 EANO</div>
@@ -95,44 +18,13 @@
   </header>
 
   <main class="container">
-  <a class="game-card" href="card/index.html">
-    <img src="assets/card-icon.png" alt="Cards">
-    <h3>EANO Cards</h3>
-  </a>
-
-  <!-- You can add more games below -->
-  <div class="game-card" onclick="previewGame('Crypto Runner')">
-    <img src="assets/runner-icon.png" alt="Runner">
-    <h3>Crypto Runner</h3>
-  </div>
-
+    <!-- Game cards will be dynamically added by dashboard.js -->
   </main>
 
   <footer>
     &copy; 2025 EANO Project – All rights reserved.
   </footer>
-    <script type="module" src="dashboard.js"></script>
 
-  <script>
-    function previewGame(title) {
-      alert(title + " is coming soon in the EANO Game ecosystem!");
-    }
-
-    // Firebase Config Placeholder (not active in test)
-    /*
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    const firebaseConfig = {
-      apiKey: "AIzaSyAx-iAan1jTlmX55sGIDnlLD-4e7j3bpeI",
-      authDomain: "eano-site.firebaseapp.com",
-      databaseURL: "https://eano-site-default-rtdb.firebaseio.com",
-      projectId: "eano-site",
-      storageBucket: "eano-site.appspot.com",
-      messagingSenderId: "498083728591",
-      appId: "1:498083728591:web:e627255f23a1b612af3bba"
-    };
-    const app = initializeApp(firebaseConfig);
-    */
-  </script>
-
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
