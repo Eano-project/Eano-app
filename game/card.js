@@ -1,50 +1,38 @@
-// EANO 20 Card Game - card.js (based on Ludo.ai, customized)
+// EANO 20 - card.js // Custom playable card game logic with AI and emoji suits
 
-const deck = []; const suits = ['E', 'A', 'N', 'O']; const values = ['1','2','3','4','5','6','7','8','10','14','20'];
+const suits = ['👥', '🏅', '🎙', '🛍', '🔗']; // Community, TrustScore, Studio, Marketplace, Mainnet const shapeMap = { '👥': 'Community', '🏅': 'TrustScore', '🎙': 'Studio', '🛍': 'Marketplace', '🔗': 'Mainnet' };
 
-// Build deck with suit and value suits.forEach(suit => { values.forEach(val => { deck.push({ suit, value: val }); }); });
+const specialNumbers = { 1: 'Hold On', 2: 'Pick Two', 3: 'Skip', 8: 'Suspension', 14: 'Marketplace', 20: 'EANO 20' };
 
-let playerHand = [], aiHand = [], pile = []; let currentPlayer = 'player';
+let playerHand = [], aiHand = [], deck = [], pile = [], playerTurn = true;
 
-const pileEl = document.getElementById('pile'); const playerCardsEl = document.getElementById('player-cards'); const aiCardsEl = document.getElementById('ai-cards'); const playerSpeech = document.getElementById('player-speech'); const aiSpeech = document.getElementById('ai-speech'); const drawBtn = document.getElementById('draw-btn'); const startBtn = document.getElementById('start-game');
+const drawPileEl = document.getElementById('draw-pile'); const playPileEl = document.getElementById('play-pile'); const playerHandEl = document.getElementById('player-hand'); const aiHandEl = document.getElementById('ai-hand'); const playerSpeech = document.getElementById('player-speech'); const aiSpeech = document.getElementById('ai-speech');
+
+const emotions = { happy: ['Nice move!', 'You’re on fire!', 'Well played!'], sad: ['Ouch!', 'Invalid move!', 'Not my day...'], angry: ['No way!', 'You got me!', 'That’s unfair!'], laugh: ['Haha!', 'Gotcha!', 'Funny!'], surprised: ['What?!', 'Oh no!', 'Didn’t see that!'], neutral: ['Hmm...', 'Play fast!'] };
+
+function createDeck() { const cards = []; for (const suit of suits) { const numbers = [2, 4, 5, 7, 12, 14, 20, 3, 1, 8, 10, 11]; for (let num of numbers) { cards.push({ suit, number: num, effect: specialNumbers[num] || null }); } } return shuffle(cards); }
 
 function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
 
-function drawCard(hand, count = 1) { for (let i = 0; i < count; i++) { if (deck.length > 0) { hand.push(deck.pop()); } } }
+function renderHand(hand, element, isAi = false) { element.innerHTML = ''; hand.forEach((card, index) => { const cardDiv = document.createElement('div'); cardDiv.className = card ${isAi ? 'ai-card' : 'player-card'}; cardDiv.innerHTML = isAi ? '' : <div class="emoji">${card.suit}</div><div class="number">${card.number}</div>; if (!isAi) { cardDiv.addEventListener('click', () => playCard(index)); } element.appendChild(cardDiv); }); }
 
-function renderHands() { playerCardsEl.innerHTML = ''; aiCardsEl.innerHTML = '';
+function renderPile() { playPileEl.innerHTML = ''; const top = pile[pile.length - 1]; if (!top) return; const cardDiv = document.createElement('div'); cardDiv.className = 'card played-card'; cardDiv.innerHTML = <div class="emoji">${top.suit}</div><div class="number">${top.number}</div>; playPileEl.appendChild(cardDiv); drawPileEl.innerHTML = '<div class="card back-card"></div>'; }
 
-playerHand.forEach((card, index) => { const div = document.createElement('div'); div.className = 'card'; div.textContent = ${card.suit} ${card.value}; div.onclick = () => playCard(index); playerCardsEl.appendChild(div); });
+function startGame() { deck = createDeck(); playerHand = deck.splice(0, 7); aiHand = deck.splice(0, 7); pile = [deck.pop()]; playerTurn = true; updateGame(); speak(playerSpeech, 'Let’s start!', 'happy'); }
 
-aiHand.forEach(() => { const div = document.createElement('div'); div.className = 'card back'; aiCardsEl.appendChild(div); });
+function updateGame() { renderHand(playerHand, playerHandEl); renderHand(aiHand, aiHandEl, true); renderPile(); }
 
-renderPile(); }
+function playCard(index) { if (!playerTurn) return speak(playerSpeech, 'Not your turn!', 'sad'); const selected = playerHand[index]; const top = pile[pile.length - 1]; if (selected.suit === top.suit || selected.number === top.number) { pile.push(playerHand.splice(index, 1)[0]); applyEffect(selected); updateGame(); if (playerHand.length === 0) { speak(playerSpeech, 'EANO Game Up! You Win!', 'happy'); return; } playerTurn = false; setTimeout(aiTurn, 1500); } else { speak(playerSpeech, 'You can’t play that!', 'angry'); } }
 
-function renderPile() { pileEl.innerHTML = ''; const top = pile[pile.length - 1]; if (top) { const div = document.createElement('div'); div.className = 'card top'; div.textContent = ${top.suit} ${top.value}; pileEl.appendChild(div); } }
+function drawCard() { if (playerTurn && deck.length > 0) { playerHand.push(deck.pop()); updateGame(); playerTurn = false; setTimeout(aiTurn, 1500); } }
 
-function speak(who, message) { const speech = who === 'player' ? playerSpeech : aiSpeech; const avatar = document.getElementById(${who}-avatar); speech.textContent = message; speech.classList.add('talk'); avatar.classList.add('talk'); setTimeout(() => { speech.classList.remove('talk'); avatar.classList.remove('talk'); }, 1500); }
+drawPileEl.addEventListener('click', drawCard);
 
-function canPlay(card) { const top = pile[pile.length - 1]; return !top || card.suit === top.suit || card.value === top.value; }
+function aiTurn() { const top = pile[pile.length - 1]; let played = false; for (let i = 0; i < aiHand.length; i++) { const card = aiHand[i]; if (card.suit === top.suit || card.number === top.number) { pile.push(aiHand.splice(i, 1)[0]); applyEffect(card); played = true; break; } } if (!played && deck.length > 0) aiHand.push(deck.pop()); updateGame(); if (aiHand.length === 0) { speak(aiSpeech, 'I win! Game up!', 'laugh'); return; } playerTurn = true; speak(aiSpeech, 'Your move.', 'neutral'); }
 
-function playCard(index) { if (currentPlayer !== 'player') return; const card = playerHand[index];
+function speak(bubble, text, mood) { bubble.textContent = text; bubble.className = speech-bubble ${mood}; bubble.style.display = 'block'; setTimeout(() => { bubble.style.display = 'none'; }, 2000); }
 
-if (canPlay(card)) { pile.push(...playerHand.splice(index, 1)); renderHands(); speak('player', pickSpeech('player')); checkWinner(); currentPlayer = 'ai'; setTimeout(aiTurn, 1500); } else { speak('player', 'Invalid move!'); } }
+function applyEffect(card) { if (!card.effect) return; switch (card.effect) { case 'Pick Two': for (let i = 0; i < 2 && deck.length > 0; i++) aiHand.push(deck.pop()); break; case 'Suspension': playerTurn = true; break; case 'Marketplace': pile[pile.length - 1].suit = suits[Math.floor(Math.random() * suits.length)]; break; case 'Hold On': playerTurn = false; break; case 'EANO 20': // force opponent to play a random card break; } }
 
-function aiTurn() { const index = aiHand.findIndex(canPlay); if (index >= 0) { pile.push(...aiHand.splice(index, 1)); renderHands(); speak('ai', pickSpeech('ai')); checkWinner(); } else { drawCard(aiHand); speak('ai', 'Oh no! Drawing again.'); } currentPlayer = 'player'; }
-
-function checkWinner() { if (playerHand.length === 0) { speak('player', '🎉 You win! EANO 20'); drawBtn.disabled = true; } else if (aiHand.length === 0) { speak('ai', '😎 AI wins! EANO 20'); drawBtn.disabled = true; } }
-
-function pickSpeech(who) { const phrases = { player: ['I got you!', 'My turn!', 'Eano time!', 'Watch this!', 'Let’s go!'], ai: ['Cornered you!', 'Haha nice!', 'Gotcha!', 'Play fast!', 'Oh, you got me!'] }; const pool = phrases[who]; return pool[Math.floor(Math.random() * pool.length)]; }
-
-function initGame() { deck.length = 0; suits.forEach(suit => { values.forEach(val => { deck.push({ suit, value: val }); }); }); shuffle(deck);
-
-playerHand = []; aiHand = []; pile = []; drawCard(playerHand, 5); drawCard(aiHand, 5); pile.push(deck.pop());
-
-drawBtn.disabled = false; renderHands(); currentPlayer = 'player'; }
-
-drawBtn.onclick = () => { if (currentPlayer !== 'player') return; drawCard(playerHand); renderHands(); speak('player', 'Picked a card...'); currentPlayer = 'ai'; setTimeout(aiTurn, 1500); };
-
-startBtn.onclick = initGame;
-
-document.addEventListener('DOMContentLoaded', initGame);
+document.addEventListener('DOMContentLoaded', startGame);
 
