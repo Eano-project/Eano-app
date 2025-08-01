@@ -1,10 +1,10 @@
 const suits = ['Community', 'Marketplace', 'Trust', 'Innovation', 'Mainnet'];
 const specialShapes = ['Square', 'Circle', 'Triangle', 'Block'];
 const specialNumbers = {
-  1: 'Hold On',   // Player skips turn
-  2: 'Pick Two',  // Opponent draws 2
-  8: 'Suspension', // Freeze opponent's turn
-  14: 'Marketplace' // Wild card to change suit
+  1: 'Hold On',
+  2: 'Pick Two',
+  8: 'Suspension',
+  14: 'Marketplace'
 };
 const specialEffects = {
   Square: 'Pick2', Circle: 'Freeze', Triangle: 'Wild', Block: 'Reverse',
@@ -44,6 +44,10 @@ function shuffle(array) {
 
 function renderHand(hand, element, isAi = false) {
   element.innerHTML = '';
+  if (!hand || hand.length === 0) {
+    console.error('Hand is empty or undefined:', hand);
+    return;
+  }
   hand.forEach((card, index) => {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
@@ -70,11 +74,12 @@ function startGame() {
   playerTurn = true;
   updateGame();
   statusEl.textContent = 'Your turn. Draw or play a card.';
+  console.log('Game started. Player hand:', playerHand, 'AI hand:', aiHand); // Debug
 }
 
 function updateGame() {
   if (!playerHandEl || !aiHandEl || !playPileEl || !drawPileEl || !statusEl) {
-    console.error('Game elements missing!');
+    console.error('Game elements missing:', { playerHandEl, aiHandEl, playPileEl, drawPileEl, statusEl });
     return;
   }
   renderHand(playerHand, playerHandEl);
@@ -88,7 +93,7 @@ function playCard(index) {
   const top = pile[pile.length - 1];
   if (canPlay(selected, top)) {
     pile.push(playerHand.splice(index, 1)[0]);
-    playSound('marketplace-sound'); // Default sound for any play
+    playSound('marketplace-sound');
     applySpecialEffect(selected);
     updateGame();
     checkEnd();
@@ -122,12 +127,12 @@ function applySpecialEffect(card) {
         break;
       case 'Suspension':
         playSound('suspension-sound');
-        playerTurn = true; // Skip AI turn
+        playerTurn = true;
         showSpeech(aiSpeech, 'Suspended!', 'angry');
         break;
       case 'Hold On':
         playSound('hold-on-sound');
-        playerTurn = false; // Skip player turn
+        playerTurn = false;
         showSpeech(playerSpeech, 'Hold On!', 'sad');
         setTimeout(aiTurn, 1000);
         break;
