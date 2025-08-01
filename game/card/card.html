@@ -1,41 +1,42 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EANO Cards</title>
-  <link rel="stylesheet" href="card.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EANO Card Game</title>
+  <link rel="stylesheet" href="card.css">
 </head>
 <body>
-  <div id="start-screen">
-    <h1><img src="game/assets/eano-logo.png" alt="EANO Logo" class="logo" /></h1>
-    <p class="subtitle">Network. Strategy. Trust.</p>
-    <img src="game/assets/eano-card-img.png" alt="EANO Card Preview" class="card-preview" />
-    <button id="startGameBtn">Start Game</button>
-  </div>  <div id="game-wrapper" style="display:none;">
+  <div class="game-wrapper">
     <header>
-      <img src="game/assets/eano-logo.png" alt="EANO Logo" class="logo small" />
-      <h1>EANO Card Battle</h1>
-    </header><div id="game-area">
-  <div class="hand">
-    <h2>CPU</h2>
-    <div id="cpu-hand" class="card-row scrollable"></div>
+      <button class="back-button" onclick="window.location.href='../dashboard.html'">⬅ Back</button>
+      <h1>EANO CARD GAME</h1>
+    </header><section class="preview">
+  <img src="..game/assets/eano-card-img.png" alt="EANO Card Preview" class="preview-img">
+  <button class="play-button" onclick="startGame()">Play Game</button>
+</section>
+
+<main id="game-area" class="hidden">
+  <div class="deck-info">
+    <div id="draw-pile" class="deck">Draw Pile</div>
+    <div id="play-pile" class="deck">Play Pile</div>
   </div>
 
-  <div class="center-area">
-    <div id="draw-pile" class="card-back" title="Draw Pile"></div>
-    <div id="discard-pile" class="card-slot">🃏</div>
+  <div class="players">
+    <div class="player cpu">
+      <h2>CPU</h2>
+      <div id="cpu-hand" class="hand"></div>
+    </div>
+
+    <div class="player you">
+      <h2>You</h2>
+      <div id="player-hand" class="hand"></div>
+    </div>
   </div>
 
-  <div class="hand">
-    <h2>You</h2>
-    <div id="player-hand" class="card-row scrollable"></div>
+  <div class="status-box">
+    <p id="status">Your turn. Draw or play a card.</p>
   </div>
-</div>
+</main>
 
-<div id="log">Your turn. Draw or play a card.</div>
-<div id="game-end" style="display:none;"></div>
-
-  </div><audio id="draw-sound" src="game/assets/draw.mp3"></audio> <audio id="play-sound" src="game/assets/play.mp3"></audio> <audio id="win-sound" src="game/assets/win.mp3"></audio> <audio id="lose-sound" src="game/assets/lose.mp3"></audio>
-
-  <script type="module" src="card.js"></script></body>
+  <script src="card.js" type="module"></script></body>
 </html>
