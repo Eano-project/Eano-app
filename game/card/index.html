@@ -11,7 +11,7 @@
   <div class="game-wrapper">
     <header>
       <button class="back-button" onclick="window.location.href='./../dashboard.html'" aria-label="Back to Dashboard">⬅ Back</button>
-      <span class="logo">EANO Card</span> <!-- Text-based logo -->
+      <span class="logo">EANO Card</span>
     </header>
     <main class="game-table">
       <div class="market-pile" id="draw-pile" aria-label="Draw Pile"></div>
@@ -37,6 +37,12 @@
       </div>
     </main>
   </div>
+  <audio id="pick-two-sound" src="../assets/pick-two.wav"></audio>
+  <audio id="suspension-sound" src="../assets/suspension.wav"></audio>
+  <audio id="hold-on-sound" src="../assets/hold-on.wav"></audio>
+  <audio id="marketplace-sound" src="../assets/marketplace.wav"></audio>
+  <audio id="last-card-sound" src="../assets/last-card.wav"></audio>
+  <audio id="game-up-sound" src="../assets/game-up.wav"></audio>
   <script src="card.js" type="module"></script>
 </body>
 </html>
