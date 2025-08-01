@@ -1,12 +1,13 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const gameData = [
-    {
-      title: "EANO Cards",
-      icon: "assets/card-icon.png",
-      description: "A strategic card-matching game with EANO-themed symbols. Outsmart the EANO AI in this crypto-inspired challenge!",
-      link: "card/index.html"
-    },
-    {
+// Sample game data (expand as needed)
+const games = [
+  {
+    id: 'eano-card-game',
+    title: 'EANO Card Game',
+    description: "A strategic card-matching game with EANO-themed symbols. Outsmart the EANO AI in this crypto-inspired challenge!",
+    image: 'assets/images/eano-card-img.png',
+    link: 'card.html'
+  }
+  // Add more games here
       title: "EANO Conquest",
       icon: "assets/conquest-icon.png",
       description: "Engage in a virtual territory battle. Conquer zones, gain influence, and rise in the EANO world.",
@@ -30,40 +31,40 @@ document.addEventListener("DOMContentLoaded", () => {
       description: "More EANO games will arrive to test your strategy, speed, and skill. Get ready!",
       link: null
     }
-  ];
+];
 
-  const container = document.querySelector(".container");
-  if (!container) {
-    console.error("Container element not found!");
-    return;
-  }
+// Populate game cards
+function populateGameCards() {
+  const container = document.querySelector('.container');
+  if (!container) return;
+  container.innerHTML = '';
+  games.forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.id = game.id;
+    card.innerHTML = `
+      <img src="${game.image}" alt="${game.title}">
+      <h2>${game.title}</h2>
+      <button onclick="window.location.href='${game.link}'">Play Now</button>
+    `;
+    container.appendChild(card);
+  });
+}
 
-  function createGameCard({ title, icon, description, link }) {
-    const card = document.createElement("div");
-    card.className = `game-card ${link ? "" : "disabled"}`;
-    card.setAttribute("aria-label", `Select ${title} game`);
-    if (link) {
-      card.onclick = () => window.location.href = link;
-    } else {
-      card.onclick = () => alert(`${title}\n\n${description}`);
-    }
+// Toggle sound (persists across pages using localStorage)
+function toggleSound() {
+  const isMuted = localStorage.getItem('soundMuted') === 'true';
+  localStorage.setItem('soundMuted', !isMuted);
+  const audios = document.querySelectorAll('audio');
+  audios.forEach(audio => (audio.muted = !isMuted));
+  alert(`Sound ${!isMuted ? 'off' : 'on'}`);
+}
 
-    const img = document.createElement("img");
-    img.src = icon;
-    img.alt = title;
-    img.onerror = () => { img.src = "assets/fallback.png"; };
-
-    const titleEl = document.createElement("h3");
-    titleEl.textContent = title;
-
-    const desc = document.createElement("p");
-    desc.textContent = description;
-
-    card.appendChild(img);
-    card.appendChild(titleEl);
-    card.appendChild(desc);
-    return card;
-  }
-
-  gameData.forEach(game => container.appendChild(createGameCard(game)));
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  populateGameCards();
+  // Apply sound settings
+  const isMuted = localStorage.getItem('soundMuted') === 'true';
+  const audios = document.querySelectorAll('audio');
+  audios.forEach(audio => (audio.muted = isMuted));
 });
