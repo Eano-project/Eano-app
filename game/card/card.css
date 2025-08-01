@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Arial', sans-serif; /* Simpler font like Naija Whot */
   background: #1a1a2e;
   color: #d1d1d1;
   overflow: hidden;
@@ -9,8 +9,8 @@ body {
 
 .game-wrapper {
   width: 100%;
-  max-width: 1200px;
-  padding: 20px;
+  max-width: 800px; /* Smaller, normal size */
+  padding: 10px;
   margin: 0 auto;
 }
 
@@ -19,66 +19,68 @@ header {
   align-items: center;
   justify-content: space-between;
   background: rgba(0, 0, 0, 0.6);
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 10; /* Ensure it stays above other content */
+  z-index: 10;
+  font-weight: normal; /* Remove bold */
 }
 
 .back-button {
-  background: #00ffcc;
-  color: #000;
+  background: #00cc99; /* Softer green */
+  color: #fff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  padding: 8px 15px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 0.9rem;
+  font-weight: normal;
 }
 
 .back-button:hover {
-  background: #00e6b3;
+  background: #00b386;
 }
 
 .logo {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.5rem;
-  color: #00ffcc;
-  text-shadow: 0 0 10px #00ffcc;
+  font-size: 1.2rem; /* Less bold, normal size */
+  color: #00cc99;
+  text-shadow: 0 0 5px #00cc99; /* Softer shadow */
 }
 
 .game-table {
-  background: rgba(0, 0, 0, 0.85);
-  border-radius: 50%;
-  width: 90vw;
-  height: 90vw;
-  max-width: 1000px;
-  max-height: 1000px;
-  margin: 80px auto 0; /* Offset for fixed header */
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px; /* Less circular, more rectangular like Naija Whot */
+  width: 100%;
+  height: auto; /* Flexible height */
+  min-height: 500px;
+  margin: 60px auto 0; /* Adjust for header */
+  padding: 20px;
   position: relative;
-  box-shadow: 0 0 15px #00ffcc;
+  box-shadow: 0 0 10px #00cc99;
 }
 
 .market-pile, .discard-pile {
   position: absolute;
-  width: 100px;
-  height: 140px;
+  width: 70px; /* Smaller, normal size */
+  height: 100px;
   background: url('../assets/back-card.png') no-repeat center/cover;
-  border-radius: 8px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.8rem;
   cursor: pointer;
   color: #d1d1d1;
 }
 
-.market-pile { top: 35%; left: 35%; }
-.discard-pile { top: 55%; left: 55%; }
+.market-pile { top: 20%; left: 20%; }
+.discard-pile { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
 .player-area, .ai-area {
   position: absolute;
@@ -86,40 +88,40 @@ header {
   width: 100%;
 }
 
-.player-area { bottom: -120px; }
-.ai-area { top: -120px; }
+.player-area { bottom: -80px; }
+.ai-area { top: -80px; }
 
 .hand {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   margin: 10px 0;
   overflow-x: auto;
   white-space: nowrap;
   padding: 10px;
-  max-width: 80%;
+  max-width: 90%;
   margin-left: auto;
   margin-right: auto;
   position: relative;
-  z-index: 1; /* Below header */
+  z-index: 1;
 }
 
 .card {
-  width: 100px;
-  height: 140px;
+  width: 70px; /* Normal size like Naija Whot */
+  height: 100px;
   background: #fff;
   color: #000;
-  border-radius: 8px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.2s;
   flex-shrink: 0;
 }
 
 .card:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .avatar {
@@ -127,10 +129,10 @@ header {
 }
 
 .avatar img {
-  width: 100px;
-  height: 100px;
+  width: 60px; /* Normal size for avatars */
+  height: 60px;
   border-radius: 50%;
-  border: 2px solid #00ffcc;
+  border: 2px solid #00cc99;
 }
 
 .speech-bubble {
@@ -138,35 +140,37 @@ header {
   position: absolute;
   background: #fff;
   color: #000;
-  padding: 10px;
-  border-radius: 10px;
-  width: 150px;
+  padding: 5px;
+  border-radius: 5px;
+  width: 120px;
   text-align: center;
-  top: -60px;
+  top: -50px;
   left: 50%;
   transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  font-size: 0.8rem;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
-.speech-bubble.happy { background: #00ffcc; }
-.speech-bubble.sad { background: #ff4d4d; }
-.speech-bubble.angry { background: #ff9900; }
+.speech-bubble.happy { background: #00cc99; }
+.speech-bubble.sad { background: #ff6666; }
+.speech-bubble.angry { background: #ff9933; }
 .speech-bubble.neutral { background: #ccc; }
 
 .status-box {
   position: absolute;
-  bottom: 20px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   background: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-  border-radius: 8px;
-  z-index: 5; /* Above hands */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  z-index: 5;
 }
 
 @keyframes happy {
   0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
+  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 
