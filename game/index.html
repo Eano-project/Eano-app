@@ -1,28 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Choose Mode - EANO Card</title>
-  <link rel="stylesheet" href="css/dashboard.css">
+  <title>EANO Card Modes</title>
+  <link rel="stylesheet" href="card.css">
+  <style>
+    .mode-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .mode {
+      background: #111;
+      border: 2px solid #00ffee;
+      padding: 20px;
+      margin: 15px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 10px #00ffee33;
+    }
+    .mode h2 {
+      margin: 0 0 10px;
+      color: #00ffee;
+    }
+    .mode p {
+      color: #ccc;
+    }
+    .mode button {
+      margin-top: 15px;
+      padding: 10px 25px;
+      background: #00ffee;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .mode button:hover {
+      background: #00ddcc;
+    }
+  </style>
 </head>
-<body class="eano-theme">
-  <header class="header">
-    <h1>🎴 Choose Your Mode</h1>
-  </header>
+<body>
+  <div class="mode-container">
+    <h1 style="color: #00ffee; text-shadow: 0 0 5px #00ffee;">EANO 20 - Game Modes</h1><div class="mode">
+  <h2>Single Player</h2>
+  <p>Challenge EANO AI in a fast-paced strategic duel. Experience avatar reactions, emotional plays and more!</p>
+  <a href="card.html"><button>Start Single Player</button></a>
+</div>
 
-  <main class="mode-selection">
-    <section class="mode-card">
-      <h2>🧠 Single Player (AI)</h2>
-      <p>Play against the smart EANO AI — expressive and strategic.</p>
-      <a href="card.html" class="play-button">▶️ Start Single Player</a>
-    </section>
+<div class="mode">
+  <h2>Multiplayer</h2>
+  <p>Coming soon: Compete with friends in real-time, ranked EANO 20 matches!</p>
+  <button disabled>Multiplayer (Coming Soon)</button>
+</div>
 
-    <section class="mode-card coming-soon">
-      <h2>👥 Multiplayer</h2>
-      <p>Challenge friends and climb the leaderboard!</p>
-      <button disabled>Coming Soon</button>
-    </section>
-  </main>
+<div class="mode">
+  <h2>Tournaments</h2>
+  <p>Coming soon: Join global EANO tournaments, earn rewards, rise in the leaderboard and win crypto prizes!</p>
+  <button disabled>Tournaments (Coming Soon)</button>
+</div>
+
+  </div>
 </body>
 </html>
