@@ -1,11 +1,14 @@
-const suits = ['Trust', 'Marketplace', 'Community', 'Innovation'];
-const suitAbbreviations = { Trust: 'TRS', Marketplace: 'MKP', Community: 'CMY', Innovation: 'INV' };
+const suits = ['Community', 'Marketplace', 'Trust', 'Innovation', 'Mainnet'];
 const specialShapes = ['Square', 'Circle', 'Triangle', 'Block'];
+const specialNumbers = {
+  1: 'Hold On',   // Player skips turn
+  2: 'Pick Two',  // Opponent draws 2
+  8: 'Suspension', // Freeze opponent's turn
+  14: 'Marketplace' // Wild card to change suit
+};
 const specialEffects = {
-  Square: 'Pick2',
-  Circle: 'Freeze',
-  Triangle: 'Wild',
-  Block: 'Reverse'
+  Square: 'Pick2', Circle: 'Freeze', Triangle: 'Wild', Block: 'Reverse',
+  ...Object.fromEntries(Object.entries(specialNumbers).map(([k, v]) => [k, v]))
 };
 
 let playerHand = [], aiHand = [], deck = [], pile = [], playerTurn = true;
@@ -45,7 +48,7 @@ function renderHand(hand, element, isAi = false) {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
     cardDiv.style.backgroundImage = isAi ? `url(../assets/back-card.png)` : 'none';
-    cardDiv.textContent = isAi ? '' : `${card.shape || card.number} ${card.shape ? '' : suitAbbreviations[card.suit]}`;
+    cardDiv.textContent = isAi ? '' : `${card.shape || card.number} ${card.suit || ''}`;
     if (!isAi) {
       cardDiv.addEventListener('click', () => playCard(index));
     }
@@ -55,7 +58,7 @@ function renderHand(hand, element, isAi = false) {
 
 function renderPile() {
   const topCard = pile[pile.length - 1];
-  playPileEl.textContent = topCard ? `${topCard.shape || topCard.number} ${topCard.shape ? '' : suitAbbreviations[topCard.suit]}` : '';
+  playPileEl.textContent = topCard ? `${topCard.shape || topCard.number} ${topCard.suit || ''}` : '';
   drawPileEl.textContent = `${deck.length} left`;
 }
 
@@ -85,6 +88,7 @@ function playCard(index) {
   const top = pile[pile.length - 1];
   if (canPlay(selected, top)) {
     pile.push(playerHand.splice(index, 1)[0]);
+    playSound('marketplace-sound'); // Default sound for any play
     applySpecialEffect(selected);
     updateGame();
     checkEnd();
@@ -92,6 +96,9 @@ function playCard(index) {
       playerTurn = false;
       showSpeech(playerSpeech, 'Nice move!', 'happy');
       setTimeout(aiTurn, 1000);
+    } else {
+      playSound('last-card-sound');
+      showSpeech(playerSpeech, 'Played last card!', 'happy');
     }
   } else {
     showSpeech(playerSpeech, 'Invalid move!', 'sad');
@@ -99,30 +106,50 @@ function playCard(index) {
 }
 
 function canPlay(card, top) {
-  return card.suit === top.suit || card.number === top.number || card.shape || top.shape;
+  return card.suit === top.suit || card.number === top.number || card.shape || top.shape || (specialNumbers[card.number] && specialNumbers[top.number]);
 }
 
 function applySpecialEffect(card) {
-  if (!card.shape) return;
-  switch (card.effect) {
-    case 'Pick2':
-      for (let i = 0; i < 2 && deck.length > 0; i++) {
-        aiHand.push(deck.pop());
-      }
-      showSpeech(aiSpeech, 'Oh no, picking two!', 'sad');
-      break;
-    case 'Freeze':
-      playerTurn = true;
-      showSpeech(aiSpeech, 'Frozen!', 'angry');
-      break;
-    case 'Wild':
-      const newSuit = suits[Math.floor(Math.random() * suits.length)];
-      pile[pile.length - 1].suit = newSuit;
-      showSpeech(playerSpeech, `Changed to ${suitAbbreviations[newSuit]}!`, 'happy');
-      break;
-    case 'Reverse':
-      showSpeech(aiSpeech, 'Reversed, huh?', 'surprised');
-      break;
+  if (card.shape || specialNumbers[card.number]) {
+    const effect = card.effect || specialNumbers[card.number];
+    switch (effect) {
+      case 'Pick Two':
+        playSound('pick-two-sound');
+        for (let i = 0; i < 2 && deck.length > 0; i++) {
+          aiHand.push(deck.pop());
+        }
+        showSpeech(aiSpeech, 'Pick Two!', 'sad');
+        break;
+      case 'Suspension':
+        playSound('suspension-sound');
+        playerTurn = true; // Skip AI turn
+        showSpeech(aiSpeech, 'Suspended!', 'angry');
+        break;
+      case 'Hold On':
+        playSound('hold-on-sound');
+        playerTurn = false; // Skip player turn
+        showSpeech(playerSpeech, 'Hold On!', 'sad');
+        setTimeout(aiTurn, 1000);
+        break;
+      case 'Marketplace':
+        playSound('marketplace-sound');
+        const newSuit = suits[Math.floor(Math.random() * suits.length)];
+        pile[pile.length - 1].suit = newSuit;
+        showSpeech(playerSpeech, `Changed to ${newSuit}!`, 'happy');
+        break;
+      case 'Wild':
+        const newSuit = suits[Math.floor(Math.random() * suits.length)];
+        pile[pile.length - 1].suit = newSuit;
+        showSpeech(playerSpeech, `Wild to ${newSuit}!`, 'happy');
+        break;
+      case 'Freeze':
+        playerTurn = true;
+        showSpeech(aiSpeech, 'Frozen!', 'angry');
+        break;
+      case 'Reverse':
+        showSpeech(aiSpeech, 'Reversed, huh?', 'surprised');
+        break;
+    }
   }
 }
 
@@ -172,12 +199,18 @@ function showSpeech(bubble, text, emotion) {
   }, 2000);
 }
 
+function playSound(soundId) {
+  document.getElementById(soundId)?.play().catch(e => console.error('Sound error:', e));
+}
+
 function checkEnd() {
   if (playerHand.length === 0) {
-    alert('You Win!');
+    playSound('game-up-sound');
+    alert('EANO Game Up! You Win!');
     resetGame();
   } else if (aiHand.length === 0) {
-    alert('EANO AI Wins!');
+    playSound('game-up-sound');
+    alert('EANO Game Up! EANO AI Wins!');
     resetGame();
   } else if (deck.length === 0 && !canPlayAny(playerHand, pile[pile.length - 1]) && !canPlayAny(aiHand, pile[pile.length - 1])) {
     alert('Game Over: Draw!');
