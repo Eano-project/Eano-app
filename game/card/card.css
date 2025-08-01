@@ -1,159 +1,133 @@
 body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #1a1a2e;
+  background: linear-gradient(#1A1A3D, #4B0082);
   color: #fff;
+  font-family: 'Exo 2', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-}
-
-.game-wrapper {
-  width: 100%;
-  max-width: 1200px;
-  padding: 20px;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 10px 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-.back-button {
-  background: #00ffcc;
-  color: #000;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.back-button:hover {
-  background: #00e6b3;
-}
-
-.logo {
-  height: 40px;
+  height: 100vh;
+  margin: 0;
 }
 
 .game-table {
-  background: rgba(0, 0, 0, 0.85);
+  background: #2F2F5A;
   border-radius: 50%;
-  width: 80vw;
-  height: 80vw;
-  max-width: 800px;
-  max-height: 800px;
-  margin: 0 auto;
+  width: 600px;
+  height: 600px;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 0 15px #00ffcc;
-}
-
-.market-pile, .discard-pile {
-  position: absolute;
-  width: 80px;
-  height: 120px;
-  background: url('../assets/back-card.png') no-repeat center/cover;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.market-pile { top: 30%; left: 40%; }
-.discard-pile { top: 50%; left: 50%; }
-
-.player-area, .ai-area {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-}
-
-.player-area { bottom: -100px; }
-.ai-area { top: -100px; }
-
-.hand {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px 0;
+  box-shadow: 0 0 20px rgba(0, 183, 235, 0.5);
 }
 
 .card {
   width: 80px;
   height: 120px;
-  background: #fff;
-  color: #000;
+  background-size: cover;
   border-radius: 8px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  color: #fff;
+  font-weight: bold;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.2s;
 }
 
 .card:hover {
   transform: scale(1.1);
 }
 
-.avatar {
-  position: relative;
+.ai-card {
+  background-image: url('../assets/images/back-card.png');
 }
 
-.avatar img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 2px solid #00ffcc;
+.player-hand, .ai-hand {
+  display: flex;
+  gap: 10px;
+  position: absolute;
+}
+
+.player-hand {
+  bottom: 20px;
+}
+
+.ai-hand {
+  top: 20px;
+}
+
+.draw-pile, .play-pile {
+  position: absolute;
+  text-align: center;
+}
+
+.draw-pile {
+  left: 50px;
+}
+
+.play-pile {
+  right: 50px;
+}
+
+.player-avatar, .ai-avatar {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+}
+
+.player-avatar {
+  bottom: -50px;
+  background-image: url('../assets/images/player-avatar.png');
+}
+
+.ai-avatar {
+  top: -50px;
+  background-image: url('../assets/images/ai-avatar.png');
 }
 
 .speech-bubble {
-  display: none;
   position: absolute;
   background: #fff;
   color: #000;
   padding: 10px;
   border-radius: 10px;
-  width: 150px;
-  text-align: center;
-  top: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  display: none;
+  transform: translateY(-50px);
 }
 
-.speech-bubble.happy { background: #00ffcc; }
-.speech-bubble.sad { background: #ff4d4d; }
-.speech-bubble.angry { background: #ff9900; }
-.speech-bubble.neutral { background: #ccc; }
-
-.status-box {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-  border-radius: 8px;
+.player-avatar .speech-bubble {
+  bottom: 100px;
 }
 
-@keyframes happy {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+.ai-avatar .speech-bubble {
+  top: 100px;
 }
 
-.happy { animation: happy 0.5s; }
+/* Animations */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.emotion-happy { animation: bounce 0.5s; }
+.emotion-sad { animation: shake 0.5s; }
+.emotion-angry { animation: pulse 0.5s; }
+.emotion-surprised { animation: flash 0.5s; }
