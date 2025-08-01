@@ -3,54 +3,49 @@ document.addEventListener("DOMContentLoaded", () => {
     {
       title: "EANO Cards",
       icon: "assets/card-icon.png",
-      description: "A strategic card-matching game where players win points by pairing EANO-themed symbols. Perfect for quick fun and testing your memory.",
-    },
-    {
-      title: "EANO Conquest",
-      icon: "assets/conquest-icon.png",
-      description: "Engage in a virtual territory battle. Conquer zones, gain influence, and rise in the EANO world. Inspired by classic conquest board games.",
-    },
-    {
-      title: "EANO Path",
-      icon: "assets/path-icon.png",
-      description: "Navigate your EANO avatar through obstacle paths and earn rewards. A mix of puzzle and reflex gameplay. Fast-paced and skill-based.",
+      description: "A strategic card-matching game with EANO-themed symbols. Outsmart the EANO AI in this crypto-inspired challenge!",
+      link: "card/index.html" // Navigates to the game
     },
     {
       title: "Coming Soon...",
       icon: "assets/coming-soon.png",
-      description: "New EANO challenges are being prepared. Stay tuned for fresh games dropping soon!"
-    },
-    {
-      title: "Coming Soon...",
-      icon: "assets/coming-soon.png",
-      description: "More EANO games will arrive to test your strategy, speed, and skill. Get ready!"
+      description: "New EANO challenges are being prepared. Stay tuned!",
+      link: null // No link for placeholders
     }
   ];
 
   const container = document.querySelector(".container");
+  if (!container) {
+    console.error("Container element not found!");
+    return;
+  }
 
-  gameData.forEach(game => {
+  function createGameCard({ title, icon, description, link }) {
     const card = document.createElement("div");
-    card.className = "game-card";
-    card.onclick = () => alert(`${game.title}\n\n${game.description}`);
+    card.className = `game-card ${link ? "" : "disabled"}`;
+    card.setAttribute("aria-label", `Select ${title} game`);
+    if (link) {
+      card.onclick = () => window.location.href = link;
+    } else {
+      card.onclick = () => alert(`${title}\n\n${description}`);
+    }
 
     const img = document.createElement("img");
-    img.src = game.icon;
-    img.alt = game.title;
+    img.src = icon;
+    img.alt = title;
+    img.onerror = () => { img.src = "assets/fallback.png"; }; // Fallback if icon is missing
 
-    const title = document.createElement("h3");
-    title.textContent = game.title;
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = title;
 
     const desc = document.createElement("p");
-    desc.textContent = game.description;
-    desc.style.fontSize = "0.8rem";
-    desc.style.marginTop = "10px";
-    desc.style.color = "#ccc";
+    desc.textContent = description;
 
     card.appendChild(img);
-    card.appendChild(title);
+    card.appendChild(titleEl);
     card.appendChild(desc);
+    return card;
+  }
 
-    container.appendChild(card);
-  });
+  gameData.forEach(game => container.appendChild(createGameCard(game)));
 });
