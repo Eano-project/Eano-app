@@ -59,4 +59,144 @@ function renderPile() {
   drawPileEl.textContent = `${deck.length} left`;
 }
 
-// Rest of the functions (startGame, updateGame, etc.) remain unchanged
+function startGame() {
+  deck = createDeck();
+  playerHand = deck.splice(0, 7);
+  aiHand = deck.splice(0, 7);
+  pile = [deck.pop()];
+  playerTurn = true;
+  updateGame();
+  statusEl.textContent = 'Your turn. Draw or play a card.';
+}
+
+function updateGame() {
+  if (!playerHandEl || !aiHandEl || !playPileEl || !drawPileEl || !statusEl) {
+    console.error('Game elements missing!');
+    return;
+  }
+  renderHand(playerHand, playerHandEl);
+  renderHand(aiHand, aiHandEl, true);
+  renderPile();
+}
+
+function playCard(index) {
+  if (!playerTurn) return;
+  const selected = playerHand[index];
+  const top = pile[pile.length - 1];
+  if (canPlay(selected, top)) {
+    pile.push(playerHand.splice(index, 1)[0]);
+    applySpecialEffect(selected);
+    updateGame();
+    checkEnd();
+    if (playerHand.length > 0) {
+      playerTurn = false;
+      showSpeech(playerSpeech, 'Nice move!', 'happy');
+      setTimeout(aiTurn, 1000);
+    }
+  } else {
+    showSpeech(playerSpeech, 'Invalid move!', 'sad');
+  }
+}
+
+function canPlay(card, top) {
+  return card.suit === top.suit || card.number === top.number || card.shape || top.shape;
+}
+
+function applySpecialEffect(card) {
+  if (!card.shape) return;
+  switch (card.effect) {
+    case 'Pick2':
+      for (let i = 0; i < 2 && deck.length > 0; i++) {
+        aiHand.push(deck.pop());
+      }
+      showSpeech(aiSpeech, 'Oh no, picking two!', 'sad');
+      break;
+    case 'Freeze':
+      playerTurn = true;
+      showSpeech(aiSpeech, 'Frozen!', 'angry');
+      break;
+    case 'Wild':
+      const newSuit = suits[Math.floor(Math.random() * suits.length)];
+      pile[pile.length - 1].suit = newSuit;
+      showSpeech(playerSpeech, `Changed to ${suitAbbreviations[newSuit]}!`, 'happy');
+      break;
+    case 'Reverse':
+      showSpeech(aiSpeech, 'Reversed, huh?', 'surprised');
+      break;
+  }
+}
+
+function drawCard() {
+  if (deck.length > 0 && playerTurn) {
+    playerHand.push(deck.pop());
+    updateGame();
+    playerTurn = false;
+    showSpeech(playerSpeech, 'Drew a card', 'neutral');
+    setTimeout(aiTurn, 1000);
+  } else {
+    showSpeech(playerSpeech, 'No cards left to draw!', 'sad');
+  }
+}
+
+function aiTurn() {
+  const top = pile[pile.length - 1];
+  let played = false;
+  for (let i = 0; i < aiHand.length; i++) {
+    if (canPlay(aiHand[i], top)) {
+      pile.push(aiHand.splice(i, 1)[0]);
+      applySpecialEffect(pile[pile.length - 1]);
+      played = true;
+      showSpeech(aiSpeech, 'Take that!', 'happy');
+      break;
+    }
+  }
+  if (!played && deck.length > 0) {
+    aiHand.push(deck.pop());
+    showSpeech(aiSpeech, 'Drawing...', 'neutral');
+  }
+  updateGame();
+  checkEnd();
+  if (aiHand.length > 0) {
+    playerTurn = true;
+    statusEl.textContent = 'Your turn. Draw or play a card.';
+  }
+}
+
+function showSpeech(bubble, text, emotion) {
+  bubble.textContent = text;
+  bubble.classList.add(emotion);
+  bubble.style.display = 'block';
+  setTimeout(() => {
+    bubble.style.display = 'none';
+    bubble.classList.remove(emotion);
+  }, 2000);
+}
+
+function checkEnd() {
+  if (playerHand.length === 0) {
+    alert('You Win!');
+    resetGame();
+  } else if (aiHand.length === 0) {
+    alert('EANO AI Wins!');
+    resetGame();
+  } else if (deck.length === 0 && !canPlayAny(playerHand, pile[pile.length - 1]) && !canPlayAny(aiHand, pile[pile.length - 1])) {
+    alert('Game Over: Draw!');
+    resetGame();
+  }
+}
+
+function canPlayAny(hand, top) {
+  return hand.some(card => canPlay(card, top));
+}
+
+function resetGame() {
+  playerHand = [];
+  aiHand = [];
+  deck = [];
+  pile = [];
+  updateGame();
+  statusEl.textContent = 'Game over. Start a new game.';
+}
+
+drawPileEl.addEventListener('click', drawCard);
+document.addEventListener('DOMContentLoaded', startGame);
