@@ -2,8 +2,8 @@ body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #1a1a2e;
-  color: #e0e0e0; /* Softer text color */
-  overflow: hidden; /* Fixed viewport */
+  color: #d1d1d1;
+  overflow: hidden;
   min-height: 100vh;
 }
 
@@ -39,7 +39,10 @@ header {
 }
 
 .logo {
-  height: 40px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  color: #00ffcc;
+  text-shadow: 0 0 10px #00ffcc;
 }
 
 .game-table {
@@ -66,7 +69,7 @@ header {
   text-align: center;
   font-size: 1rem;
   cursor: pointer;
-  color: #e0e0e0;
+  color: #d1d1d1;
 }
 
 .market-pile { top: 35%; left: 35%; }
@@ -85,7 +88,7 @@ header {
   display: flex;
   gap: 10px;
   margin: 10px 0;
-  overflow-x: auto; /* Scrollable hands */
+  overflow-x: auto;
   white-space: nowrap;
   padding: 10px;
   max-width: 80%;
@@ -94,7 +97,7 @@ header {
 }
 
 .card {
-  width: 100px; /* Fixed size */
+  width: 100px;
   height: 140px;
   background: #fff;
   color: #000;
@@ -105,7 +108,7 @@ header {
   font-size: 1rem;
   cursor: pointer;
   transition: transform 0.3s;
-  flex-shrink: 0; /* Prevent resizing */
+  flex-shrink: 0;
 }
 
 .card:hover {
