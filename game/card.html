@@ -2,40 +2,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EANO Card - Single Player</title>
-  <link rel="stylesheet" href="../css/card.css" />
+  <title>EANO 20 - Card Game</title>
+  <link rel="stylesheet" href="card.css" />
 </head>
 <body>
   <div class="game-container">
     <header>
-      <h1>EANO Card - Single Player</h1>
-    </header><!-- Round Table -->
-<div class="table">
-  <!-- EANO AI -->
-  <div class="player-slot ai">
-    <div class="avatar ai-avatar" id="ai-avatar"></div>
-    <div class="speech-bubble" id="ai-speech">Let's play smart!</div>
-    <div class="hand" id="ai-hand"></div>
+      <h1>EANO 20</h1>
+      <button id="start-game">Start New Game</button>
+    </header><div class="table">
+  <div class="avatar-section">
+    <div id="ai-avatar" class="avatar"></div>
+    <div id="ai-speech" class="speech-bubble"></div>
   </div>
 
-  <!-- Play Area -->
   <div class="play-area">
-    <div class="draw-pile" id="draw-pile">🎴</div>
-    <div class="play-pile" id="play-pile"></div>
+    <div id="draw-pile" class="draw-pile">Draw</div>
+    <div id="pile" class="play-pile">Pile</div>
   </div>
 
-  <!-- You -->
-  <div class="player-slot user">
-    <div class="avatar user-avatar" id="user-avatar"></div>
-    <div class="speech-bubble" id="user-speech">I'm ready!</div>
-    <div class="hand" id="player-hand"></div>
+  <div class="avatar-section">
+    <div id="user-avatar" class="avatar"></div>
+    <div id="player-speech" class="speech-bubble"></div>
   </div>
 </div>
 
+<div class="hand" id="player-cards"></div>
+<div class="hand" id="ai-cards"></div>
+
 <footer>
-  <button id="start-game">Start Game</button>
-  <p>Part of EANO Crypto Game Series</p>
+  <button id="draw-btn">Draw Card</button>
 </footer>
 
-  </div>  <script src="../js/card.js"></script></body>
+  </div>  <script src="card.js"></script></body>
 </html>
