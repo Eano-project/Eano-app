@@ -5,33 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EANO Game Hub</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
   <header>
     <div class="brand">
-      <img src="assets/eano-logo.png" alt="EANO Games Logo" class="logo">
+      <img src="assets/images/eano-logo.png" alt="EANO Games Logo" class="logo">
     </div>
     <div class="metrics">
       <div>TrustScore: ⭐⭐⭐</div>
-      <div>Balance: 0.000 EANO</div>
+      <div>Balance: <span id="balance">0.000 EANO</span></div>
     </div>
   </header>
 
   <main class="container">
-    <!-- Game cards dynamically added by dashboard.js -->
+    <div class="game-card" id="eano-card-game">
+      <img src="assets/images/eano-card-img.png" alt="EANO Card Game">
+      <h2>EANO Card Game</h2>
+      <button onclick="window.location.href='card.html'">Play Now</button>
+    </div>
+    <!-- Additional game cards can be added dynamically -->
   </main>
 
   <footer>
     &copy; 2025 EANO Project – All rights reserved.
   </footer>
 
-   <div class="dashboard">
-    <img src="assets/images/logo.png" alt="EANO Card Logo" class="logo">
-    <h1>EANO Card Game</h1>
-    <button onclick="window.location.href='card.html'">Start Game</button>
-    <button onclick="toggleSound()">Toggle Sound</button>
-  </div>
   <script src="js/dashboard.js"></script>
 </body>
 </html>
