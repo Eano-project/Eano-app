@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EANO Card Game</title>
+  <link rel="stylesheet" href="css/card.css">
+</head>
+<body>
+  <div class="game-table">
+    <img src="assets/images/logo.png" alt="EANO Card Logo" class="logo">
+    <div id="draw-pile" class="draw-pile">Draw Pile</div>
+    <div id="play-pile" class="play-pile">Play Pile</div>
+    <div id="player-hand" class="player-hand"></div>
+    <div id="ai-hand" class="ai-hand"></div>
+    <div id="status">Loading...</div>
+    <div class="player-avatar">
+      <div class="speech-bubble"></div>
+    </div>
+    <div class="ai-avatar">
+      <div class="speech-bubble"></div>
+    </div>
+  </div>
+  <audio id="marketplace-sound" src="assets/sounds/marketplace-sound.mp3"></audio>
+  <audio id="pick-two-sound" src="assets/sounds/pick-two-sound.mp3"></audio>
+  <audio id="suspension-sound" src="assets/sounds/suspension-sound.mp3"></audio>
+  <audio id="hold-on-sound" src="assets/sounds/hold-on-sound.mp3"></audio>
+  <audio id="last-card-sound" src="assets/sounds/last-card-sound.mp3"></audio>
+  <audio id="game-up-sound" src="assets/sounds/game-up-sound.mp3"></audio>
+  <script src="js/card.js"></script>
+</body>
+</html>
