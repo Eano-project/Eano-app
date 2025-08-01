@@ -1,44 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EANO Card Game</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/card.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EANO Card - Play</title>
+  <link rel="stylesheet" href="css/card.css"/>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <img src="assets/images/eano-logo.png" alt="EANO Games Logo" class="logo">
+  <div class="game-container">
+    <!-- AI Opponent -->
+    <div class="avatar ai-avatar">
+      <img src="assets/avatars/ai-default.png" id="ai-avatar" alt="Eano AI"/>
+      <div class="expression-text" id="ai-talk">Your move!</div>
     </div>
-    <div class="metrics">
-      <div>TrustScore: ⭐⭐⭐</div>
-      <div>Balance: <span id="balance">0.000 EANO</span></div>
+
+    <!-- Card Table -->
+    <div class="card-table">
+      <img src="assets/eano-card-img.png" alt="Card Table" class="table-image"/>
+      <div class="cards-area">
+        <div class="card back" id="card1"></div>
+        <div class="card back" id="card2"></div>
+      </div>
     </div>
-  </header>
-  <div class="game-table">
-    <div id="draw-pile" class="draw-pile">Draw Pile</div>
-    <div id="play-pile" class="play-pile">Play Pile</div>
-    <div id="player-hand" class="player-hand"></div>
-    <div id="ai-hand" class="ai-hand"></div>
-    <div id="status">Loading...</div>
-    <div class="player-avatar">
-      <div class="speech-bubble"></div>
-    </div>
-    <div class="ai-avatar">
-      <div class="speech-bubble"></div>
+
+    <!-- Player -->
+    <div class="avatar player-avatar">
+      <img src="assets/avatars/player-default.png" id="player-avatar" alt="You"/>
+      <div class="expression-text" id="player-talk">Ready to win!</div>
     </div>
   </div>
-  <footer>
-    &copy; 2025 EANO Project – All rights reserved.
-  </footer>
-  <audio id="marketplace-sound" src="assets/sounds/marketplace-sound.mp3"></audio>
-  <audio id="pick-two-sound" src="assets/sounds/pick-two-sound.mp3"></audio>
-  <audio id="suspension-sound" src="assets/sounds/suspension-sound.mp3"></audio>
-  <audio id="hold-on-sound" src="assets/sounds/hold-on-sound.mp3"></audio>
-  <audio id="last-card-sound" src="assets/sounds/last-card-sound.mp3"></audio>
-  <audio id="game-up-sound" src="assets/sounds/game-up-sound.mp3"></audio>
+
   <script src="js/card.js"></script>
 </body>
 </html>
