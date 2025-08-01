@@ -1,94 +1,32 @@
-/* card.css - EANO Cards Game Styling */
-body {
-  margin: 0;
-  background: #000;
-  color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
+/* === EANO Card Game Styles === */ body { margin: 0; padding: 0; background-color: #121212; font-family: 'Segoe UI', sans-serif; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; overflow: hidden; }
 
-#start-screen {
-  text-align: center;
-}
+.game-container { text-align: center; width: 100%; max-width: 800px; padding: 1rem; }
 
-#start-screen button {
-  padding: 12px 24px;
-  background: #00ffcc;
-  color: #000;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
+.back-button { position: absolute; top: 1rem; left: 1rem; color: #fff; background: #444; padding: 0.5rem 1rem; border-radius: 5px; text-decoration: none; font-weight: bold; }
 
-#game-area {
-  width: 100%;
-  max-width: 600px;
-  padding: 16px;
-  background: #111;
-  border-radius: 10px;
-  box-shadow: 0 0 15px #00ffcc;
-}
+h1 { margin-top: 2rem; color: #00ffd9; }
 
-.hand {
-  margin: 10px 0;
-  text-align: center;
-}
+.game-info { margin: 1rem 0; background: #1f1f1f; padding: 1rem; border-radius: 10px; }
 
-.card-row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
+.play-area { display: flex; justify-content: space-around; align-items: center; margin: 2rem 0; flex-wrap: wrap; }
 
-.card {
-  width: 60px;
-  height: 90px;
-  background: white;
-  color: black;
-  border-radius: 5px;
-  text-align: center;
-  line-height: 90px;
-  font-weight: bold;
-  cursor: pointer;
-}
+.deck, .pile { width: 120px; height: 160px; border-radius: 12px; background-size: cover; background-repeat: no-repeat; background-position: center; box-shadow: 0 0 10px #00ffd9; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; }
 
-.card-back {
-  width: 60px;
-  height: 90px;
-  background: url("assets/eano-card-back.png") no-repeat center;
-  background-size: cover;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 10px auto;
-}
+.deck { background-image: url('assets/eano-card-img.png'); }
 
-.center-area {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 20px 0;
-}
+.pile { background-color: #333; }
 
-.card-slot {
-  width: 60px;
-  height: 90px;
-  background: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-}
+.hands { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 2rem; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 1rem; }
 
-#log {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 0.95rem;
-  color: #ff0;
-}
+.hand { display: flex; gap: 0.5rem; overflow-x: auto; padding: 1rem; scroll-snap-type: x mandatory; }
+
+.card { background-color: #1e1e1e; border: 2px solid #00ffd9; border-radius: 10px; padding: 0.5rem 1rem; color: #00ffd9; font-weight: bold; cursor: pointer; scroll-snap-align: start; transition: transform 0.2s; }
+
+.card:hover { transform: scale(1.1); }
+
+#status { margin-bottom: 1rem; font-size: 1.1rem; font-weight: 600; color: #ffda6b; }
+
+button { padding: 0.75rem 1.5rem; background-color: #00ffd9; color: #000; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 0 10px #00ffd9; transition: background 0.3s; }
+
+button:hover { background-color: #0ff; }
+
