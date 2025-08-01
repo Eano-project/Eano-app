@@ -4,13 +4,31 @@ document.addEventListener("DOMContentLoaded", () => {
       title: "EANO Cards",
       icon: "assets/card-icon.png",
       description: "A strategic card-matching game with EANO-themed symbols. Outsmart the EANO AI in this crypto-inspired challenge!",
-      link: "card/index.html" // Navigates to the game
+      link: "card/index.html"
+    },
+    {
+      title: "EANO Conquest",
+      icon: "assets/conquest-icon.png",
+      description: "Engage in a virtual territory battle. Conquer zones, gain influence, and rise in the EANO world.",
+      link: null
+    },
+    {
+      title: "EANO Path",
+      icon: "assets/path-icon.png",
+      description: "Navigate your EANO avatar through obstacle paths and earn rewards. A mix of puzzle and reflex gameplay.",
+      link: null
     },
     {
       title: "Coming Soon...",
       icon: "assets/coming-soon.png",
       description: "New EANO challenges are being prepared. Stay tuned!",
-      link: null // No link for placeholders
+      link: null
+    },
+    {
+      title: "Coming Soon...",
+      icon: "assets/coming-soon.png",
+      description: "More EANO games will arrive to test your strategy, speed, and skill. Get ready!",
+      link: null
     }
   ];
 
@@ -33,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const img = document.createElement("img");
     img.src = icon;
     img.alt = title;
-    img.onerror = () => { img.src = "assets/fallback.png"; }; // Fallback if icon is missing
+    img.onerror = () => { img.src = "assets/fallback.png"; };
 
     const titleEl = document.createElement("h3");
     titleEl.textContent = title;
