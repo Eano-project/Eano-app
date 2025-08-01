@@ -1,35 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EANO Game Hub</title>
-  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="card.css" />
+  <style>
+    .hub-container {
+      padding: 40px 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .game-tile {
+      background: #111;
+      border: 2px solid #00ffee;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px #00ffee33;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .game-tile:hover {
+      transform: translateY(-5px);
+    }
+    .game-tile h2 {
+      margin: 0;
+      color: #00ffee;
+    }
+    .game-tile p {
+      color: #ccc;
+      margin: 10px 0;
+    }
+    .game-tile a button {
+      background: #00ffee;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .game-tile a button:hover {
+      background: #00ddcc;
+    }
+  </style>
 </head>
-<body class="eano-theme">
-  <header class="header">
-    <img src="assets/logo.png" alt="EANO Logo" class="logo">
-    <h1>🎮 EANO Game Hub</h1>
-  </header>
+<body>
+  <div class="hub-container">
+    <header>
+      <h1 style="color: #00ffee; text-align: center; text-shadow: 0 0 5px #00ffee;">Welcome to EANO Game Hub</h1>
+    </header><div class="game-tile">
+  <h2>EANO 20 (Card Game)</h2>
+  <p>Challenge the AI or friends in a crypto-themed card game with strategic plays and emotional avatars.</p>
+  <a href="index.html"><button>Play EANO 20</button></a>
+</div>
 
-  <main class="game-list">
-    <div class="game-card">
-      <h2>🎴 EANO Card</h2>
-      <p>Crypto-inspired card battle game against AI or real players.</p>
-      <a href="index.html" class="play-button">▶️ Play EANO Card</a>
-    </div>
+<div class="game-tile">
+  <h2>EANO Conquest (Ludo-style)</h2>
+  <p>Coming soon: Battle for EANO dominance in this ludo-inspired strategic conquest game.</p>
+  <button disabled>Coming Soon</button>
+</div>
 
-    <div class="game-card coming-soon">
-      <h2>🟠 EANO Conquest</h2>
-      <p>A strategic Ludo-like game built with crypto-level twists.</p>
-      <button disabled>Coming Soon</button>
-    </div>
+<div class="game-tile">
+  <h2>EANO Path (Snake & Ladder)</h2>
+  <p>Coming soon: Navigate your EANO character through twists, ladders and crypto challenges!</p>
+  <button disabled>Coming Soon</button>
+</div>
 
-    <div class="game-card coming-soon">
-      <h2>🟢 EANO Path</h2>
-      <p>Snake-and-ladder journey powered by EANO levels & boosts.</p>
-      <button disabled>Coming Soon</button>
-    </div>
-  </main>
+  </div>
 </body>
 </html>
