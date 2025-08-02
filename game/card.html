@@ -1,54 +1,289 @@
-<!DOCTYPE html><html lang="en">
+<!-- SAVE THIS AS eano-whot.html AND OPEN IN BROWSER -->
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EANO 20 - Card Game</title>
-  <link rel="stylesheet" href="card.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EANO Card Game (Naija Whot Style)</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    .screen { display: none; height: 100vh; justify-content: center; align-items: center; flex-direction: column; }
+    .active { display: flex !important; }
+    .avatar-option {
+      padding: 10px; margin: 10px; border: 2px solid #555;
+      border-radius: 10px; cursor: pointer; text-align: center;
+    }
+    .avatar-option:hover { border-color: #0ff; }
+    .avatar { font-size: 48px; margin: 10px; }
+    .card {
+      width: 80px; height: 120px;
+      background: #eee; color: #111;
+      border-radius: 10px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      margin: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 5px #aaa;
+    }
+    .cards {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+    }
+    .info, .bubble {
+      margin: 10px;
+      font-size: 16px;
+    }
+    .bubble {
+      background: #333; padding: 8px 12px; border-radius: 12px;
+    }
+    .deck-area {
+      margin: 20px auto;
+      text-align: center;
+    }
+    .center-card {
+      font-size: 18px;
+      background: #fff;
+      color: #000;
+      width: 100px;
+      height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      margin: auto;
+      box-shadow: 0 0 8px #0ff;
+    }
+    .life-counter, .timer {
+      margin: 10px;
+      font-size: 14px;
+      color: #ff4444;
+    }
+  </style>
 </head>
 <body>
-  <div class="game-container">
-    <header>
-      <h1>EANO 20</h1>
-    </header><div class="round-table">
-  <!-- AI Area -->
-  <div class="ai-section">
-    <div class="avatar ai-avatar">
-      <img src="assets/avatar-ai.png" alt="EANO AI" />
-      <div class="speech-bubble" id="ai-speech"></div>
+
+<div id="select-avatar" class="screen active">
+  <h2>Choose Your Avatar</h2>
+  <div style="display: flex;">
+    <div class="avatar-option" onclick="startGame('👨‍💻')">
+      <div class="avatar">👨‍💻</div><p>Male</p>
     </div>
-    <div id="ai-hand" class="card-row ai-hand"></div>
-  </div>
-
-  <!-- Center piles -->
-  <div class="center-pile">
-    <div id="draw-pile" class="pile draw-pile" title="Tap to draw a card"></div>
-    <div id="play-pile" class="pile play-pile" title="Last played card"></div>
-  </div>
-
-  <!-- Player Area -->
-  <div class="player-section">
-    <div id="player-hand" class="card-row player-hand"></div>
-    <div class="avatar player-avatar">
-      <img src="assets/avatar-user.png" alt="You" />
-      <div class="speech-bubble" id="player-speech"></div>
+    <div class="avatar-option" onclick="startGame('👩‍🚀')">
+      <div class="avatar">👩‍🚀</div><p>Female</p>
     </div>
   </div>
 </div>
 
-<footer>
-  <button id="draw-btn">Draw</button>
-</footer>
+<div id="game-screen" class="screen">
+  <div class="info">Cards in deck: <span id="deckCount"></span> | Lives: <span id="lives">3</span></div>
+  <div class="timer" id="timer">⏳ 10</div>
 
-<!-- Sound effects -->
-<audio id="game-up-sound" src="assets/sounds/win.mp3"></audio>
-<audio id="pick-two-sound" src="assets/sounds/pick2.mp3"></audio>
-<audio id="suspension-sound" src="assets/sounds/freeze.mp3"></audio>
-<audio id="marketplace-sound" src="assets/sounds/wild.mp3"></audio>
-<audio id="hold-on-sound" src="assets/sounds/holdon.mp3"></audio>
-<audio id="last-card-sound" src="assets/sounds/lastcard.mp3"></audio>
-
-<script src="card.js"></script>
-
+  <div class="section">
+    <div class="avatar" id="aiAvatar">🤖</div>
+    <div class="bubble" id="aiText">Your turn?</div>
+    <div class="cards" id="aiHand"></div>
   </div>
+
+  <div class="deck-area">
+    <div>Table Card</div>
+    <div class="center-card" id="tableCard">--</div>
+    <br>
+    <button onclick="drawFromDeck()">🃏 Draw from Marketplace</button>
+  </div>
+
+  <div class="section">
+    <div class="cards" id="playerHand"></div>
+    <div class="avatar" id="playerAvatar"></div>
+    <div class="bubble" id="playerText">Play a card...</div>
+  </div>
+</div>
+
+<script>
+  const suits = ['TrustScore', 'Studio', 'Community', 'Mainnet', 'Marketplace'];
+  let deck = [], playerHand = [], aiHand = [], tableCard = null;
+  let playerLives = 3;
+  let countdown = 10;
+  let timerInterval = null;
+  let isPlayerTurn = true;
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function createDeck() {
+    const d = [];
+    for (let suit of suits) {
+      for (let i = 1; i <= 14; i++) {
+        if (suit === 'Marketplace' && i > 8) continue;
+        d.push({ suit, number: i });
+      }
+    }
+    return shuffle(d);
+  }
+
+  function startGame(avatar) {
+    document.getElementById('select-avatar').classList.remove('active');
+    document.getElementById('game-screen').classList.add('active');
+    document.getElementById('playerAvatar').innerText = avatar;
+
+    deck = createDeck();
+    playerHand = deck.splice(0, 5);
+    aiHand = deck.splice(0, 5);
+    tableCard = deck.pop();
+
+    updateUI();
+    startTimer();
+  }
+
+  function updateUI() {
+    document.getElementById('deckCount').innerText = deck.length;
+    document.getElementById('lives').innerText = playerLives;
+    renderCards();
+    renderTableCard();
+  }
+
+  function renderCards() {
+    const pDiv = document.getElementById('playerHand');
+    const aDiv = document.getElementById('aiHand');
+    pDiv.innerHTML = '';
+    aDiv.innerHTML = '';
+
+    playerHand.forEach((card, index) => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = `<div>${card.suit}</div><div>${card.number}</div>`;
+      c.onclick = () => playCard(index);
+      pDiv.appendChild(c);
+    });
+
+    aiHand.forEach(() => {
+      const c = document.createElement('div');
+      c.className = 'card';
+      c.innerHTML = '🂠';
+      aDiv.appendChild(c);
+    });
+  }
+
+  function renderTableCard() {
+    const tDiv = document.getElementById('tableCard');
+    tDiv.innerHTML = `<div>${tableCard.suit}</div><div>${tableCard.number}</div>`;
+  }
+
+  function playCard(index) {
+    if (!isPlayerTurn) return;
+    const card = playerHand[index];
+    if (card.suit !== tableCard.suit && card.number !== tableCard.number) return;
+
+    playerHand.splice(index, 1);
+    tableCard = card;
+    document.getElementById('playerText').innerText = `You played: ${card.suit} ${card.number}`;
+    updateUI();
+    stopTimer();
+
+    // Apply special effects
+    if (card.number === 2) {
+      aiHand.push(deck.pop(), deck.pop());
+    }
+    if (card.number === 8) {
+      document.getElementById('aiText').innerText = `Skipped my turn! 😑`;
+      startTimer(); // Player goes again
+      return;
+    }
+    if (card.number === 14) {
+      aiHand.push(deck.pop());
+      playerHand.push(deck.pop());
+    }
+
+    isPlayerTurn = false;
+    setTimeout(aiTurn, 1500);
+  }
+
+  function aiTurn() {
+    const match = aiHand.find(c => c.suit === tableCard.suit || c.number === tableCard.number);
+    if (match) {
+      tableCard = match;
+      aiHand.splice(aiHand.indexOf(match), 1);
+      document.getElementById('aiText').innerText = `I played: ${match.suit} ${match.number}`;
+      if (match.number === 2) playerHand.push(deck.pop(), deck.pop());
+      if (match.number === 8) {
+        isPlayerTurn = false;
+        setTimeout(aiTurn, 1000);
+        return;
+      }
+      if (match.number === 14) {
+        aiHand.push(deck.pop());
+        playerHand.push(deck.pop());
+      }
+    } else {
+      if (deck.length > 0) aiHand.push(deck.pop());
+      document.getElementById('aiText').innerText = `I draw a card...`;
+    }
+    updateUI();
+    isPlayerTurn = true;
+    startTimer();
+    checkGameOver();
+  }
+
+  function drawFromDeck() {
+    if (!isPlayerTurn) return;
+    if (deck.length > 0) {
+      playerHand.push(deck.pop());
+      document.getElementById('playerText').innerText = `You drew a card.`;
+      updateUI();
+    }
+  }
+
+  function startTimer() {
+    countdown = 10;
+    document.getElementById('timer').innerText = `⏳ ${countdown}`;
+    timerInterval = setInterval(() => {
+      countdown--;
+      document.getElementById('timer').innerText = `⏳ ${countdown}`;
+      if (countdown <= 0) {
+        clearInterval(timerInterval);
+        playerLives--;
+        updateUI();
+        if (playerLives <= 0) {
+          alert('💀 You lost all lives!');
+          location.reload();
+        } else {
+          document.getElementById('playerText').innerText = '⏱ Time up! You lost a life.';
+          isPlayerTurn = false;
+          setTimeout(aiTurn, 1500);
+        }
+      }
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
+
+  function checkGameOver() {
+    if (playerHand.length === 0) {
+      alert('🎉 You win!');
+      location.reload();
+    } else if (aiHand.length === 0) {
+      alert('💀 AI wins!');
+      location.reload();
+    } else if (deck.length === 0) {
+      alert('🃏 Deck is empty. Game over.');
+      location.reload();
+    }
+  }
+</script>
 </body>
 </html>
