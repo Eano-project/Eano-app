@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <title>EANO Card Game</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      background: #0c0f16;
-      color: white;
       overflow: hidden;
+      font-family: sans-serif;
+      background: #111;
+      color: white;
     }
     .screen {
       display: none;
@@ -26,120 +29,164 @@
     .avatar-selection img {
       height: 100px;
       margin: 10px;
-      border: 2px solid transparent;
+      border: 3px solid transparent;
       border-radius: 50%;
       cursor: pointer;
       transition: 0.3s;
     }
     .avatar-selection img:hover {
-      border: 2px solid #4fc3f7;
-    }
-    .card {
-      background: #1e1e2f;
-      border: 2px solid #4fc3f7;
-      padding: 8px;
-      border-radius: 10px;
-      margin: 5px;
-      min-width: 50px;
-      font-size: 13px;
-      text-align: center;
-      font-weight: bold;
+      border: 3px solid #4fc3f7;
     }
     .game-board {
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      justify-content: space-between;
-    }
-    .top-row, .bottom-row {
-      display: flex;
       align-items: center;
-      justify-content: space-around;
+      height: 100vh;
+      width: 100vw;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .ai-section, .player-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .avatars {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
       padding: 10px;
     }
-    .middle-row {
+    .avatar-box {
       text-align: center;
     }
-    .ai-avatar img, .player-avatar img {
+    .avatar-box img {
       height: 80px;
+      width: 80px;
       border-radius: 50%;
+      border: 2px solid #4fc3f7;
     }
     .bubble {
+      margin-top: 5px;
       background: #333;
-      color: #fff;
       padding: 5px 10px;
       border-radius: 20px;
-      margin-top: 10px;
-      max-width: 200px;
       font-size: 14px;
+    }
+    .table {
+      flex: 1;
+      width: 90%;
+      max-width: 650px;
+      border: 2px solid #4fc3f7;
+      border-radius: 20px;
+      margin: 10px 0;
+      background: #222;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .market-container {
+      text-align: center;
+      margin: 10px auto;
+    }
+    .market-container button {
+      background: #4caf50;
+      color: white;
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px #4caf50;
+    }
+    .play-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    .card {
+      background: #1e1e2f;
+      border: 2px solid #4fc3f7;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 5px;
+      font-size: 13px;
+      text-align: center;
+      font-weight: bold;
+      min-width: 60px;
     }
     .hand {
       overflow-x: auto;
       display: flex;
       padding: 10px;
+      justify-content: center;
+    }
+    .hand::-webkit-scrollbar {
+      height: 8px;
+    }
+    .hand::-webkit-scrollbar-thumb {
+      background: #4fc3f7;
+      border-radius: 10px;
     }
     .hand .card {
       cursor: pointer;
-    }
-    .deck, .play-area {
-      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
-<!-- Screen 1: Avatar Selection -->
+<!-- Avatar Selection -->
 <div id="avatar-screen" class="screen show">
   <h2>Select Your Avatar</h2>
   <div class="avatar-selection">
     <img src="avatars/1.png" onclick="selectAvatar('avatars/1.png')">
     <img src="avatars/2.png" onclick="selectAvatar('avatars/2.png')">
+    <img src="avatars/3.png" onclick="selectAvatar('avatars/3.png')">
   </div>
 </div>
 
-<!-- Screen 2: Game -->
+<!-- Game Screen -->
 <div id="game-screen" class="screen">
   <div class="game-board">
-
-    <!-- AI Section -->
-    <div class="top-row">
-      <div class="ai-avatar">
+    <!-- Avatars Facing Each Other -->
+    <div class="avatars">
+      <div class="avatar-box">
         <img src="avatars/2.png" id="aiAvatar">
-        <div id="aiBubble" class="bubble">Ready?</div>
+        <div class="bubble" id="aiBubble">Ready?</div>
       </div>
-      <div class="deck">
-        <div class="card" id="deckCard">Market 🛍</div>
-      </div>
-    </div>
-
-    <!-- Middle -->
-    <div class="middle-row">
-      <div class="play-area">
-        <div class="card" id="playCard">Start</div>
-      </div>
-    </div>
-
-    <!-- Player Section -->
-    <div class="bottom-row">
-      <div class="player-avatar">
+      <div class="avatar-box">
         <img src="" id="playerAvatar">
         <div class="bubble" id="playerBubble">Your move</div>
       </div>
     </div>
-    <div class="hand" id="playerHand"></div>
+
+    <!-- Round Table -->
+    <div class="table">
+      <div class="hand" id="aiHand"></div>
+      <div class="play-area">
+        <div class="card" id="playCard">Start</div>
+      </div>
+      <div class="hand" id="playerHand"></div>
+      <div class="market-container">
+        <button id="marketBtn" onclick="useMarket()">🛒 Market (Draw)</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-  const playerHand = document.getElementById("playerHand");
-  const playCard = document.getElementById("playCard");
-  const aiBubble = document.getElementById("aiBubble");
-  const playerBubble = document.getElementById("playerBubble");
-  const deckCard = document.getElementById("deckCard");
+const playerHand = document.getElementById("playerHand");
+const playCard = document.getElementById("playCard");
+const aiBubble = document.getElementById("aiBubble");
+const playerBubble = document.getElementById("playerBubble");
+const aiHand = document.getElementById("aiHand");
+const playerAvatar = document.getElementById("playerAvatar");
 
-  const playerCards = [];
-  const aiCards = [];
-  const cardNames = [
+const playerCards = [];
+const aiCards = [];
+const cardNames = [
   "TrustScore 🎖",
   "Studio 🎙",
   "Community 🫂",
@@ -149,111 +196,168 @@
   "Hold On ⏩",
   "Suspension 🛑"
 ];
-  const aiEmotes = ["Hmm...", "Nice move!", "Oh no!", "You got me!", "Play fast 😈"];
 
-  let isPlayerTurn = true;
+const aiEmotes = ["Hmm...", "Nice move!", "Oh no!", "You got me!", "Play fast 😈"];
+let isPlayerTurn = true;
+let currentCard;
+let marketUsed = false;
 
-  function selectAvatar(src) {
-    document.getElementById("playerAvatar").src = src;
-    document.getElementById("game-screen").classList.add("show");
-    document.getElementById("avatar-screen").classList.remove("show");
-    initGame();
-  }
+function selectAvatar(src) {
+  playerAvatar.src = src;
+  document.getElementById("game-screen").classList.add("show");
+  document.getElementById("avatar-screen").classList.remove("show");
+  initGame();
+}
 
-  function drawCard() {
-    const name = cardNames[Math.floor(Math.random() * cardNames.length)];
-    const number = Math.floor(Math.random() * 14) + 1;
-    return { name, number };
-  }
+function drawCard() {
+  return {
+    name: cardNames[Math.floor(Math.random() * cardNames.length)],
+    number: Math.floor(Math.random() * 14) + 1
+  };
+}
 
-  function renderHand() {
+function renderHand() {
   playerHand.innerHTML = '';
   playerCards.forEach((card, index) => {
     const div = document.createElement("div");
     div.className = "card";
     div.innerText = `${card.name}\n${card.number}`;
-    
-    div.onclick = () => {
-      if (!isPlayerTurn) return;
-
-      const valid = card.name === currentCard.name || card.number === currentCard.number;
-
-      if (valid || ["Pick 2 🔁", "Suspension 🛑", "Hold On ⏩"].includes(card.name)) {
-        currentCard = card;
-        playCard.innerText = `${card.name}\n${card.number}`;
-        playerCards.splice(index, 1);
-        renderHand();
-        playerBubble.innerText = `You played ${card.name}`;
-
-        // Handle special cards
-        if (card.name === "Pick 2 🔁") {
-          aiCards.push(drawCard(), drawCard());
-          aiBubble.innerText = "😠 Picked 2!";
-        } else if (card.name === "Suspension 🛑") {
-          aiBubble.innerText = "😑 Skipped!";
-          setTimeout(() => {
-            isPlayerTurn = true;
-            playerBubble.innerText = "Go again!";
-          }, 1000);
-          return; // skip AI turn
-        } else if (card.name === "Hold On ⏩") {
-          playerBubble.innerText = "You get another turn 🔁";
-          return; // play again
-        }
-
-        isPlayerTurn = false;
-        aiTurn();
-      } else {
-        playerBubble.innerText = "❌ Invalid move";
-      }
-    };
-
+    div.onclick = () => playPlayerCard(index);
     playerHand.appendChild(div);
   });
+
+  aiHand.innerHTML = '';
+  aiCards.forEach(() => {
+    const cardBack = document.createElement("div");
+    cardBack.className = "card";
+    cardBack.innerText = "🂠";
+    aiHand.appendChild(cardBack);
+  });
+}
+
+function playPlayerCard(index) {
+  if (!isPlayerTurn) return;
+  const card = playerCards[index];
+  const valid =
+    card.name === currentCard.name ||
+    card.number === currentCard.number ||
+    ["Pick 2 🔁", "Suspension 🛑", "Hold On ⏩"].includes(card.name);
+
+  if (valid) {
+    currentCard = card;
+    playCard.innerText = `${card.name}\n${card.number}`;
+    playerCards.splice(index, 1);
+    playerBubble.innerText = `You played ${card.name}`;
+    renderHand();
+
+    if (card.name === "Pick 2 🔁") {
+      aiCards.push(drawCard(), drawCard());
+      aiBubble.innerText = "😠 Picked 2!";
+    } else if (card.name === "Suspension 🛑") {
+      aiBubble.innerText = "😑 Skipped!";
+      checkWin();
+      return setTimeout(() => {
+        isPlayerTurn = true;
+        playerBubble.innerText = "Go again!";
+      }, 1000);
+    } else if (card.name === "Hold On ⏩") {
+      playerBubble.innerText = "Another turn 🔁";
+      checkWin();
+      return;
+    }
+
+    isPlayerTurn = false;
+    marketUsed = false;
+    checkWin();
+    setTimeout(aiTurn, 1000);
+  } else {
+    playerBubble.innerText = "❌ Invalid move";
   }
+}
 
-  let currentCard;
+function aiTurn() {
+  const playableIndex = aiCards.findIndex(c =>
+    c.name === currentCard.name ||
+    c.number === currentCard.number ||
+    ["Pick 2 🔁", "Hold On ⏩", "Suspension 🛑"].includes(c.name)
+  );
 
-  function aiTurn() {
+  if (playableIndex !== -1) {
+    const card = aiCards[playableIndex];
+    aiCards.splice(playableIndex, 1);
+    currentCard = card;
+    playCard.innerText = `${card.name}\n${card.number}`;
+    aiBubble.innerText = aiEmotes[Math.floor(Math.random() * aiEmotes.length)];
+
+    renderHand();
+
+    if (card.name === "Pick 2 🔁") {
+      playerCards.push(drawCard(), drawCard());
+      playerBubble.innerText = "Picked 2 😭";
+    } else if (card.name === "Suspension 🛑") {
+      playerBubble.innerText = "⏭ Skipped!";
+      checkWin();
+      return setTimeout(aiTurn, 1000);
+    } else if (card.name === "Hold On ⏩") {
+      aiBubble.innerText = "Another turn 🌀";
+      checkWin();
+      return setTimeout(aiTurn, 1000);
+    }
+
     setTimeout(() => {
-      const playable = aiCards.find(card => card.name === currentCard.name || card.number === currentCard.number);
-      if (playable) {
-        currentCard = playable;
-        playCard.innerText = `${playable.name}\n${playable.number}`;
-        aiBubble.innerText = aiEmotes[Math.floor(Math.random() * aiEmotes.length)];
-        const index = aiCards.indexOf(playable);
-        aiCards.splice(index, 1);
-      } else {
-        aiBubble.innerText = "Going to Market...";
-        aiCards.push(drawCard());
-      }
+      isPlayerTurn = true;
+      playerBubble.innerText = "Your move";
+      renderHand();
+      checkWin();
+    }, 1000);
+  } else {
+    aiBubble.innerText = "🤷 No card to play";
+    aiCards.push(drawCard());
+    renderHand();
+    setTimeout(() => {
       isPlayerTurn = true;
       playerBubble.innerText = "Your move";
     }, 1000);
   }
+}
 
-  function initGame() {
-    deckCard.onclick = () => {
-  if (!isPlayerTurn) return;
+function checkWin() {
+  if (playerCards.length === 0) {
+    setTimeout(() => {
+      alert("🎉 You Win!");
+      location.reload();
+    }, 500);
+  } else if (aiCards.length === 0) {
+    setTimeout(() => {
+      alert("💀 Eano AI Wins!");
+      location.reload();
+    }, 500);
+  }
+}
 
+function useMarket() {
+  if (!isPlayerTurn || marketUsed) {
+    playerBubble.innerText = "🚫 You can't draw now!";
+    return;
+  }
   const newCard = drawCard();
   playerCards.push(newCard);
+  marketUsed = true;
+  playerBubble.innerText = `🛒 Drew a card`;
   renderHand();
-  playerBubble.innerText = "You drew a card 🃏";
+}
 
-  // Still ends your turn even if you draw
-  isPlayerTurn = false;
-  aiTurn();
-};
-    for (let i = 0; i < 4; i++) {
-      playerCards.push(drawCard());
-      aiCards.push(drawCard());
-    }
-    currentCard = drawCard();
-    playCard.innerText = `${currentCard.name}\n${currentCard.number}`;
-    renderHand();
+function initGame() {
+  for (let i = 0; i < 4; i++) {
+    playerCards.push(drawCard());
+    aiCards.push(drawCard());
   }
+  currentCard = drawCard();
+  playCard.innerText = `${currentCard.name}\n${currentCard.number}`;
+  renderHand();
+  playerBubble.innerText = "Game started";
+  aiBubble.innerText = "Let's go!";
+}
 </script>
-
 </body>
-  </html>
+</html>
