@@ -17,8 +17,8 @@
     }
     .screen {
       display: none;
-      height: 100vh;
-      width: 100vw;
+      height: 300vh;
+      width: 400vw;
       align-items: center;
       justify-content: center;
       flex-direction: column;
@@ -37,6 +37,8 @@
     .avatar-selection img:hover {
       border: 3px solid #4fc3f7;
     }
+    .avatar-img {
+  }
     .game-board {
       display: flex;
       flex-direction: column;
@@ -67,6 +69,29 @@
       border-radius: 50%;
       border: 2px solid #4fc3f7;
     }
+    .avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  animation: idleFloat 3s ease-in-out infinite;
+}
+
+@keyframes idleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  .talking {
+  animation: pulseTalk 0.3s ease-in-out 3;
+}
+
+@keyframes pulseTalk {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
     .bubble {
       margin-top: 5px;
       background: #333;
@@ -141,9 +166,10 @@
 <div id="avatar-screen" class="screen show">
   <h2>Select Your Avatar</h2>
   <div class="avatar-selection">
-    <img src="avatars/1.png" onclick="selectAvatar('avatars/1.png')">
-    <img src="avatars/2.png" onclick="selectAvatar('avatars/2.png')">
-    <img src="avatars/3.png" onclick="selectAvatar('avatars/3.png')">
+    <img src="assets/avatar11.png" onclick="selectAvatar('assets/avatar11.png')">
+    <img src="assets/avatar12.png" onclick="selectAvatar('assets/avatar12.png')">
+    <img src="assets/crypto_male.png" onclick="selectAvatar('assets/crypto_male.png')">
+    <img src="assets/crypto_female.png" onclick="selectAvatar('assets/crypto_female.png')">
   </div>
 </div>
 
@@ -203,11 +229,14 @@ let currentCard;
 let marketUsed = false;
 
 function selectAvatar(src) {
-  playerAvatar.src = src;
-  document.getElementById("game-screen").classList.add("show");
+  selectedAvatar = src;
   document.getElementById("avatar-screen").classList.remove("show");
+  document.getElementById("game-screen").classList.add("show");
+
+  // Use consistent avatar display
+  document.getElementById("playerAvatar").src = selectedAvatar;
   initGame();
-}
+  }
 
 function drawCard() {
   return {
@@ -274,7 +303,16 @@ function playPlayerCard(index) {
     playerBubble.innerText = "❌ Invalid move";
   }
 }
+function aiSpeak(message) {
+  aiBubble.innerText = message;
 
+  const aiImg = document.getElementById("aiAvatar");
+  aiImg.classList.add("talking");
+
+  setTimeout(() => {
+    aiImg.classList.remove("talking");
+  }, 1200);
+}
 function aiTurn() {
   const playableIndex = aiCards.findIndex(c =>
     c.name === currentCard.name ||
