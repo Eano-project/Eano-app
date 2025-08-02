@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>EANO Card Game</title>
   <link rel="preload" as="image" href="assets/avatar11.png">
- <link rel="preload" as="image" href="assets/avatar12.png">
- <link rel="preload" as="image" href="assets/crypto_male.png">
- <link rel="preload" as="image" href="assets/crypto_female.png">
+  <link rel="preload" as="image" href="assets/avatar12.png">
+  <link rel="preload" as="image" href="assets/crypto_male.png">
+  <link rel="preload" as="image" href="assets/crypto_female.png">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
       padding: 0;
@@ -19,17 +18,20 @@
       background: #111;
       color: white;
     }
+
     .screen {
       display: none;
-      height: 300vh;
-      width: 400vw;
+      height: 100vh;
+      width: 100vw;
       align-items: center;
       justify-content: center;
       flex-direction: column;
     }
-    .show {
+
+    .screen.show {
       display: flex;
     }
+
     .avatar-selection img {
       height: 100px;
       margin: 10px;
@@ -38,61 +40,33 @@
       cursor: pointer;
       transition: 0.3s;
     }
+
     .avatar-selection img:hover {
       border: 3px solid #4fc3f7;
     }
+
     .avatar-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  animation: idleFloat 3s ease-in-out infinite;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      animation: idleFloat 3s ease-in-out infinite;
     }
-    .game-board {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      width: 100vw;
-      padding: 10px;
-      overflow: hidden;
-    }
-    .ai-section, .player-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .avatars {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 90%;
-      padding: 10px;
-    }
-    .avatar-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  animation: idleFloat 3s ease-in-out infinite;
-}
 
-@keyframes idleFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
+    @keyframes idleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
 
-.talking {
-  animation: pulseTalk 0.3s ease-in-out 3;
-}
+    .talking {
+      animation: pulseTalk 0.3s ease-in-out 3;
+    }
 
-@keyframes pulseTalk {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
+    @keyframes pulseTalk {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
     .bubble {
       margin-top: 5px;
       background: #333;
@@ -100,6 +74,31 @@
       border-radius: 20px;
       font-size: 14px;
     }
+
+    .game-board {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      padding: 10px;
+    }
+
+    .avatars {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      padding: 10px;
+    }
+
+    .avatar-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 10px;
+    }
+
     .table {
       flex: 1;
       width: 90%;
@@ -112,26 +111,27 @@
       flex-direction: column;
       justify-content: space-between;
     }
-    .market-container {
-      text-align: center;
-      margin: 10px auto;
-    }
-    .market-container button {
-      background: #4caf50;
-      color: white;
-      padding: 10px 16px;
-      font-size: 16px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 10px #4caf50;
-    }
-    .play-area {
+
+    .hand {
+      overflow-x: auto;
       display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 10px;
+      justify-content: center;
     }
+
+    .hand::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .hand::-webkit-scrollbar-thumb {
+      background: #4fc3f7;
+      border-radius: 10px;
+    }
+
+    .hand .card {
+      cursor: pointer;
+    }
+
     .card {
       background: #1e1e2f;
       border: 2px solid #4fc3f7;
@@ -143,21 +143,28 @@
       font-weight: bold;
       min-width: 60px;
     }
-    .hand {
-      overflow-x: auto;
+
+    .play-area {
       display: flex;
-      padding: 10px;
       justify-content: center;
+      align-items: center;
+      padding: 10px;
     }
-    .hand::-webkit-scrollbar {
-      height: 8px;
+
+    .market-container {
+      text-align: center;
+      margin: 10px auto;
     }
-    .hand::-webkit-scrollbar-thumb {
-      background: #4fc3f7;
-      border-radius: 10px;
-    }
-    .hand .card {
+
+    .market-container button {
+      background: #4caf50;
+      color: white;
+      padding: 10px 16px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
       cursor: pointer;
+      box-shadow: 0 0 10px #4caf50;
     }
   </style>
 </head>
@@ -176,16 +183,17 @@
 
 <!-- Game Screen -->
 <div id="game-screen" class="screen">
-<div class="avatar-box">
-  <img src="avatars/2.png" id="aiAvatar" class="avatar-img">
-  <div class="bubble" id="aiBubble">Ready?</div>
-</div>
-<div class="avatar-box">
-  <img src="" id="playerAvatar" class="avatar-img">
-  <div class="bubble" id="playerBubble">Your move</div>
-</div>
+  <div class="game-board">
+    <div class="avatar-box">
+      <img id="aiAvatar" class="avatar-img" alt="AI Avatar">
+      <div class="bubble" id="aiBubble">Ready?</div>
+    </div>
 
-    <!-- Round Table -->
+    <div class="avatar-box">
+      <img id="playerAvatar" class="avatar-img" alt="Player Avatar">
+      <div class="bubble" id="playerBubble">Your move</div>
+    </div>
+
     <div class="table">
       <div class="hand" id="aiHand"></div>
       <div class="play-area">
@@ -210,14 +218,8 @@ const playerAvatar = document.getElementById("playerAvatar");
 const playerCards = [];
 const aiCards = [];
 const cardNames = [
-  "TrustScore 🎖",
-  "Studio 🎙",
-  "Community 🫂",
-  "Mainnet 🌐",
-  "Marketplace 🛍",
-  "Pick 2 🔁",
-  "Hold On ⏩",
-  "Suspension 🛑"
+  "TrustScore 🎖", "Studio 🎙", "Community 🫂", "Mainnet 🌐",
+  "Marketplace 🛍", "Pick 2 🔁", "Hold On ⏩", "Suspension 🛑"
 ];
 
 const aiEmotes = ["Hmm...", "Nice move!", "Oh no!", "You got me!", "Play fast 😈"];
@@ -225,15 +227,35 @@ let isPlayerTurn = true;
 let currentCard;
 let marketUsed = false;
 
+const aiAvatars = [
+  'assets/avatar11.png',
+  'assets/avatar12.png',
+  'assets/crypto_male.png',
+  'assets/crypto_female.png'
+];
+
 function selectAvatar(src) {
-  selectedAvatar = src;
   document.getElementById("avatar-screen").classList.remove("show");
   document.getElementById("game-screen").classList.add("show");
-
-  // Use consistent avatar display
-  document.getElementById("playerAvatar").src = selectedAvatar;
+  playerAvatar.src = src;
   initGame();
+}
+
+function initGame() {
+  const aiAvatar = aiAvatars[Math.floor(Math.random() * aiAvatars.length)];
+  document.getElementById("aiAvatar").src = aiAvatar;
+
+  for (let i = 0; i < 4; i++) {
+    playerCards.push(drawCard());
+    aiCards.push(drawCard());
   }
+
+  currentCard = drawCard();
+  playCard.innerText = `${currentCard.name}\n${currentCard.number}`;
+  renderHand();
+  playerBubble.innerText = "Game started";
+  aiBubble.innerText = "Let's go!";
+}
 
 function drawCard() {
   return {
@@ -264,9 +286,7 @@ function renderHand() {
 function playPlayerCard(index) {
   if (!isPlayerTurn) return;
   const card = playerCards[index];
-  const valid =
-    card.name === currentCard.name ||
-    card.number === currentCard.number ||
+  const valid = card.name === currentCard.name || card.number === currentCard.number ||
     ["Pick 2 🔁", "Suspension 🛑", "Hold On ⏩"].includes(card.name);
 
   if (valid) {
@@ -300,20 +320,17 @@ function playPlayerCard(index) {
     playerBubble.innerText = "❌ Invalid move";
   }
 }
+
 function aiSpeak(message) {
   aiBubble.innerText = message;
-
   const aiImg = document.getElementById("aiAvatar");
   aiImg.classList.add("talking");
-
-  setTimeout(() => {
-    aiImg.classList.remove("talking");
-  }, 1200);
+  setTimeout(() => aiImg.classList.remove("talking"), 1200);
 }
+
 function aiTurn() {
   const playableIndex = aiCards.findIndex(c =>
-    c.name === currentCard.name ||
-    c.number === currentCard.number ||
+    c.name === currentCard.name || c.number === currentCard.number ||
     ["Pick 2 🔁", "Hold On ⏩", "Suspension 🛑"].includes(c.name)
   );
 
@@ -322,8 +339,7 @@ function aiTurn() {
     aiCards.splice(playableIndex, 1);
     currentCard = card;
     playCard.innerText = `${card.name}\n${card.number}`;
-    aiBubble.innerText = aiEmotes[Math.floor(Math.random() * aiEmotes.length)];
-
+    aiSpeak(aiEmotes[Math.floor(Math.random() * aiEmotes.length)]);
     renderHand();
 
     if (card.name === "Pick 2 🔁") {
@@ -381,27 +397,6 @@ function useMarket() {
   playerBubble.innerText = `🛒 Drew a card`;
   renderHand();
 }
-const aiAvatars = [
-  'assets/avatar11.png',
-  'assets/avatar12.png',
-  'assets/crypto_male.png',
-  'assets/crypto_female.png'
-];
-function initGame() {
-  const aiAvatar = aiAvatars[Math.floor(Math.random() * aiAvatars.length)];
-  document.getElementById("aiAvatar").src = aiAvatar;
-
-  for (let i = 0; i < 4; i++) {
-    playerCards.push(drawCard());
-    aiCards.push(drawCard());
-  }
-  currentCard = drawCard();
-  playCard.innerText = `${currentCard.name}\n${currentCard.number}`;
-  renderHand();
-  playerBubble.innerText = "Game started";
-  aiBubble.innerText = "Let's go!";
-             }
-  
 </script>
 </body>
-</html>
+  </html>
