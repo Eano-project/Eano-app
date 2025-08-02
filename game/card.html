@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>EANO Card Game</title>
+  <link rel="preload" as="image" href="assets/avatar11.png">
+<link rel="preload" as="image" href="assets/avatar12.png">
+<link rel="preload" as="image" href="assets/crypto_male.png">
+<link rel="preload" as="image" href="assets/crypto_female.png">
   <style>
     * {
       box-sizing: border-box;
@@ -83,7 +87,9 @@
   50% {
     transform: translateY(-6px);
   }
-  .talking {
+}
+
+.talking {
   animation: pulseTalk 0.3s ease-in-out 3;
 }
 
@@ -179,7 +185,8 @@
     <!-- Avatars Facing Each Other -->
     <div class="avatars">
       <div class="avatar-box">
-        <img src="avatars/2.png" id="aiAvatar">
+        <img src="avatars/2.png" id="aiAvatar" class="avatar-img">
+<img src="" id="playerAvatar" class="avatar-img">
         <div class="bubble" id="aiBubble">Ready?</div>
       </div>
       <div class="avatar-box">
@@ -384,8 +391,16 @@ function useMarket() {
   playerBubble.innerText = `🛒 Drew a card`;
   renderHand();
 }
-
+const aiAvatars = [
+  'assets/avatar11.png',
+  'assets/avatar12.png',
+  'assets/crypto_male.png',
+  'assets/crypto_female.png'
+];
 function initGame() {
+  const aiAvatar = aiAvatars[Math.floor(Math.random() * aiAvatars.length)];
+  document.getElementById("aiAvatar").src = aiAvatar;
+
   for (let i = 0; i < 4; i++) {
     playerCards.push(drawCard());
     aiCards.push(drawCard());
@@ -395,7 +410,8 @@ function initGame() {
   renderHand();
   playerBubble.innerText = "Game started";
   aiBubble.innerText = "Let's go!";
-}
+             }
+  
 </script>
 </body>
 </html>
