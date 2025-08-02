@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />
   <title>EANO Card Game</title>
   <link rel="preload" as="image" href="assets/avatar11.png">
@@ -10,14 +11,17 @@
   <style>
     * { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: sans-serif;
-      background: #111;
-      color: white;
-    }
+    body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.main-wrapper, .screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
     .screen {
       display: none;
@@ -75,14 +79,13 @@
       font-size: 14px;
     }
 
-    .game-board {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      width: 100vw;
-      padding: 10px;
-    }
+    #game-board, .game-area, .play-area {
+  min-height: 80vh; /* or 90vh to fill more of the screen */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
     .avatars {
       display: flex;
@@ -399,4 +402,4 @@ function useMarket() {
 }
 </script>
 </body>
-  </html>
+</html>
