@@ -9,6 +9,10 @@
   <link rel="preload" as="image" href="assets/crypto_male.png">
   <link rel="preload" as="image" href="assets/crypto_female.png">
   <style>
+      <audio id="sfx-pick" src="sounds/pick2.mp3"></audio>
+<audio id="sfx-suspend" src="sounds/suspend.mp3"></audio>
+<audio id="sfx-hold" src="sounds/holdon.mp3"></audio>
+<audio id="sfx-market" src="sounds/market.mp3"></audio>
     <style>
   * {
     box-sizing: border-box;
@@ -267,7 +271,17 @@ function selectAvatar(src) {
   playerAvatar.src = src;
   initGame();
 }
-
+    
+function playSound(type) {
+  const sounds = {
+    pick: document.getElementById("sfx-pick"),
+    suspend: document.getElementById("sfx-suspend"),
+    hold: document.getElementById("sfx-hold"),
+    market: document.getElementById("sfx-market")
+  };
+  sounds[type]?.play();
+      }
+    
 function initGame() {
   const aiAvatar = aiAvatars[Math.floor(Math.random() * aiAvatars.length)];
   document.getElementById("aiAvatar").src = aiAvatar;
@@ -313,21 +327,30 @@ function renderHand() {
 function playPlayerCard(index) {
   if (!isPlayerTurn) return;
   const card = playerCards[index];
-  const valid = card.name === currentCard.name || card.number === currentCard.number ||
-    ["Pick 2 🔁", "Suspension 🛑", "Hold On ⏩"].includes(card.name);
+  const valid = card.name === currentCard.name || card.number === currentCard.number;
 
-  if (valid) {
-    currentCard = card;
-    playCard.innerText = `${card.name}\n${card.number}`;
-    playerCards.splice(index, 1);
-    playerBubble.innerText = `You played ${card.name}`;
-    renderHand();
-
-    if (card.name === "Pick 2 🔁") {
-      aiCards.push(drawCard(), drawCard());
-      aiBubble.innerText = "😠 Picked 2!";
-    } else if (card.name === "Suspension 🛑") {
-      aiBubble.innerText = "😑 Skipped!";
+// Card effects by number
+if (card.number === 2) {
+  aiCards.push(drawCard(), drawCard());
+  aiBubble.innerText = "😠 Picked 2!";
+  playSound("pick");
+} else if (card.number === 8) {
+  aiBubble.innerText = "😑 Skipped!";
+  playSound("suspend");
+  checkWin();
+  return setTimeout(() => {
+    isPlayerTurn = true;
+    playerBubble.innerText = "Go again!";
+  }, 1000);
+} else if (card.number === 1) {
+  playerBubble.innerText = "Another turn 🔁";
+  playSound("hold");
+  checkWin();
+  return;
+} else if (card.number === 14) {
+  playerBubble.innerText = "🎲 Market!";
+  playSound("market");
+}
       checkWin();
       return setTimeout(() => {
         isPlayerTurn = true;
