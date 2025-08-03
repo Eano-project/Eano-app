@@ -9,10 +9,7 @@
   <link rel="preload" as="image" href="assets/crypto_male.png">
   <link rel="preload" as="image" href="assets/crypto_female.png">
   <style>
-      <audio id="sfx-pick" src="sounds/pick2.mp3"></audio>
-<audio id="sfx-suspend" src="sounds/suspend.mp3"></audio>
-<audio id="sfx-hold" src="sounds/holdon.mp3"></audio>
-<audio id="sfx-market" src="sounds/market.mp3"></audio>
+
     <style>
   * {
     box-sizing: border-box;
@@ -197,6 +194,10 @@
   }
 </style>
 </head>
+    <audio id="sfx-pick" src="sounds/pick2.mp3"></audio>
+<audio id="sfx-suspend" src="sounds/suspend.mp3"></audio>
+<audio id="sfx-hold" src="sounds/holdon.mp3"></audio>
+<audio id="sfx-market" src="sounds/market.mp3"></audio>
 <body>
 
 <!-- Avatar Selection -->
@@ -252,7 +253,12 @@ const cardNames = [
   "TrustScore 🎖", "Studio 🎙", "Community 🫂", "Mainnet 🌐",
   "Marketplace 🛍", "Pick 2 🔁", "Hold On ⏩", "Suspension 🛑"
 ];
-
+const specialCardNumbers = {
+  1: "Hold On ⏩",
+  2: "Pick 2 🔁",
+  8: "Suspension 🛑",
+  14: "Market 🎲"
+};
 const aiEmotes = ["Hmm...", "Nice move!", "Oh no!", "You got me!", "Play fast 😈"];
 let isPlayerTurn = true;
 let currentCard;
@@ -313,6 +319,7 @@ function renderHand() {
     div.innerText = `${card.name}\n${card.number}`;
     div.onclick = () => playPlayerCard(index);
     playerHand.appendChild(div);
+      div.innerText = `${card.name}\n${card.number}${specialCardNumbers[card.number] ? '\n' + specialCardNumbers[card.number] : ''}`;
   });
 
   aiHand.innerHTML = '';
