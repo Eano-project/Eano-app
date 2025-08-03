@@ -39,7 +39,7 @@
   }
 
   .avatar-selection img {
-    height: 100px;
+    height: 80px;
     margin: 10px;
     border: 3px solid transparent;
     border-radius: 50%;
@@ -316,10 +316,9 @@ function renderHand() {
   playerCards.forEach((card, index) => {
     const div = document.createElement("div");
     div.className = "card";
-    div.innerText = `${card.name}\n${card.number}`;
+    div.innerText = `${card.name}\n${card.number}${specialCardNumbers[card.number] ? '\n' + specialCardNumbers[card.number] : ''}`;
     div.onclick = () => playPlayerCard(index);
     playerHand.appendChild(div);
-      div.innerText = `${card.name}\n${card.number}${specialCardNumbers[card.number] ? '\n' + specialCardNumbers[card.number] : ''}`;
   });
 
   aiHand.innerHTML = '';
@@ -344,22 +343,32 @@ if (card.number === 2) {
 } else if (card.number === 8) {
   aiBubble.innerText = "😑 Skipped!";
   playSound("suspend");
+  renderHand();
   checkWin();
   return setTimeout(() => {
     isPlayerTurn = true;
     playerBubble.innerText = "Go again!";
   }, 1000);
-    playSound("market");
+} else if (card.number === 1) {
+  playerBubble.innerText = "Another turn 🔁";
+  playSound("hold");
+  renderHand();
+  checkWin();
+  return; // Player keeps turn
+} else if (card.number === 14) {
+  playerBubble.innerText = "Market for all 🎲";
+  aiCards.push(drawCard());
+  playerCards.push(drawCard());
+  playSound("market");
 }
-      checkWin();
-      return setTimeout(() => {
-        isPlayerTurn = true;
-        playerBubble.innerText = "Go again!";
-      }, 1000);
-    } else if (card.name === "Hold On ⏩") {
-      playerBubble.innerText = "Another turn 🔁";
-      checkWin();
-      return;
+
+currentCard = card;
+playerCards.splice(index, 1);
+renderHand();
+isPlayerTurn = false;
+marketUsed = false;
+checkWin();
+setTimeout(aiTurn, 1000);
     }
 
     isPlayerTurn = false;
@@ -392,17 +401,27 @@ function aiTurn() {
     aiSpeak(aiEmotes[Math.floor(Math.random() * aiEmotes.length)]);
     renderHand();
 
-    if (card.name === "Pick 2 🔁") {
-      playerCards.push(drawCard(), drawCard());
-      playerBubble.innerText = "Picked 2 😭";
-    } else if (card.name === "Suspension 🛑") {
-      playerBubble.innerText = "⏭ Skipped!";
-      checkWin();
-      return setTimeout(aiTurn, 1000);
-    } else if (card.name === "Hold On ⏩") {
-      aiBubble.innerText = "Another turn 🌀";
-      checkWin();
-      return setTimeout(aiTurn, 1000);
+    if (card.number === 2) {
+  playerCards.push(drawCard(), drawCard());
+  playerBubble.innerText = "Picked 2 😭";
+  playSound("pick");
+} else if (card.number === 8) {
+  playerBubble.innerText = "⏭ Skipped!";
+  playSound("suspend");
+  renderHand();
+  checkWin();
+  return setTimeout(aiTurn, 1000);
+} else if (card.number === 1) {
+  aiBubble.innerText = "Another turn 🌀";
+  playSound("hold");
+  renderHand();
+  checkWin();
+  return setTimeout(aiTurn, 1000);
+} else if (card.number === 14) {
+  aiBubble.innerText = "Market for both 🎲";
+  playerCards.push(drawCard());
+  aiCards.push(drawCard());
+  playSound("market");
     }
 
     setTimeout(() => {
