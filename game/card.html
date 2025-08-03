@@ -196,6 +196,8 @@
 <audio id="sfx-suspend" src="sounds/suspend.mp3"></audio>
 <audio id="sfx-hold" src="sounds/holdon.mp3"></audio>
 <audio id="sfx-market" src="sounds/market.mp3"></audio>
+ <audio id="sfx-win" src="sounds/win.mp3"></audio>
+ <audio id="sfx-lose" src="sounds/lose.mp3"></audio>
 <body>
 
 <!-- Avatar Selection -->
@@ -282,6 +284,8 @@ function playSound(type) {
     suspend: document.getElementById("sfx-suspend"),
     hold: document.getElementById("sfx-hold"),
     market: document.getElementById("sfx-market")
+    win: document.getElementById("sfx-win"),
+    lose: document.getElementById("sfx-lose")
   };
   sounds[type]?.play();
       }
