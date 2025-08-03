@@ -333,42 +333,37 @@ function playPlayerCard(index) {
   const card = playerCards[index];
   const valid = card.name === currentCard.name || card.number === currentCard.number;
 
-// Card effects by number
-if (card.number === 2) {
-  aiCards.push(drawCard(), drawCard());
-  aiBubble.innerText = "😠 Picked 2!";
-  playSound("pick");
-} else if (card.number === 8) {
-  aiBubble.innerText = "😑 Skipped!";
-  playSound("suspend");
-  renderHand();
-  checkWin();
-  return setTimeout(() => {
-    isPlayerTurn = true;
-    playerBubble.innerText = "Go again!";
-  }, 1000);
-} else if (card.number === 1) {
-  playerBubble.innerText = "Another turn 🔁";
-  playSound("hold");
-  renderHand();
-  checkWin();
-  return; // Player keeps turn
-} else if (card.number === 14) {
-  playerBubble.innerText = "Market for all 🎲";
-  aiCards.push(drawCard());
-  playerCards.push(drawCard());
-  playSound("market");
-}
-
-currentCard = card;
-playerCards.splice(index, 1);
-renderHand();
-isPlayerTurn = false;
-marketUsed = false;
-checkWin();
-setTimeout(aiTurn, 1000);
+  if (valid) {
+    // Card effects by number
+    if (card.number === 2) {
+      aiCards.push(drawCard(), drawCard());
+      aiBubble.innerText = "😠 Picked 2!";
+      playSound("pick");
+    } else if (card.number === 8) {
+      aiBubble.innerText = "😑 Skipped!";
+      playSound("suspend");
+      renderHand();
+      checkWin();
+      isPlayerTurn = true;
+      playerBubble.innerText = "Go again!";
+      return;
+    } else if (card.number === 1) {
+      playerBubble.innerText = "Another turn 🔁";
+      playSound("hold");
+      renderHand();
+      checkWin();
+      return; // Player keeps turn
+    } else if (card.number === 14) {
+      playerBubble.innerText = "Market for all 🎲";
+      aiCards.push(drawCard());
+      playerCards.push(drawCard());
+      playSound("market");
     }
 
+    currentCard = card;
+    playerCards.splice(index, 1);
+    playCard.innerText = `${card.name}\n${card.number}`;
+    renderHand();
     isPlayerTurn = false;
     marketUsed = false;
     checkWin();
@@ -466,4 +461,4 @@ function useMarket() {
 }
 </script>
 </body>
-</html>
+        </html>
