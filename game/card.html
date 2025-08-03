@@ -342,14 +342,7 @@ if (card.number === 2) {
     isPlayerTurn = true;
     playerBubble.innerText = "Go again!";
   }, 1000);
-} else if (card.number === 1) {
-  playerBubble.innerText = "Another turn 🔁";
-  playSound("hold");
-  checkWin();
-  return;
-} else if (card.number === 14) {
-  playerBubble.innerText = "🎲 Market!";
-  playSound("market");
+    playSound("market");
 }
       checkWin();
       return setTimeout(() => {
